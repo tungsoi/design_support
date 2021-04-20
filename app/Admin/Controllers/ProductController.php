@@ -5,6 +5,7 @@ namespace App\Admin\Controllers;
 use App\Models\Category;
 use App\Models\Material;
 use App\Models\Product;
+use App\Models\ProductProperty;
 use App\Models\Supplier;
 use Encore\Admin\Auth\Database\Menu;
 use Encore\Admin\Controllers\AdminController;
@@ -12,6 +13,9 @@ use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use Encore\Admin\Widgets\Table;
+use Illuminate\Http\Request;
+Use Encore\Admin\Admin as EncoreAdmin;
+
 
 class ProductController extends AdminController
 {
@@ -68,6 +72,9 @@ class ProductController extends AdminController
         $grid->option_count('Số Options')->display(function () {
             return $this->properties->count();
         });
+        $grid->color_count('Màu sắc')->display(function () {
+            return $this->colors->pluck('color');
+        })->label();
         $grid->quantity_sold('Số lượng đã bán');
         $grid->disableColumnSelector();
         $grid->disableBatchActions();
@@ -126,15 +133,23 @@ class ProductController extends AdminController
             ->rules('required');
 
             $form->url('link_3d', 'Link sản phẩm 3D');
-        })->tab('Kích cỡ và giá', function ($form) {
+        })
+        ->tab('Kích cỡ và giá', function ($form) {
 
             $form->hasMany('properties', "-", function (Form\NestedForm $form) {
-                $form->text('site', 'Mã kích thước')->rules('required');
+                $form->text('size', 'Mã kích thước')->rules('required');
                 $form->select('material_id', 'Vật liệu')->options(Material::all()->pluck('title', 'id'))->rules('required');
                 $form->currency('price', 'Giá tiền')->digits(0)->width(200)->symbol('VND')->rules('required');
                 $form->text('lenght', 'Chiều dài (cm)')->rules('required');
                 $form->text('width', 'Chiều rộng (cm)')->rules('required');
                 $form->text('height', 'Chiều cao (cm)')->rules('required');
+            });
+
+        })
+        ->tab('Màu sắc', function ($form) {
+
+            $form->hasMany('colors', "-", function (Form\NestedForm $form) {
+                $form->text('color', 'Tên màu sắc')->rules('required');
             });
 
         });
@@ -147,9 +162,103 @@ class ProductController extends AdminController
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();
             $tools->disableView();
-            $tools->disableList();
         });
 
         return $form;
+    }
+
+    public function getProperty(Request $request)
+    {
+        $product = Product::find($request->get('q'));
+
+        if ($product) {
+            $options = $product->properties;
+
+            $option_data = [];
+            foreach ($options as $option)
+            {
+                if (! $options)
+                {
+                    return null;
+                }
+
+                $option_data[] = collect([
+                    'id'    =>  $option->id,
+                    'text'  =>  "Size: ".$option->size." (".$option->lenght." x ".$option->width." x ".$option->height.")  - "
+                                . $option->material->title
+                                ." - "
+                                .number_format($option->price)." VND"
+                ]);
+            }
+            return $option_data;
+        }
+
+        return null;
+    }
+
+    public function getColor(Request $request)
+    {
+        $product = Product::find($request->get('q'));
+
+        if ($product) {
+            $options = $product->colors;
+            if (! $options)
+            {
+                return null;
+            }
+
+            $option_data = [];
+            foreach ($options as $option)
+            {
+                $option_data[] = collect([
+                    'id'    =>  $option->id,
+                    'text'  =>  $option->color
+                ]);
+            }
+            return $option_data;
+        }
+
+        return null;
+    }
+
+    public function getPrice(Request $request)
+    {
+        $product = Product::find($request->get('q'));
+
+        if ($product) {
+            $options = $product->properties;
+            if (! $options)
+            {
+                return null;
+            }
+
+            $option_data = [];
+            foreach ($options as $option)
+            {
+                $option_data[] = collect([
+                    'id'    =>  $option->id,
+                    'text'  =>  number_format($option->price)." VND"
+                ]);
+            }
+            return $option_data;
+        }
+
+        return null;
+    }
+
+    public function getPriceFromProperty(Request $request)
+    {
+        $product_property = ProductProperty::find($request->get('q'));
+
+        if ($product_property) {
+            return [
+                collect([
+                    'id'    =>  $product_property->price,
+                    'text'  =>  number_format($product_property->price)." VND"
+                ])
+            ];
+        }
+
+        return null;
     }
 }

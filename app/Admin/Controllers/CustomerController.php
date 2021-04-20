@@ -133,12 +133,17 @@ class CustomerController extends AdminController
                 'off' => ['value' => User::DEACTIVE, 'text' => 'Khoá', 'color' => 'danger'],
             ];
             $form->switch('status', 'Trạng thái')->states($states)->default(User::ACTIVE);
-        })->tab('Thông tin công ty', function ($form) {
+        })
+        ->tab('Thông tin công ty', function ($form) {
             $form->text('profile.company_name', 'Tên công ty')->rules('required');
             $form->text('profile.email', 'Email công ty')->rules('required|email');
             $form->text('profile.address', 'Địa chỉ')->rules('required');
             $form->text('profile.mobile_phone', 'Điện thoại liên hệ')->rules('required');
             $form->hidden('profile.code');
+        })
+        ->tab('Thanh toán', function ($form) {
+            $form->text('profile.discount_percent', '% giảm giá đơn hàng')->rules('required');
+            $form->text('profile.min_deposite_percent', '% tối thiểu đặt cọc đơn hàng')->rules('required|email');
         });
 
         $form->saving(function (Form $form) {

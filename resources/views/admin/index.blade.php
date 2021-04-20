@@ -40,6 +40,10 @@
         {!! Admin::html() !!}
     </div>
 
+    <div class="overlay-loading">
+        <i class="fa fa-spinner fa-spin"></i> Đang tải dữ liệu
+    </div>
+
 </div>
 
 <script>
@@ -51,11 +55,5 @@
 <!-- REQUIRED JS SCRIPTS -->
 {!! Admin::js() !!}
 
-<script>
-    $('.has-many-properties-form').addClass('row');
-    $('.has-many-properties-form .form-group').addClass('col-md-4');
-    $('.has-many-properties').prev().remove();
-    $('.has-many-properties').prev().remove();
-</script>
 </body>
 </html>

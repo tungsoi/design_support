@@ -16,6 +16,7 @@ class AddColumnToProductsTable extends Migration
         Schema::table('products', function (Blueprint $table) {
             $table->integer('supplier_id')->nullable()->comment('nha cung cap');
             $table->text('link_3d')->nullable()->comment('link san pham 3d');
+            $table->integer('quantity_sold')->nullable()->default(0)->comment('Số lượng sản phẩm này đã bán');
         });
     }
 
@@ -29,6 +30,7 @@ class AddColumnToProductsTable extends Migration
         Schema::table('products', function (Blueprint $table) {
             $table->dropColumn('supplier_id');
             $table->dropColumn('link_3d');
+            $table->dropColumn('quantity_sold');
         });
     }
 }

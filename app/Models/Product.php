@@ -61,4 +61,9 @@ class Product extends Model
     public function supplier() {
         return $this->hasOne('App\Models\Supplier', 'id', 'supplier_id');
     }
+
+    public function colors()
+    {
+        return $this->hasMany('App\Models\ProductColor', 'product_id');
+    }
 }

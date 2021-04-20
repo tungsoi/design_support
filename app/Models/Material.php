@@ -24,6 +24,11 @@ class Material extends Model
         'title'
     ];
 
+    /**
+     * Format output
+     *
+     * @var array
+     */
     protected $casts = [
         'created_at'  => 'datetime:H:i | d-m-Y'
     ];

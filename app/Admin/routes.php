@@ -15,13 +15,19 @@ Route::group([
 
     $router->get('/', 'HomeController@index')->name('home');
 
+    $router->get('/products/product_properties', 'ProductController@getProperty')->name('products.getProperty');
+    $router->get('/products/product_colors', 'ProductController@getColor')->name('products.getColor');
+    $router->get('/products/product_prices', 'ProductController@getPrice')->name('products.getPrice');
+    $router->get('/products/product_property_price', 'ProductController@getPriceFromProperty')->name('products.getPriceFromProperty');
+
     $router->resources([
         'auth/users'    =>  'UserController',
         'categories'    =>  'CategoryController',
         'products'      =>  'ProductController',
         'materials'     =>  'MaterialController',
         'suppliers'     =>  'SupplierController',
-        'customers'     =>  'CustomerController'
+        'customers'     =>  'CustomerController',
+        'orders'        =>  'OrderController'
     ]);
 
 });

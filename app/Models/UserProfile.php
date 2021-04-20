@@ -24,7 +24,9 @@ class UserProfile extends Model
         'address',
         'mobile_phone',
         'email',
-        'code'
+        'code',
+        'discount_percent',
+        'min_deposite_percent'
     ];
 
     public function user()

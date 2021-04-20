@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class AddColumnToProductsTable extends Migration
+class CreateOrderStatusesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,10 @@ class AddColumnToProductsTable extends Migration
      */
     public function up()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->integer('quantity_sold')->nullable()->default(0)->comment('Số lượng sản phẩm này đã bán');
+        Schema::create('order_statuses', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->string('title')->nullable()->comment('ten trang thai');
+            $table->timestamps();
         });
     }
 
@@ -25,8 +27,6 @@ class AddColumnToProductsTable extends Migration
      */
     public function down()
     {
-        Schema::table('products', function (Blueprint $table) {
-            $table->dropColumn('quantity_sold');
-        });
+        Schema::dropIfExists('order_statuses');
     }
 }

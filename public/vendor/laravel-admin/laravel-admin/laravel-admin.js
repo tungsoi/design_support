@@ -196,3 +196,27 @@ $('#totop').on('click', function (e) {
     }
 
 })(jQuery);
+
+$(document).ajaxStart(function()
+{
+    $('.overlay-loading').toggle();
+});
+
+$(document).ajaxComplete(function()
+{
+    $('.overlay-loading').toggle();
+    amount();
+});
+
+
+function amount() {
+    var products = $('.has-many-items-forms .remove');
+
+    for ($index = 0; $index < products.length; $index++)
+    {
+        let qty = $('input.order_qty').eq($index).val();
+        let price = $('select.price').eq($index).val();
+        let amount = qty * price;
+        $('.amount_one_item').eq($index).val(amount);
+    }
+}

@@ -4,14 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ProductProperty extends Model
+class ProductColor extends Model
 {
     /**
      * Table name
      *
      * @var string
      */
-    protected $table = "product_properties";
+    protected $table = "product_colors";
 
     /**
      * Fields
@@ -20,22 +20,11 @@ class ProductProperty extends Model
      */
     protected $fillable = [
         'product_id',
-        'size',
-        'lenght',
-        'width',
-        'height',
-        'material_id',
-        'price'
+        'color'
     ];
 
     public function product()
     {
         return $this->belongsTo('App\Models\Product','product_id');
     }
-
-    public function material()
-    {
-        return $this->hasOne('App\Models\Material', 'id', 'material_id');
-    }
-
 }

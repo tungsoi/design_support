@@ -16,7 +16,7 @@ class CreateProductPropertiesTable extends Migration
         Schema::create('product_properties', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->integer('product_id')->nullable()->comment('id san pham');
-            $table->string('site')->nullable()->comment('Mã kích thước');
+            $table->string('size')->nullable()->comment('Mã kích thước');
             $table->string('lenght')->nullable()->comment('Chieu dai');
             $table->string('width')->nullable();
             $table->string('height')->nullable();
