@@ -34,12 +34,12 @@ Route::group([
 
 
 Route::group([
-    'namespace'     => 'App\\Admin\\Controllers\\Shop',
+    'namespace'     => 'App\\Admin\\Controllers\\Furn',
     'middleware'    => 'web',
-    'as'            => 'shop.',
+    'as'            => 'home.',
 ], function (Router $router) {
 
-    $router->get('/', 'HomeController@index')->name('home');
+    $router->get('/', 'HomeController@index')->name('index');
 
 });
 

@@ -288,5 +288,5 @@ section.content .grid-box {
     color: black;
     vertical-align: middle;
     padding-top: 15%;
-    display: none;
+    /* display: none; */
 }

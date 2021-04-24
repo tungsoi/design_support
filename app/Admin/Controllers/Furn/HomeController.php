@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Admin\Controllers\Shop;
+namespace App\Admin\Controllers\Furn;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
@@ -10,6 +10,6 @@ class HomeController extends Controller
     public function index()
     {
         $categories = Category::whereIsShowShop(Category::ACTIVE)->limit(5)->get();
-        return view('shop.index', compact('categories'));
+        return view('furns.index', compact('categories'));
     }
 }
