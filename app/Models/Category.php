@@ -26,13 +26,14 @@ class Category extends Model
         'name',
         'parent_id',
         'is_show_shop',
-        'avatar'
+        'avatar',
+        'icon'
     ];
 
     const ACTIVE = 1;
     const DEACTIVE = 0;
 
     public function products() {
-        return Product::whereCategoryId($this->id)->count();
+        return $this->hasMany('App\Models\Product', 'category_id', 'id');
     }
 }

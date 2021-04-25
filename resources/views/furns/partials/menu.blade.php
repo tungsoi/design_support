@@ -48,7 +48,7 @@
                 <!-- Header Logo Start -->
                 <div class="col-auto align-self-center">
                     <div class="header-logo">
-                        <a href="index.html">{{ config('admin.name') }}</a>
+                        <a href="index.html"><img src="{{ asset('assets/furns/images/logo/logo.jpg') }}" alt=""></a>
                     </div>
                 </div>
                 <!-- Header Logo End -->
@@ -56,7 +56,7 @@
                 <!-- Header Action Start -->
                 <div class="col align-self-center">
                     <div class="header-actions">
-                        <div class="header_account_list">
+                        {{-- <div class="header_account_list">
                             <a href="javascript:void(0)" class="header-action-btn search-btn"><i
                                     class="icon-magnifier"></i></a>
                             <div class="dropdown_search">
@@ -65,9 +65,9 @@
                                     <button class="submit" type="submit"><i class="icon-magnifier"></i></button>
                                 </form>
                             </div>
-                        </div>
+                        </div> --}}
                         <!-- Single Wedge Start -->
-                        <div class="header-bottom-set dropdown">
+                        {{-- <div class="header-bottom-set dropdown">
                             <button class="dropdown-toggle header-action-btn" data-bs-toggle="dropdown"><i
                                     class="icon-user"></i></button>
                             <ul class="dropdown-menu dropdown-menu-right">
@@ -75,16 +75,25 @@
                                 <li><a class="dropdown-item" href="checkout.html">Checkout</a></li>
                                 <li><a class="dropdown-item" href="login.html">Sign in</a></li>
                             </ul>
-                        </div>
+                        </div> --}}
+
+                        @if (Admin::user())
                         <!-- Single Wedge End -->
                         <a href="#offcanvas-cart" class="header-action-btn header-action-btn-cart offcanvas-toggle pr-0">
                             <i class="icon-handbag"></i>
-                            <span class="header-action-num">01</span>
+                            <span class="header-action-num">+</span>
                             <!-- <span class="cart-amount">€30.00</span> -->
                         </a>
                         <a href="#offcanvas-mobile-menu" class="header-action-btn header-action-btn-menu offcanvas-toggle d-lg-none">
                             <i class="icon-menu"></i>
                         </a>
+                        @else
+                        <a class="dropdown-toggle header-action-btn"
+                            href="{{ route('admin.login') }}"
+                            style="cursor: pointer">
+                            <i class="icon-login"></i>
+                        </a>
+                        @endif
                     </div>
                 </div>
                 <!-- Header Action End -->
@@ -150,11 +159,14 @@
                 <div class="col-md-12 align-self-center">
                     <div class="main-menu">
                         <ul>
-                            <li><a href="about.html">Trang chủ</a></li>
-                            <li><a href="about.html">Giới thiệu</a></li>
-                            <li class="dropdown position-static"><a href="#">Sản phẩm <i
-                                        class="ion-ios-arrow-down"></i></a>
-                                <ul class="mega-menu d-block">
+                            <li><a href="{{ route('furn.home') }}">Trang chủ</a></li>
+                            <li><a href="{{ route('furn.aboutus')}}">Giới thiệu</a></li>
+                            <li class="dropdown position-static">
+                                <a href="{{ route('furn.product') }}">
+                                    Sản phẩm
+                                    {{-- <i class="ion-ios-arrow-down"></i> --}}
+                                </a>
+                                {{-- <ul class="mega-menu d-block">
                                     <li class="d-flex">
                                         <ul class="d-block">
                                             <li class="title"><a href="#">Shop Page</a></li>
@@ -204,10 +216,14 @@
                                             </li>
                                         </ul>
                                     </li>
-                                </ul>
+                                </ul> --}}
                             </li>
-                            <li class="dropdown "><a href="#">Blog <i class="ion-ios-arrow-down"></i></a>
-                                <ul class="sub-menu">
+                            <li class="dropdown ">
+                                <a href="{{ route('furn.blog') }}">
+                                    Bài viết
+                                    {{-- <i class="ion-ios-arrow-down"></i> --}}
+                                </a>
+                                {{-- <ul class="sub-menu">
                                     <li class="dropdown position-static"><a href="blog-grid-left-sidebar.html">Blog Grid
                                         <i class="ion-ios-arrow-right"></i></a>
                                         <ul class="sub-menu sub-menu-2">
@@ -231,9 +247,9 @@
                                             </li>
                                         </ul>
                                     </li>
-                                </ul>
+                                </ul> --}}
                             </li>
-                            <li><a href="contact.html">Liên hệ</a></li>
+                            <li><a href="{{ route('furn.contact') }}">Liên hệ</a></li>
                         </ul>
                     </div>
                 </div>

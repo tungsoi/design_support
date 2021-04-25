@@ -275,7 +275,7 @@ return [
     |    "skin-red", "skin-red-light", "skin-black", "skin-black-light".
     |
     */
-    'skin' => 'skin-yellow',
+    'skin' => 'skin-red',
 
     /*
     |--------------------------------------------------------------------------

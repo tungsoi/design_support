@@ -55,7 +55,7 @@ class Product extends Model
 
     public function properties()
     {
-        return $this->hasMany('App\Models\ProductProperty', 'product_id');
+        return $this->hasMany('App\Models\ProductProperty', 'product_id')->orderBy('price', 'asc');
     }
 
     public function supplier() {

@@ -36,10 +36,14 @@ Route::group([
 Route::group([
     'namespace'     => 'App\\Admin\\Controllers\\Furn',
     'middleware'    => 'web',
-    'as'            => 'home.',
+    'as'            => 'furn.',
 ], function (Router $router) {
 
-    $router->get('/', 'HomeController@index')->name('index');
+    $router->get('/', 'HomeController@index')->name('home');
+    $router->get('/aboutus', 'HomeController@aboutus')->name('aboutus');
+    $router->get('/contact', 'HomeController@contact')->name('contact');
+    $router->get('/blog', 'HomeController@blog')->name('blog');
+    $router->get('/product', 'ProductController@index')->name('product');
 
 });
 

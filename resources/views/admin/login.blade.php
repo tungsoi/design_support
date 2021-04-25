@@ -88,6 +88,10 @@
                     <br>
                     <h5 class="text-center">Copyright {{ config('admin.name') }}@2021</h5>
                 </div>
+                <div class="col-md-12 text-center">
+                    <br>
+                    <a href="/" class="">Trang chủ</a>
+                </div>
             </div>
         </div>
         <!-- /.login-box-body -->

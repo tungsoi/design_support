@@ -1,57 +1,20 @@
-<!-- Product Category Start -->
 <div class="section pt-100px pb-100px">
     <div class="container">
         <div class="category-slider swiper-container" data-aos="fade-up">
             <div class="category-wrapper swiper-wrapper">
-                <!-- Single Category -->
+                @if (isset($categories) && $categories->count() > 0)
+                @foreach ($categories as $category)
                 <div class=" swiper-slide">
                     <a href="shop-left-sidebar.html" class="category-inner ">
                         <div class="category-single-item">
-                            <img src="assets/furns/images/icons/1.png" alt="">
-                            <span class="title">Office Chair</span>
+                            <i class="fa {{ $category->icon }}" style="font-size: 60px; color: #474747"></i>
+                            <span class="title">{{ $category->name }}</span>
                         </div>
                     </a>
                 </div>
-                <!-- Single Category -->
-                <div class=" swiper-slide">
-                    <a href="shop-left-sidebar.html" class="category-inner ">
-                        <div class="category-single-item">
-                            <img src="assets/furns/images/icons/2.png" alt="">
-                            <span class="title">Book Shelf</span>
-                        </div>
-                    </a>
-                </div>
-                <!-- Single Category -->
-                <div class=" swiper-slide">
-                    <a href="shop-left-sidebar.html" class="category-inner ">
-                        <div class="category-single-item">
-                            <img src="assets/furns/images/icons/3.png" alt="">
-                            <span class="title">Light & Sofa</span>
-                        </div>
-                    </a>
-                </div>
-                <!-- Single Category -->
-                <div class=" swiper-slide">
-                    <a href="shop-left-sidebar.html" class="category-inner ">
-                        <div class="category-single-item">
-                            <img src="assets/furns/images/icons/4.png" alt="">
-                            <span class="title">Reading Table</span>
-                        </div>
-                    </a>
-                </div>
-                <!-- Single Category -->
-                <div class="swiper-slide">
-                    <a href="shop-left-sidebar.html" class="category-inner ">
-                        <div class="category-single-item">
-                            <img src="assets/furns/images/icons/5.png" alt="">
-                            <span class="title">Corner Table</span>
-                        </div>
-                    </a>
-                </div>
-                <!-- Single Category -->
+                @endforeach
+                @endif
             </div>
         </div>
     </div>
 </div>
-
-<!-- Product Category End -->

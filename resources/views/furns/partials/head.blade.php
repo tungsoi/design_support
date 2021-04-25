@@ -45,6 +45,7 @@
 <link rel="stylesheet" href="{{ asset('assets/furns/css/plugins/jquery.lineProgressbar.css') }}">
 <link rel="stylesheet" href="{{ asset('assets/furns/css/plugins/nice-select.css') }}" />
 <link rel="stylesheet" href="{{ asset('assets/furns/css/plugins/venobox.css') }}" />
+<link rel="stylesheet" href="{{ asset('vendor/laravel-admin/font-awesome/css/font-awesome.min.css') }}">
 
 <!-- Use the minified version files listed below for better performance and remove the files listed above -->
 <link rel="stylesheet" href="{{ asset('assets/furns/css/vendor/vendor.min.css') }}" />
@@ -53,3 +54,4 @@
 
 <!-- Main Style -->
 <link rel="stylesheet" href="{{ asset('assets/furns/css/style.css') }}" />
+<link rel="stylesheet" href="{{ asset('assets/furns/css/furns.css') }}" />

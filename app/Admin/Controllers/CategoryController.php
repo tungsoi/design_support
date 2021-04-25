@@ -57,13 +57,16 @@ class CategoryController extends AdminController
             return Category::whereParentId($this->id)->pluck('name');
         })->label();
         $grid->products('Số sản phẩm')->display(function () {
-            return $this->products();
+            return $this->products->count();
         });
 
         $grid->is_show_shop('Trang thái')->radio([
             1 => 'Hiển thị',
             0 => 'Không hiển thị'
         ]);
+        $grid->column('icon')->display(function () {
+            return "<i class='fa ".$this->icon."' style='font-size: 30px'></i>";
+        });
 
 
         $grid->disableColumnSelector();
@@ -111,6 +114,7 @@ class CategoryController extends AdminController
             0   =>  'Không hiển thị',
             1   =>  'Hiển thị'
         ]);
+        $form->icon('icon');
 
         $form->disableEditingCheck();
         $form->disableCreatingCheck();
@@ -118,7 +122,7 @@ class CategoryController extends AdminController
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();
             $tools->disableView();
-            $tools->disableList();
+            // $tools->disableList();
         });
 
         return $form;

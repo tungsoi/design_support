@@ -1,0 +1,19 @@
+.header-logo img{
+    max-width: 200px;
+}
+.team-img img {
+    width: 300px;
+    border-radius: 50%;
+}
+.breadcrumb-area {
+    background-color: white;
+}
+.bg-white {
+    background-color: white !important;
+}
+.team-single {
+    border: 1px dotted gray;
+}
+.bg-dark {
+    background-color: #ebebeb !important;
+}
