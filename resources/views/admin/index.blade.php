@@ -40,9 +40,9 @@
         {!! Admin::html() !!}
     </div>
 
-    <div class="overlay-loading">
+    {{-- <div class="overlay-loading">
         <img src="{{ asset("assets/img/index.svg") }}" alt="">
-    </div>
+    </div> --}}
 
 </div>
 

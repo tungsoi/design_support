@@ -64,7 +64,7 @@
             </div>
             <div class="col-lg-7 col-sm-12 col-xs-12" data-aos="fade-up" data-aos-delay="200">
                 <div class="product-details-content quickview-content">
-                    <h2>{{ $product->name }}</h2>
+                    <h2>{{ $product->code . " - " . $product->name}}</h2>
                     <p class="reference">Danh mục:<span> {{ $product->category->name }}</span></p>
                     <div class="pro-details-rating-wrap">
                         <div class="rating-product">
@@ -81,7 +81,7 @@
                             <li class="old-price not-cut">Liên hệ</li>
                         </ul>
                     </div>
-                    <p class="quickview-para">{{ $product->description }}</p>
+                    {{-- <p class="quickview-para">{{ $product->description }}</p> --}}
                     <div class="pro-details-size-color d-flex">
                         <div class="pro-details-color-wrap">
                             <span>Màu sắc</span>
