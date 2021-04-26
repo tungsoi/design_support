@@ -34,7 +34,7 @@
                                         <!-- Single Prodect -->
                                         <div class="product">
                                             <div class="thumb">
-                                                <a href="shop-left-sidebar.html" class="image">
+                                                <a href="{{ route('furn.product.detail', $product->id) }}" class="image">
                                                     <img src="{{ asset('uploads/'.$product->avatar) }}" alt="Product" />
                                                     <img class="hover-image" src="{{ asset('uploads/'.$product->avatar) }}" alt="Product" />
                                                 </a>
@@ -50,7 +50,7 @@
                                                 <button title="Add To Cart" class=" add-to-cart">Thêm vào giỏ hàng</button>
                                             </div>
                                             <div class="content">
-                                                <h5 class="title"><a href="shop-left-sidebar.html">{{ $product->name }}</a></h5>
+                                                <h5 class="title"><a href="{{ route('furn.product.detail', $product->id) }}">{{ $product->name }}</a></h5>
                                                 <span class="price">
                                                     @if (Admin::user())
                                                         <span class="new" style="color: #e41c10">
