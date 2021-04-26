@@ -48,7 +48,7 @@
                 <!-- Header Logo Start -->
                 <div class="col-auto align-self-center">
                     <div class="header-logo">
-                        <a href="index.html"><img src="{{ asset('assets/furns/images/logo/logo.jpg') }}" alt=""></a>
+                        <a href="{{ route('/') }}"><img src="{{ asset('assets/furns/images/logo/logo.jpg') }}" alt=""></a>
                     </div>
                 </div>
                 <!-- Header Logo End -->
