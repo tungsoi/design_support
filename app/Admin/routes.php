@@ -44,6 +44,7 @@ Route::group([
     $router->get('/contact', 'HomeController@contact')->name('contact');
     $router->get('/blog', 'HomeController@blog')->name('blog');
     $router->get('/product', 'ProductController@index')->name('product');
+    $router->get('/product/detail/{id}', 'ProductController@show')->name('product.detail');
 
 });
 

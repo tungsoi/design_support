@@ -14,4 +14,11 @@ class ProductController extends Controller
         $categories = Category::all();
         return view('furns.product', compact('products', 'categories'));
     }
+
+    public function show($id)
+    {
+        $product = Product::find($id);
+
+        return view('furns.product-detail', compact('product'));
+    }
 }
