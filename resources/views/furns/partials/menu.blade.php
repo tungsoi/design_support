@@ -218,37 +218,6 @@
                                     </li>
                                 </ul> --}}
                             </li>
-                            <li class="dropdown ">
-                                <a href="{{ route('furn.blog') }}">
-                                    Bài viết
-                                    {{-- <i class="ion-ios-arrow-down"></i> --}}
-                                </a>
-                                {{-- <ul class="sub-menu">
-                                    <li class="dropdown position-static"><a href="blog-grid-left-sidebar.html">Blog Grid
-                                        <i class="ion-ios-arrow-right"></i></a>
-                                        <ul class="sub-menu sub-menu-2">
-                                            <li><a href="blog-grid-left-sidebar.html">Blog Grid Left Sidebar</a></li>
-                                            <li><a href="blog-grid-right-sidebar.html">Blog Grid Right Sidebar</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="dropdown position-static"><a href="blog-list-left-sidebar.html">Blog List
-                                        <i class="ion-ios-arrow-right"></i></a>
-                                        <ul class="sub-menu sub-menu-2">
-                                            <li><a href="blog-list-left-sidebar.html">Blog List Left Sidebar</a></li>
-                                            <li><a href="blog-list-right-sidebar.html">Blog List Right Sidebar</a></li>
-                                        </ul>
-                                    </li>
-                                    <li class="dropdown position-static"><a href="blog-single-left-sidebar.html">Single
-                                        Blog <i class="ion-ios-arrow-right"></i></a>
-                                        <ul class="sub-menu sub-menu-2">
-                                            <li><a href="blog-single-left-sidebar.html">Single Blog Left Sidebar</a>
-                                            </li>
-                                            <li><a href="blog-single-right-sidebar.html">Single Blog Right Sidebar</a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                </ul> --}}
-                            </li>
                             <li><a href="{{ route('furn.contact') }}">Liên hệ</a></li>
                         </ul>
                     </div>

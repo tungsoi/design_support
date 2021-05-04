@@ -111,10 +111,12 @@ class ProductController extends AdminController
         $form->tab('Thông tin sản phẩm', function ($form) {
             $form->image('avatar', 'Ảnh đại diện')
             ->thumbnail('small', $width = 50, $height = 50)
-            ->rules('required');
+            ->rules('required')
+            ->retainable();
 
             $form->multipleFile('pictures', 'Ảnh mô tả sản phẩm')
-            ->rules('mimes:jpeg,png,jpg');
+            ->rules('mimes:jpeg,png,jpg')
+            ->retainable();
 
             $form->select('category_id', 'Danh mục sản phẩm')
             ->options(Category::all()->pluck('name', 'id'))

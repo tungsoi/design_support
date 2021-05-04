@@ -17,3 +17,7 @@
 .bg-dark {
     background-color: #ebebeb !important;
 }
+.product-tab-nav .nav-item {
+    font-weight: 400;
+    font-size: 14px;
+}

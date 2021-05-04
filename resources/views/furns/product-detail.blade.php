@@ -36,11 +36,13 @@
                             <img class="img-responsive m-auto" src="{{ asset('uploads/'.$product->avatar) }}" alt="" width="470" height="470">
                         </div>
 
+                        @if ($product->pictures !== null && $product->pictures->count() > 0)
                         @foreach ($product->pictures as $picture)
                             <div class="swiper-slide zoom-image-hover">
                                 <img class="img-responsive m-auto" src="{{ asset('uploads/'.$picture) }}" alt=""  width="470" height="470">
                             </div>
                         @endforeach
+                        @endif
                     </div>
                 </div>
                 <div class="swiper-container zoom-thumbs slider-nav-style-1 small-nav mt-3 mb-3">
@@ -48,12 +50,13 @@
                         <div class="swiper-slide">
                             <img class="img-responsive m-auto" src="{{ asset('uploads/'.$product->avatar) }}" alt=""  width="107" height="107">
                         </div>
-
+                        @if ($product->pictures !== null && $product->pictures->count() > 0)
                         @foreach ($product->pictures as $picture)
                             <div class="swiper-slide">
                                 <img class="img-responsive m-auto" src="{{ asset('uploads/'.$picture) }}" alt=""  width="107" height="107">
                             </div>
                         @endforeach
+                        @endif
                     </div>
                     <!-- Add Arrows -->
                     <div class="swiper-buttons">
@@ -95,9 +98,11 @@
                         <div class="product-size">
                             <span>Kích thước</span>
                             <select>
+                                @if ($product->properties->count() > 0)
                                 @foreach ($product->properties as $property)
                                     <option value="{{ $property->id }}">{{ $property->size }}</option>
                                 @endforeach
+                                @endif
                             </select>
                         </div>
                     </div>
