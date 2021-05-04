@@ -36,7 +36,7 @@
                             <img class="img-responsive m-auto" src="{{ asset('uploads/'.$product->avatar) }}" alt="" width="470" height="470">
                         </div>
 
-                        @if ($product->pictures !== null && $product->pictures->count() > 0)
+                        @if ($product->pictures !== null && sizeof($product->pictures) > 0)
                         @foreach ($product->pictures as $picture)
                             <div class="swiper-slide zoom-image-hover">
                                 <img class="img-responsive m-auto" src="{{ asset('uploads/'.$picture) }}" alt=""  width="470" height="470">
@@ -50,7 +50,7 @@
                         <div class="swiper-slide">
                             <img class="img-responsive m-auto" src="{{ asset('uploads/'.$product->avatar) }}" alt=""  width="107" height="107">
                         </div>
-                        @if ($product->pictures !== null && $product->pictures->count() > 0)
+                        @if ($product->pictures !== null && sizeof($product->pictures) > 0)
                         @foreach ($product->pictures as $picture)
                             <div class="swiper-slide">
                                 <img class="img-responsive m-auto" src="{{ asset('uploads/'.$picture) }}" alt=""  width="107" height="107">
