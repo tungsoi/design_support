@@ -98,7 +98,7 @@
                         <div class="product-size">
                             <span>Kích thước</span>
                             <select>
-                                @if ($product->properties->count() > 0)
+                                @if ($product->pictures !== null && $product->properties->count() > 0)
                                 @foreach ($product->properties as $property)
                                     <option value="{{ $property->id }}">{{ $property->size }}</option>
                                 @endforeach
