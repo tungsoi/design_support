@@ -27,11 +27,22 @@
     <!-- Tweaks for older IEs--><!--[if lt IE 9]>
         <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js') }}"></script>
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js') }}"></script><![endif]-->
+
+        <style>
+            #myVideo {
+                position: absolute;
+                width: 100% !important;
+                top: 0;
+                left: 0;
+            }
+        </style>
   </head>
   <body>
     <div class="main">
       <section class="bg-cover bg-center hero">
-        <div class="dark-overlay"></div>
+        <video autoplay muted loop id="myVideo">
+            <source src="{{ asset('assets/furn/video/intro.mp4') }}" type="video/mp4">
+        </video>
         <div class="position-relative z-index-1">
           <div class="container text-center text-white">
             <p class="font-italic lead">Oh, hello, nice to meet you!</p>
