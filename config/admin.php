@@ -402,7 +402,7 @@ return [
 
             // Editor configuration
             'config' => [
-                'height' => 200,
+                'height' => 400,
             ]
         ],
         'grid-lightbox' => [

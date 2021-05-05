@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "05d3e0ee387c2af4a326536d6a53846f",
+    "content-hash": "dfa2dedaba188e448c53f20513168baa",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -4594,6 +4594,58 @@
                 }
             ],
             "time": "2021-01-20T14:39:46+00:00"
+        },
+        {
+            "name": "zhpefe/select-tree",
+            "version": "v1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/zhpefe/select-tree.git",
+                "reference": "77c0681e87b6af3a4a0d34a64d1f33be09104817"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/zhpefe/select-tree/zipball/77c0681e87b6af3a4a0d34a64d1f33be09104817",
+                "reference": "77c0681e87b6af3a4a0d34a64d1f33be09104817",
+                "shasum": ""
+            },
+            "require": {
+                "encore/laravel-admin": "~1.6",
+                "php": ">=7.0.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~6.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Zhpefe\\SelectTree\\SelectTreeServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Zhpefe\\SelectTree\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "z.pefei",
+                    "email": "zhpefe789@gmail.com"
+                }
+            ],
+            "description": "laravel-admin select-tree",
+            "homepage": "https://github.com/zhpefe/select-tree",
+            "keywords": [
+                "laravel-admin",
+                "select-tree"
+            ],
+            "time": "2019-04-15T00:53:04+00:00"
         }
     ],
     "packages-dev": [

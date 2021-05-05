@@ -51,7 +51,6 @@ class MaterialController extends AdminController
         });
         $grid->column('number', 'STT');
         $grid->title('Tên chất liệu');
-        $grid->category()->name('Tên danh mục')->label();
         $grid->column('created_at', 'Ngày tạo');
         $grid->disableBatchActions();
 
@@ -85,7 +84,6 @@ class MaterialController extends AdminController
         $form = new Form(new Material);
 
         $form->text('title', 'Tên chất liệu')->rules('required');
-        $form->select('category_id', 'Tên danh mục')->options(Category::all()->pluck('name', 'id'));
 
         $form->disableEditingCheck();
         $form->disableCreatingCheck();

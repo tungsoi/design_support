@@ -244,7 +244,7 @@ section.content .grid-box {
 #tab-form-2 > hr {
     display: none !important;
 }
-.has-many-properties-form > .form-group {
+/* .has-many-properties-form > .form-group {
     width: 33.33% !important;
     display: inline-block !important;
 }
@@ -256,7 +256,7 @@ section.content .grid-box {
 .has-many-properties-form > .form-group > .col-sm-8 {
     padding: 0px !important;
     width: 60% !important;
-}
+} */
 
 .has-many-items-form > .form-group {
     width: 50% !important;

@@ -14,7 +14,8 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use Encore\Admin\Widgets\Table;
 use Illuminate\Http\Request;
-Use Encore\Admin\Admin as EncoreAdmin;
+use Encore\Admin\Admin as EncoreAdmin;
+use Illuminate\Support\Str;
 
 
 class ProductController extends AdminController
@@ -62,19 +63,40 @@ class ProductController extends AdminController
         $grid->column('number', 'STT');
         $grid->code('Mã sản phẩm');
         $grid->name('Tên sản phẩm');
-        $grid->column('avatar', 'Ảnh đại diện')->lightbox(['width' => 80, 'height' => 50]);
-        $grid->column('pictures', 'Ảnh sản phẩm')->lightbox(['width' => 80, 'height' => 50]);
+        $grid->column('avatar', 'Ảnh đại diện')->display(function () {
+            $array = $this->pictures;
+
+            if ($array != null && sizeof($array) > 0)
+            {
+                $data = [];
+                $data[] = $array[0];
+
+                return $data;
+            }
+
+            return null;
+        })->lightbox(['width' => 80, 'height' => 50]);
+        $grid->column('pictures', 'Ảnh sản phẩm')->display(function () {
+            $array = $this->pictures;
+
+            if ($array != null && sizeof($array) > 0)
+            {
+                unset($array[0]);
+
+                return $array;
+            }
+        })->lightbox(['width' => 80, 'height' => 50]);
         $grid->category()->name('Danh mục sản phẩm');
         $grid->supplier()->name('Nhà cung cấp');
         $grid->link_3d('Link 3D')->display(function () {
             return "<a href='.$this->link_3d.'>Xem</a>";
         });
+        $grid->link_order('Link mua hàng')->display(function () {
+            return "<a href='.$this->link_order.'>Xem</a>";
+        });
         $grid->option_count('Số Options')->display(function () {
             return $this->properties->count();
         });
-        $grid->color_count('Màu sắc')->display(function () {
-            return $this->colors->pluck('color');
-        })->label();
         $grid->quantity_sold('Số lượng đã bán');
         $grid->disableColumnSelector();
         $grid->disableBatchActions();
@@ -108,51 +130,45 @@ class ProductController extends AdminController
     protected function form()
     {
         $form = new Form(new Product);
-        $form->tab('Thông tin sản phẩm', function ($form) {
-            $form->image('avatar', 'Ảnh đại diện')
-            ->thumbnail('small', $width = 50, $height = 50)
-            ->rules('required')
-            ->retainable();
 
-            $form->multipleFile('pictures', 'Ảnh mô tả sản phẩm')
+        $form->column(2/3, function ($form) {
+            $form->hidden('code');
+            $form->multipleFile('pictures', 'Ảnh')
             ->rules('mimes:jpeg,png,jpg')
-            ->retainable();
+            ->help('Ảnh đầu tiên sẽ hiển thị là ảnh đại diện');
 
-            $form->select('category_id', 'Danh mục sản phẩm')
-            ->options(Category::all()->pluck('name', 'id'))
-            ->rules('required');
+            $form->select('category_id', 'Danh mục')
+            ->options(Category::all()->pluck('name', 'id'));
 
-            $form->text('code', 'Mã sản phẩm')
-                ->rules('required')->help('VD: GHE001');
-
-            $form->text('name', 'Tên sản phẩm')
-                ->rules('required')->help('VD: Ghế Sofa Luxury');
-
-            $form->summernote('description', 'Mô tả sản phẩm')->rules('required');
+            $form->text('name', 'Tên sản phẩm');
 
             $form->select('supplier_id', 'Nhà cung cấp')
-            ->options(Supplier::all()->pluck('name', 'id'))
-            ->rules('required');
+            ->options(Supplier::all()->pluck('name', 'id'));
 
             $form->url('link_3d', 'Link sản phẩm 3D');
-        })
-        ->tab('Kích cỡ và giá', function ($form) {
+            $form->url('link_order', 'Link mua hàng');
 
+            $form->summernote('description', 'Mô tả sản phẩm');
+        });
+
+        $form->column(1/3, function ($form) {
+            $form->divider('Kích thước và giá');
             $form->hasMany('properties', "-", function (Form\NestedForm $form) {
-                $form->text('size', 'Mã kích thước')->rules('required');
-                $form->select('material_id', 'Vật liệu')->options(Material::all()->pluck('title', 'id'))->rules('required');
-                $form->currency('price', 'Giá tiền')->digits(0)->width(200)->symbol('VND')->rules('required');
-                $form->text('lenght', 'Chiều dài (cm)')->rules('required');
-                $form->text('width', 'Chiều rộng (cm)')->rules('required');
-                $form->text('height', 'Chiều cao (cm)')->rules('required');
+                $form->text('size', 'Mã kích thước')->help('Dài x Rộng x Cao');
+                $form->select('material_id', 'Vật liệu')->options(Material::all()->pluck('title', 'id'));
+                $form->currency('price', 'Giá tiền')->digits(0)->width(200)->symbol('VND');
             });
+        });
 
-        })
-        ->tab('Màu sắc', function ($form) {
-
-            $form->hasMany('colors', "-", function (Form\NestedForm $form) {
-                $form->text('color', 'Tên màu sắc')->rules('required');
-            });
+        $form->saving(function (Form $form) {
+            if ($form->category_id != null) {
+                $category = Category::find($form->category_id)->first()->name;
+                $category_code = Str::upper(str_replace("-", '', Str::slug($category)));
+                $form->code = $category_code."-".str_pad((string) Product::count(), 4, "0", STR_PAD_LEFT);
+            }
+            else {
+                $form->code = "SP-".str_pad((string) Product::count(), 4, "0", STR_PAD_LEFT);
+            }
 
         });
 

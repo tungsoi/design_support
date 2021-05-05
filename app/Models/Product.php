@@ -30,7 +30,8 @@ class Product extends Model
         'pictures',
         'supplier_id',
         'link_3d',
-        'quantity_sold'
+        'quantity_sold',
+        'link_order'
     ];
 
     public function getPicturesAttribute($pictures)
