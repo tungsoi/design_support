@@ -10,7 +10,7 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $categories = Category::whereIsShowShop(Category::ACTIVE)->get();
+        $categories = Category::whereIsShowShop(Category::ACTIVE)->limit(2)->get();
         $products = Product::orderBy('created_at', 'desc')->limit(8)->get();
         return view('furns.index', compact('categories', 'products'));
     }

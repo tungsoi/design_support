@@ -10,7 +10,7 @@
     <!-- Bootstrap CSS-->
     <link rel="stylesheet" href="{{ asset('assets/furn/bootstrap/css/bootstrap.min.css') }}">
     <!-- Google fonts-->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cardo:400,400i">
+    {{-- <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Cardo:400,400i"> --}}
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700">
     <!-- Lightbox-->
     <link rel="stylesheet" href="{{ asset('assets/furn/lightbox2/css/lightbox.min.css') }}">
@@ -19,7 +19,7 @@
     <!-- Parallax-->
     <link rel="stylesheet" href="{{ asset('assets/furn/onepage-scroll/onepage-scroll.css') }}">
     <!-- theme stylesheet-->
-    <link rel="stylesheet" href="{{ asset('assets/furn/css/style.default.css') }}" id="theme-stylesheet">
+    <link rel="stylesheet" href="{{ asset('assets/furn/css/style.sea.css') }}" id="theme-stylesheet">
     <!-- Custom stylesheet - for your changes-->
     <link rel="stylesheet" href="{{ asset('assets/furn/css/custom.css') }}">
     <!-- Favicon-->
@@ -29,52 +29,176 @@
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js') }}"></script><![endif]-->
 
         <style>
+
+            html, body {
+                width: 100%;
+                overflow-x: hidden;
+                font: 300 14px 'Montserrat';
+                color: #fff;
+                position: relative;
+                line-height: 1.6;
+                background: #111;
+            }
             #myVideo {
                 position: absolute;
                 width: 100% !important;
                 top: 0;
                 left: 0;
             }
+            .hero {
+                background: none !important;
+            }
+            .logo {
+                max-width: 150px;
+            }
+            .menu {
+              position: fixed;
+              top: 0;
+              left: 0;
+              z-index: 200000;
+              width: 100%;
+              background: #000;
+              border-color: #D0D0D0;
+              height: 55px;
+            }
+            .menu .navbar {
+              width: 100%;
+              max-width: 1440px;
+              margin-left: auto;
+              margin-right: auto;
+              height: 100%;
+            }
+            .menu .nav-item a {
+              display: inline-block;
+              font-size: 13px;
+              font-weight: 600;
+              color: #999 !important;
+              position: relative;
+              z-index: 10;
+            }
+            .menu .nav-item a:hover {
+              color: white !important;
+            }
+            .menu .nav-item {
+              margin-left: 30px;
+            }
+            .navbar-nav .active  a {
+              color: white !important;
+            }
+            .brand {
+              font-size: 32px !important;
+              font-weight: 400 !important;
+              color: white !important;
+              margin-right: 40px;
+            }
+            section {
+                padding: 0px !important;
+            }
+            .category {
+                padding: 0px !important;
+                margin: 0px !important;
+                height: 100% !important;
+                cursor: pointer;
+                overflow: hidden;
+            }
+            .category img {
+                /* width: 100%; */
+                height: 100%;
+                transition: transform 1s;
+                margin-left: -50%;
+            }
+
+            .category a {
+                width: 100%;
+                height: 100%;
+            }
+            #category .row {
+                position: absolute !important;
+                height: 100% !important;
+                padding: 0px !important;
+                margin: 0px !important;
+                width: 100%;
+            }
+            .category-overlay {
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              background: black;
+              z-index: 2;
+              opacity: 0.5;
+              -webkit-transition: opacity 0.5s ease-in-out;
+              -moz-transition: opacity 0.5s ease-in-out;
+              -ms-transition: opacity 0.5s ease-in-out;
+              -o-transition: opacity 0.5s ease-in-out;
+              transition: opacity 0.5s ease-in-out;
+            }
+            .category:hover .category-overlay{
+              opacity: 0;
+            }
+            .category:hover img{
+              transform: scale(1.1);
+            }
+            .category-text {
+              position: absolute;
+              z-index: 3;
+              left: 20px;
+              bottom: 50px;
+              text-transform: uppercase;
+            }
         </style>
   </head>
   <body>
+    <div class="menu">
+      <nav class="navbar navbar-expand-lg ">
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <a class="nav-link brand" href="#">DESIGN SUPPORT <span class="sr-only">(current)</span></a>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link" href="#">SẢN PHẨM <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">GIỚI THIỆU</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">LIÊN HỆ</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
     <div class="main">
       <section class="bg-cover bg-center hero">
         <video autoplay muted loop id="myVideo">
             <source src="{{ asset('assets/furn/video/intro.mp4') }}" type="video/mp4">
         </video>
-        <div class="position-relative z-index-1">
-          <div class="container text-center text-white">
-            <p class="font-italic lead">Oh, hello, nice to meet you!</p>
-            <h1 class="text-uppercase my-4">My name is screen</h1>
-            <p class="font-italic lead">I am a nice scrolling template prepared for portfolio, telling stories and short presentations.</p>
-            <p class="font-italic lead">I have best results with nice pictures on the background or nice colours.</p>
-          </div>
-        </div>
-        <div class="scroll-btn link-scroll"><i class="fas fa-angle-double-down"></i></div>
       </section>
-      <section id="1">
-        <div class="d-flex h-100 align-items-center">
-          <div class="container">
-            <div class="row align-items-center">
-              <div class="col-lg-6 mb-4 mb-lg-0">
-                <header class="text-center">
-                  <h2 class="text-uppercase lined">About Me</h2>
-                </header>
-                <p class="lead">This can be an about section or anything else ;)</p>
-                <p>Impossible considered invitation him men instrument saw celebrated unpleasant. Put rest and must set kind next many near nay. He exquisite continued explained middleton am. Voice hours young woody has she think equal. Estate moment he at on wonder at season little. Six garden result summer set family esteem nay estate. End admiration mrs unreserved discovered comparison especially invitation.</p>
-                <p>Delightful unreserved impossible few estimating men favourable see entreaties. She propriety immediate was improving. He or entrance humoured likewise moderate. Much nor game son say feel. Fat make met can must form into gate. Me we offending prevailed discovery.</p>
-              </div>
-              <div class="col-lg-6"><img src="{{ asset('assets/furn/img/about.jpg') }}" alt="..." class="img-fluid rounded-circle d-block mx-auto"></div>
+      <section id="category">
+        <div class="row">
+            @foreach ($categories as $category)
+            <div class="col-lg-6 col-md-6 category">
+                <div class="category-overlay"></div>
+                <a
+                    href="#"
+                    data-lightbox="image-1"
+                    data-title="My caption"
+                    class="d-block"
+                    style="">
+
+                    <img src="{{ asset('uploads/'.$category->avatar) }}" alt="">
+                </a>
+                <div class="category-text">
+                  <h2>{{ $category->name }}</h2>
+                  <p>Tìm hiểu thêm</p>
+                </div>
             </div>
-          </div>
+            @endforeach
         </div>
       </section>
-      <section class="bg-gray">
+      <section class="bg-light">
         <div class="d-flex h-100 align-items-center">
           <div class="container">
             <header class="mb-5 text-center">
-              <h2 class="text-uppercase lined">Services</h2>
+              <h2 class="text-uppercase lined">Sản phẩm</h2>
             </header>
             <div class="row text-center">
               <div class="col-lg-4 col-md-6 mb-4">
@@ -111,6 +235,7 @@
           </div>
         </div>
       </section>
+
       <section>
         <div class="d-flex h-100 align-items-center">
           <div class="container">
@@ -208,6 +333,7 @@
         </div>
       </section>
     </div>
+
     <!-- JavaScript files-->
     <script src="{{ asset('assets/furn/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('assets/furn/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
