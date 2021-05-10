@@ -162,7 +162,7 @@ class ProductController extends AdminController
 
         $form->saving(function (Form $form) {
             if ($form->category_id != null) {
-                $category = Category::find($form->category_id)->first()->name;
+                $category = Category::find($form->category_id)->name;
                 $category_code = Str::upper(str_replace("-", '', Str::slug($category)));
                 $form->code = $category_code."-".str_pad((string) Product::count(), 4, "0", STR_PAD_LEFT);
             }
