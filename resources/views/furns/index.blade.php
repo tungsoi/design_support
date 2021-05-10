@@ -105,14 +105,14 @@
                 /* width: 100%; */
                 height: 100%;
                 transition: transform 1s;
-                margin-left: -50%;
+                margin-left: -10%;
             }
 
             .category a {
                 width: 100%;
                 height: 100%;
             }
-            #category .row {
+            .category-head .row {
                 position: absolute !important;
                 height: 100% !important;
                 padding: 0px !important;
@@ -145,6 +145,21 @@
               bottom: 50px;
               text-transform: uppercase;
             }
+
+            .products {
+              background-color: white !important;
+              color: #999 !important;
+            }
+            .product-item img {
+                width: 90%;
+                height: auto;
+                max-height: 300px;
+            }
+
+            .product-item {
+                height: 100% !important;
+                margin-bottom: 50px !important;
+            }
         </style>
   </head>
   <body>
@@ -172,10 +187,32 @@
             <source src="{{ asset('assets/furn/video/intro.mp4') }}" type="video/mp4">
         </video>
       </section>
-      <section id="category">
+      <section class="category-head">
         <div class="row">
-            @foreach ($categories as $category)
+            @foreach ($categorie_row_1 as $category)
             <div class="col-lg-6 col-md-6 category">
+                <div class="category-overlay"></div>
+                <a
+                    href="#"
+                    data-lightbox="image-1"
+                    data-title="My caption"
+                    class="d-block"
+                    style="">
+
+                    <img src="{{ asset('uploads/'.$category->avatar) }}" alt="">
+                </a>
+                <div class="category-text">
+                  <h1>{{ $category->name }}</h2>
+                  <h3 style="font-weight: 400">Tìm hiểu thêm</h3>
+                </div>
+            </div>
+            @endforeach
+        </div>
+      </section>
+      <section class="category-head">
+        <div class="row">
+            @foreach ($categorie_row_2 as $category)
+            <div class="col-lg-4 col-md-4 category">
                 <div class="category-overlay"></div>
                 <a
                     href="#"
@@ -194,43 +231,27 @@
             @endforeach
         </div>
       </section>
-      <section class="bg-light">
+      <section class="bg-light products">
         <div class="d-flex h-100 align-items-center">
-          <div class="container">
+          <div class="container-fluid">
             <header class="mb-5 text-center">
               <h2 class="text-uppercase lined">Sản phẩm</h2>
+              <a href="" class="text-uppercase">xem tất cả</a>
             </header>
             <div class="row text-center">
-              <div class="col-lg-4 col-md-6 mb-4">
-                <div class="icon mb-3"><i class="fas fa-desktop"></i></div>
-                <h4 class="text-uppercase lined lined-compact">Web design</h4>
-                <p class="text-mted">Fifth abundantly made Give sixth hath. Cattle creature i be don't them.</p>
-              </div>
-              <div class="col-lg-4 col-md-6 mb-4">
-                <div class="icon mb-3"><i class="fas fa-print"></i></div>
-                <h4 class="text-uppercase lined lined-compact">Print</h4>
-                <p class="text-mted">Advantage old had otherwise sincerity dependent additions. It in adapted natural.</p>
-              </div>
-              <div class="col-lg-4 col-md-6 mb-4">
-                <div class="icon mb-3"><i class="fas fa-globe-americas"></i></div>
-                <h4 class="text-uppercase lined lined-compact">SEO and SEM</h4>
-                <p class="text-mted">Am terminated it excellence invitation projection as. She graceful shy.</p>
-              </div>
-              <div class="col-lg-4 col-md-6 mb-4">
-                <div class="icon mb-3"><i class="far fa-lightbulb"></i></div>
-                <h4 class="text-uppercase lined lined-compact">consulting</h4>
-                <p class="text-mted">Fifth abundantly made Give sixth hath. Cattle creature i be don't them.</p>
-              </div>
-              <div class="col-lg-4 col-md-6 mb-4">
-                <div class="icon mb-3"><i class="far fa-envelope"></i></div>
-                <h4 class="text-uppercase lined lined-compact">Email marketing</h4>
-                <p class="text-mted">Advantage old had otherwise sincerity dependent additions. It in adapted natural.</p>
-              </div>
-              <div class="col-lg-4 col-md-6 mb-4">
-                <div class="icon mb-3"><i class="fas fa-user"></i></div>
-                <h4 class="text-uppercase lined lined-compact">UI &amp; UX</h4>
-                <p class="text-mted">Am terminated it excellence invitation projection as. She graceful shy.</p>
-              </div>
+                <div class="col-lg-12">
+                    <div class="row">
+                        @foreach ($products as $product)
+                            <div class="col-lg-3 col-md-4 col-sm-2 mb-4 product-item">
+                                <img src="{{ $product->avatar }}" alt="">
+                                <br> <br>
+                                <i><h5 class="" style="font-weight: 400">Đèn</h5></i>
+                                <h4 class="text-uppercase lined-compact">Đèn chùm hiện đại</h4>
+                                <h5 class="text-mted">10.000.000 VND</h5>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
             </div>
           </div>
         </div>
@@ -240,92 +261,44 @@
         <div class="d-flex h-100 align-items-center">
           <div class="container">
             <header class="text-center mb-5">
-              <h2 class="text-uppercase lined">Portfolio</h2>
-            </header>
-            <div class="row">
-              <div class="col-lg-12 text-center">
-                <p>You can make also a portfolio or image gallery.</p>
-              </div>
-              <div class="col-lg-4 col-md-6 mb-4"><a href="{{ asset('assets/furn/img/portfolio-1.jpg') }}" data-lightbox="image-1" data-title="My caption" class="d-block mb-1"><img src="{{ asset('assets/furn/img/portfolio-1.jpg') }}" alt="..." class="img-fluid d-block mx-auto"></a></div>
-              <div class="col-lg-4 col-md-6 mb-4"><a href="{{ asset('assets/furn/img/portfolio-2.jpg') }}" data-lightbox="image-1" data-title="My caption" class="d-block mb-1"><img src="{{ asset('assets/furn/img/portfolio-2.jpg') }}" alt="..." class="img-fluid d-block mx-auto"></a></div>
-              <div class="col-lg-4 col-md-6 mb-4"><a href="{{ asset('assets/furn/img/portfolio-3.jpg') }}" data-lightbox="image-1" data-title="My caption" class="d-block mb-1"><img src="{{ asset('assets/furn/img/portfolio-3.jpg') }}" alt="..." class="img-fluid d-block mx-auto"></a></div>
-              <div class="col-lg-4 col-md-6 mb-4"><a href="{{ asset('assets/furn/img/portfolio-4.jpg') }}" data-lightbox="image-1" data-title="My caption" class="d-block mb-1"><img src="{{ asset('assets/furn/img/portfolio-4.jpg') }}" alt="..." class="img-fluid d-block mx-auto"></a></div>
-              <div class="col-lg-4 col-md-6 mb-4"><a href="{{ asset('assets/furn/img/portfolio-5.jpg') }}" data-lightbox="image-1" data-title="My caption" class="d-block mb-1"><img src="{{ asset('assets/furn/img/portfolio-5.jpg') }}" alt="..." class="img-fluid d-block mx-auto"></a></div>
-              <div class="col-lg-4 col-md-6 mb-4"><a href="{{ asset('assets/furn/img/portfolio-6.jpg') }}" data-lightbox="image-1" data-title="My caption" class="d-block mb-1"><img src="{{ asset('assets/furn/img/portfolio-6.jpg') }}" alt="..." class="img-fluid d-block mx-auto"></a></div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="bg-gray">
-        <div class="d-flex h-100 align-items-center">
-          <div class="container">
-            <header class="text-center mb-5">
-              <h2 class="text-uppercase lined">Text page</h2>
-            </header>
-            <div class="row">
-              <div class="col-lg-6">
-                <p>Able an hope of body. Any nay shyness article matters own removal nothing his forming. Gay own additions education satisfied the perpetual. If he cause manor happy. Without farther she exposed saw man led. Along on happy could cease green oh.</p>
-                <p>Betrayed cheerful declared end and. Questions we additions is extremely incommode. Next half add call them eat face. Age lived smile six defer bed their few. Had admitting concluded too behaviour him she. Of death to or to being other.</p>
-              </div>
-              <div class="col-lg-6">
-                <p>Effects present letters inquiry no an removed or friends. Desire behind latter me though in. Supposing shameless am he engrossed up additions. My possible peculiar together to. Desire so better am cannot he up before points. Remember mistaken opinions it pleasure of debating. Court front maids forty if aware their at. Chicken use are pressed removed.</p>
-                <p>Saw yet kindness too replying whatever marianne. Old sentiments resolution admiration unaffected its mrs literature. Behaviour new set existence dashwoods. It satisfied to mr commanded consisted disposing engrossed. Tall snug do of till on easy. Form not calm new fail.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section>
-        <div class="d-flex h-100 align-items-center">
-          <div class="container">
-            <header class="text-center mb-5">
-              <h2 class="text-uppercase lined">Contact</h2>
+              <h2 class="text-uppercase lined">Liên hệ</h2>
             </header>
             <div class="row">
               <div class="col-lg-6">
                 <form action="" class="contact-form">
                   <div class="row">
                     <div class="form-group col-lg-6">
-                      <label for="firstName">Your firstname *</label>
+                      <label for="firstName">Họ *</label>
                       <input id="firstName" type="text" name="firstname" placeholder="Enter your firstname" class="form-control">
                     </div>
                     <div class="form-group col-lg-6">
-                      <label for="lastName">Your lastname *</label>
+                      <label for="lastName">Tên và tên đệm *</label>
                       <input id="lastName" type="text" name="lastname" placeholder="Enter your lastname" class="form-control">
                     </div>
                     <div class="form-group col-lg-12">
-                      <label for="email">Your email *</label>
+                      <label for="email">Địa chỉ email *</label>
                       <input id="email" type="email" name="email" placeholder="Enter your email" class="form-control">
                     </div>
                     <div class="form-group col-lg-12">
-                      <label for="message">Your message for us *</label>
+                      <label for="message">Ghi chú *</label>
                       <textarea id="message" name="message" placeholder="Enter your message" class="form-control"></textarea>
                     </div>
                     <div class="form-group col-lg-12">
-                      <button type="submit" class="btn btn-outline-primary w-100">Send message</button>
+                      <button type="submit" class="btn btn-outline-primary w-100">Gửi thông tin</button>
                     </div>
                   </div>
                 </form>
               </div>
               <div class="col-lg-6">
-                <p>Effects present letters inquiry no an removed or friends. Desire behind latter me though in. Supposing shameless am he engrossed up additions. My possible peculiar together to. Desire so better am cannot he up before points. Remember mistaken opinions it pleasure of debating. Court front maids forty if aware their at. Chicken use are pressed removed.</p>
-                <p>Able an hope of body. Any nay shyness article matters own removal nothing his forming. Gay own additions education satisfied the perpetual. If he cause manor happy. Without farther she exposed saw man led. Along on happy could cease green oh.</p>
-                <ul class="mb-0 list-inline text-center">
-                  <li class="list-inline-item"><a href="#" class="social-link social-link-facebook"><i class="fab fa-facebook-f"></i></a></li>
-                  <li class="list-inline-item"><a href="#" class="social-link social-link-twitter"><i class="fab fa-twitter"></i></a></li>
-                  <li class="list-inline-item"><a href="#" class="social-link social-link-google-plus"><i class="fab fa-google-plus-g"></i></a></li>
-                  <li class="list-inline-item"><a href="#" class="social-link social-link-instagram"><i class="fab fa-instagram"></i></a></li>
-                  <li class="list-inline-item"><a href="#" class="social-link social-link-email"><i class="fas fa-envelope"></i></a></li>
-                </ul>
+                <p>Hotline: 0345.513.889</p>
+                <p>Địa chỉ: 521 Minh Khai, Hà Nội</p>
+                <p>Email: designsupport-noreply@gmail.com</p>
               </div>
             </div>
             <footer class="py-5 mt-5">
               <div class="row">
                 <div class="col-lg-6 text-center text-lg-left">
-                  <p class="font-italic mb-0 text-gray">&copy; 2019 Your name/company goes here</p>
-                </div>
-                <div class="col-lg-6 text-center text-lg-right">
-                  <p class="font-italic mb-0 text-gray">&copy; Template by <a href="https://bootstrapious.com/p/big-bootstrap-tutorial" class="text-gray">Bootstrapious</a></p>
+                  <p class="font-italic mb-0 text-gray">&copy; 2021 DesignSupport@rec</p>
                 </div>
               </div>
             </footer>
