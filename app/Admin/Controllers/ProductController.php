@@ -135,7 +135,8 @@ class ProductController extends AdminController
             $form->hidden('code');
             $form->multipleFile('pictures', 'Ảnh')
             ->rules('mimes:jpeg,png,jpg')
-            ->help('Ảnh đầu tiên sẽ hiển thị là ảnh đại diện');
+            ->help('Ảnh đầu tiên sẽ hiển thị là ảnh đại diện')
+            ->removable();
 
             $form->select('category_id', 'Danh mục')
             ->options(Category::all()->pluck('name', 'id'));
