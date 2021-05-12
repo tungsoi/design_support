@@ -21,7 +21,7 @@
                     class="d-block"
                     style="">
 
-                    <img src="{{ asset('uploads/'.$category->avatar) }}" alt="">
+                    <img src="{{ asset('uploads/'.$category->avatar) }}" alt="" width="255" height="255">
                 </a>
                 <div class="category-text">
                   <h1>{{ $category->name }}</h2>
