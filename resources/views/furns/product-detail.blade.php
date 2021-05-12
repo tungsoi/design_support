@@ -9,20 +9,26 @@
         'to'    =>  $product->code . " / " . $product->name
     ])
     <div class="main">
-      <section class="bg-light products" style="margin-top: 50px;">
+      <section class="bg-light products" style="margin-top: 70px;">
         <div class="d-flex h-100 align-items-center">
           <div class="container-fluid">
             <div class="content">
-                <div class="row" style="margin: 0px 15px;">
+                <div class="row" style="margin: 0px 15px; height: 98%;">
                     <div class="col-lg-1">
                         @if ($product->pictures != null && is_array($product->pictures))
-                            @foreach ($product->pictures as $picture)
-                                <img src="{{ asset('uploads/'.$picture) }}" alt="" style="width: 100%; margin-bottom: 10px; border: 1px solid rgb(48, 47, 47); cursor: pointer">
+                            @foreach ($product->pictures as $key => $picture)
+                                <img class="image-detail"
+                                src="{{ asset('uploads/'.$picture) }}" alt=""
+                                style="
+                                width: 100%;
+                                margin-bottom: 10px;
+                                border: 1px solid rgb(48, 47, 47);
+                                cursor: pointer;">
                             @endforeach
                         @endif
                     </div>
-                    <div class="col-lg-7" style="height: 100%; overflow: hidden;">
-                        <img src="{{ $product->avatar }}" alt="" style="height: 90%; width: 100%">
+                    <div class="col-lg-7" style="height: 90%; overflow: hidden !important;">
+                        <img class="image-avatar" src="{{ $product->avatar }}" alt="" style="height: 90%; width: 100%">
                     </div>
                     <div class="col-lg-4">
                         <div class="row">
@@ -112,6 +118,11 @@
         $('.category-overlay').on('click',  function () {
             let href = $(this).next().attr('href');
             window.location = href
+        })
+
+        $(document).on('click', '.image-detail', function () {
+            let src = $(this).attr('src');
+            $('.image-avatar').attr('src', src);
         })
     </script>
   </body>
