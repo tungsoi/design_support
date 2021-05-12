@@ -27,7 +27,8 @@ class Category extends Model
         'parent_id',
         'is_show_shop',
         'avatar',
-        'icon'
+        'icon',
+        'code'
     ];
 
     const ACTIVE = 1;
