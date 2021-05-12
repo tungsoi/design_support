@@ -20,7 +20,8 @@
                                 <img class="image-detail"
                                 src="{{ asset('uploads/'.$picture) }}" alt=""
                                 style="
-                                width: 100%;
+                                width: 85px;
+                                height: 85px;
                                 margin-bottom: 10px;
                                 border: 1px solid rgb(48, 47, 47);
                                 cursor: pointer;">
