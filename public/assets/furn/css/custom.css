@@ -142,7 +142,8 @@ section {
 }
 .products .container-fluid {
     position: absolute;
-    top: 80px;
+    padding-top: 100px;
+    height: 100%;
 }
 .product-name {
     margin-top: 0;
@@ -166,4 +167,11 @@ section {
     font-size: 14px;
     margin: 0px;
     color: rgb(218, 42, 42);
+}
+.container-fluid .content{
+    width: 100%;
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 100%;
 }

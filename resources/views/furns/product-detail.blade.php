@@ -6,31 +6,49 @@
     @include('furns.menu')
     @include('furns.submenu', [
         'from'  =>  'Trang chủ',
-        'to'    =>  $category->name
+        'to'    =>  $product->code . " / " . $product->name
     ])
     <div class="main">
-
       <section class="bg-light products" style="margin-top: 50px;">
         <div class="d-flex h-100 align-items-center">
-          <div class="container">
-                <div class="row">
-                    <p>Hiển thị {{ $products->count() }} trên {{ $count }} sản phẩm</p>
-                </div>
-                <div class="row">
-                    @foreach ($products as $product)
-                        <div class="col-lg-3 col-md-6 mb-4">
-                            <a href="{{ route('furn.product.detail', $product->code) }}" data-title="{{ $product->name }}" class="d-block mb-1">
-                                <img src="{{ $product->avatar }}" alt="..." class="img-fluid d-block mx-auto" style="width: 255px !important; height: 255px !important;">
-                            </a>
-                            <p class="product-category-name text-center"><i>{{ $product->category->name }}</i></p>
-                            <p class="product-name text-center">{{ $product->name }}</p>
-                            <p class="product-price text-center">Liên hệ</p>
+          <div class="container-fluid">
+            <div class="content">
+                <div class="row" style="margin: 0px 15px;">
+                    <div class="col-lg-1">
+                        @if ($product->pictures != null && is_array($product->pictures))
+                            @foreach ($product->pictures as $picture)
+                                <img src="{{ asset('uploads/'.$picture) }}" alt="" style="width: 100%; margin-bottom: 10px; border: 1px solid rgb(48, 47, 47); cursor: pointer">
+                            @endforeach
+                        @endif
+                    </div>
+                    <div class="col-lg-7" style="height: 100%; overflow: hidden;">
+                        <img src="{{ $product->avatar }}" alt="" style="height: 90%; width: 100%">
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                {{ $product->category->name }}
+                            </div>
+                            <div class="col-lg-6 text-right">
+                                {{ $product->code }}
+                            </div>
                         </div>
-                    @endforeach
+                        <br>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <h3 class="text-uppercase">{{ $product->name }}</h3>
+                            </div>
+                            <div class="col-lg-12">
+                                <br>
+                                <h4 class="text-uppercase" style="font-weight: 400; color: rgb(172, 83, 83);">Liên hệ</h4>
+                            </div>
+                            <div class="col-lg-12">
+                                {!! $product->description !!}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="row">
-                    {{ $products->links() }}
-                </div>
+            </div>
           </div>
         </div>
       </section>
