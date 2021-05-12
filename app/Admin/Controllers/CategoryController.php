@@ -8,6 +8,7 @@ use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
+use Illuminate\Support\Str;
 
 class CategoryController extends AdminController
 {
@@ -47,7 +48,8 @@ class CategoryController extends AdminController
         $grid->column('number', 'STT');
 
         $grid->column('avatar', 'Ảnh đại diện')->lightbox(['width' => 80, 'height' => 50]);
-        $grid->name('Tên danh mục');
+        $grid->name('Tên danh mục')->editable();
+        $grid->code('Mã danh mục')->editable();
         $grid->parent_id('Danh mục quản lý')->display(function ()
         {
             return Category::find($this->parent_id)->name ?? "";
@@ -59,15 +61,6 @@ class CategoryController extends AdminController
         $grid->products('Số sản phẩm')->display(function () {
             return $this->products->count();
         });
-
-        $grid->is_show_shop('Trang thái')->radio([
-            1 => 'Hiển thị',
-            0 => 'Không hiển thị'
-        ]);
-        $grid->column('icon')->display(function () {
-            return "<i class='fa ".$this->icon."' style='font-size: 30px'></i>";
-        });
-
 
         $grid->disableColumnSelector();
         $grid->paginate(100);
@@ -109,12 +102,11 @@ class CategoryController extends AdminController
         $form->image('avatar', 'Ảnh đại diện')
         ->thumbnail('small', $width = 100, $height = 100)
         ->rules('required');
-        $form->select('is_show_shop', 'Hiển thị trên trang chủ')
-        ->options([
-            0   =>  'Không hiển thị',
-            1   =>  'Hiển thị'
-        ]);
-        $form->icon('icon');
+        $form->hidden('code');
+
+        $form->saving(function (Form $form) {
+            $form->code = Str::slug($form->name);
+        });
 
         $form->disableEditingCheck();
         $form->disableCreatingCheck();

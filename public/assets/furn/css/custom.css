@@ -1,1 +1,169 @@
 /* your styles go here */
+
+html, body {
+    width: 100%;
+    overflow-x: hidden;
+    font: 300 14px 'Montserrat';
+    color: #fff;
+    position: relative;
+    line-height: 1.6;
+    background: #111;
+}
+#myVideo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+.hero {
+    background: none !important;
+}
+.logo {
+    max-width: 150px;
+}
+.menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 200000;
+  width: 100%;
+  background: #000;
+  border-color: #D0D0D0;
+  height: 55px;
+}
+.menu .navbar {
+  width: 100%;
+  max-width: 1440px;
+  margin-left: auto;
+  margin-right: auto;
+  height: 100%;
+}
+.menu .nav-item a {
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #999 !important;
+  position: relative;
+  z-index: 10;
+}
+.menu .nav-item a:hover {
+  color: white !important;
+}
+.menu .nav-item {
+  margin-left: 30px;
+}
+.navbar-nav .active  a {
+  color: white !important;
+}
+.brand {
+  font-size: 32px !important;
+  font-weight: 400 !important;
+  color: white !important;
+  margin-right: 40px;
+}
+section {
+    padding: 0px !important;
+}
+.category {
+    padding: 0px !important;
+    margin: 0px !important;
+    height: 100% !important;
+    cursor: pointer;
+    overflow: hidden;
+}
+.category img {
+    height: 100%;
+    transition: transform 1s;
+    padding: absolute;
+    object-fit: cover;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.category a {
+    width: 100%;
+    height: 100%;
+}
+.category-head .row {
+    position: absolute !important;
+    height: 100% !important;
+    padding: 0px !important;
+    margin: 0px !important;
+    width: 100%;
+}
+.category-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: black;
+  z-index: 2;
+  opacity: 0.5;
+  -webkit-transition: opacity 0.5s ease-in-out;
+  -moz-transition: opacity 0.5s ease-in-out;
+  -ms-transition: opacity 0.5s ease-in-out;
+  -o-transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.5s ease-in-out;
+}
+.category:hover .category-overlay{
+  opacity: 0;
+}
+.category:hover img{
+  transform: scale(1.1);
+}
+.category-text {
+  position: absolute;
+  z-index: 3;
+  left: 20px;
+  bottom: 50px;
+  text-transform: uppercase;
+}
+
+.products {
+  background-color: white !important;
+  color: #999 !important;
+  padding-top: 20px;
+}
+.product-item img {
+    height: auto;
+    position: absolute;
+    width: 100%;
+    max-width: 200px;
+    top: 0;
+    left: 0;
+}
+
+.product-item {
+    height: 100% !important;
+    margin-bottom: 50px !important;
+}
+.products .container-fluid {
+    position: absolute;
+    top: 80px;
+}
+.product-name {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 15px;
+    font-weight: bold;
+    color: #4e4e4e;
+    text-transform: uppercase;
+    margin: 5px 0px;
+}
+.product-category-name {
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 12px;
+    margin: 0px;
+}
+
+.product-price {
+    font-weight: 400;
+    text-transform: uppercase;
+    font-size: 14px;
+    margin: 0px;
+    color: rgb(218, 42, 42);
+}

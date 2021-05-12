@@ -1,69 +1,22 @@
 <!DOCTYPE html>
 <html>
     @include('furns.head')
-    <body>
+  <body>
+
     @include('furns.menu')
+    @include('furns.submenu', [
+        'from'  =>  'Trang chủ',
+        'to'    =>  $category->name
+    ])
     <div class="main">
-      <section class="bg-cover bg-center intro">
-        <video autoplay muted loop id="myVideo">
-            <source src="{{ asset('assets/furn/video/intro.mp4') }}" type="video/mp4">
-        </video>
-      </section>
-      <section class="category-head">
-        <div class="row">
-            @foreach ($categorie_row_1 as $category)
-            <div class="col-lg-6 col-md-6 category">
-                <div class="category-overlay"></div>
-                <a
-                    href="{{ route('furn.product.product-by-category', $category->code) }}"
-                    data-lightbox="image-1"
-                    data-title="My caption"
-                    class="d-block"
-                    style="">
 
-                    <img src="{{ asset('uploads/'.$category->avatar) }}" alt="">
-                </a>
-                <div class="category-text">
-                  <h1>{{ $category->name }}</h2>
-                  <h3 style="font-weight: 400">Tìm hiểu thêm</h3>
-                </div>
-            </div>
-            @endforeach
-        </div>
-      </section>
-      <section class="category-head">
-        <div class="row">
-            @foreach ($categorie_row_2 as $category)
-            <div class="col-lg-4 col-md-4 category">
-                <div class="category-overlay"></div>
-                <a
-                    href="{{ route('furn.product.product-by-category', $category->code) }}"
-                    data-lightbox="image-1"
-                    class="d-block"
-                    style="">
-
-                    <img src="{{ asset('uploads/'.$category->avatar) }}" alt="">
-                </a>
-                <div class="category-text">
-                  <h2>{{ $category->name }}</h2>
-                  <p>Tìm hiểu thêm</p>
-                </div>
-            </div>
-            @endforeach
-        </div>
-      </section>
-      <section class="bg-light products">
+      <section class="bg-light products" style="margin-top: 50px;">
         <div class="d-flex h-100 align-items-center">
-          <div class="container-fluid">
-            <div class="container">
-                <header class="text-center">
-                  <h2 class="text-uppercase lined">Sản phẩm</h2>
-                </header>
+          <div class="container">
                 <div class="row">
-                    <div class="col-lg-12 text-center text-uppercase mb-5">
-                        <a href="{{ route('furn.product') }}">Xem tất cả</a> <br>
-                    </div>
-
+                    <p>Hiển thị {{ $products->count() }} trên {{ $count }} sản phẩm</p>
+                </div>
+                <div class="row">
                     @foreach ($products as $product)
                         <div class="col-lg-3 col-md-6 mb-4">
                             <a href="{{ $product->avatar }}" data-lightbox="image-1" data-title="{{ $product->name }}" class="d-block mb-1">
@@ -75,7 +28,9 @@
                         </div>
                     @endforeach
                 </div>
-              </div>
+                <div class="row">
+                    {{ $products->links() }}
+                </div>
           </div>
         </div>
       </section>

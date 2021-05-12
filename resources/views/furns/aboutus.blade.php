@@ -1,81 +1,47 @@
 <!DOCTYPE html>
 <html>
     @include('furns.head')
-    <body>
+  <body>
+
     @include('furns.menu')
+    @include('furns.submenu', [
+        'from'  =>  'Trang chủ',
+        'to'    =>  'Giới thiệu'
+    ])
     <div class="main">
-      <section class="bg-cover bg-center intro">
-        <video autoplay muted loop id="myVideo">
-            <source src="{{ asset('assets/furn/video/intro.mp4') }}" type="video/mp4">
-        </video>
-      </section>
-      <section class="category-head">
-        <div class="row">
-            @foreach ($categorie_row_1 as $category)
-            <div class="col-lg-6 col-md-6 category">
-                <div class="category-overlay"></div>
-                <a
-                    href="{{ route('furn.product.product-by-category', $category->code) }}"
-                    data-lightbox="image-1"
-                    data-title="My caption"
-                    class="d-block"
-                    style="">
 
-                    <img src="{{ asset('uploads/'.$category->avatar) }}" alt="">
-                </a>
-                <div class="category-text">
-                  <h1>{{ $category->name }}</h2>
-                  <h3 style="font-weight: 400">Tìm hiểu thêm</h3>
-                </div>
-            </div>
-            @endforeach
-        </div>
-      </section>
-      <section class="category-head">
-        <div class="row">
-            @foreach ($categorie_row_2 as $category)
-            <div class="col-lg-4 col-md-4 category">
-                <div class="category-overlay"></div>
-                <a
-                    href="{{ route('furn.product.product-by-category', $category->code) }}"
-                    data-lightbox="image-1"
-                    class="d-block"
-                    style="">
-
-                    <img src="{{ asset('uploads/'.$category->avatar) }}" alt="">
-                </a>
-                <div class="category-text">
-                  <h2>{{ $category->name }}</h2>
-                  <p>Tìm hiểu thêm</p>
-                </div>
-            </div>
-            @endforeach
-        </div>
-      </section>
-      <section class="bg-light products">
+      <section class="bg-light products" style="margin-top: 50px;">
         <div class="d-flex h-100 align-items-center">
-          <div class="container-fluid">
-            <div class="container">
-                <header class="text-center">
-                  <h2 class="text-uppercase lined">Sản phẩm</h2>
-                </header>
-                <div class="row">
-                    <div class="col-lg-12 text-center text-uppercase mb-5">
-                        <a href="{{ route('furn.product') }}">Xem tất cả</a> <br>
-                    </div>
+          <div class="container">
+            <header class="text-center mb-5">
+                <h2 class="text-uppercase lined">Giới thiệu về Design Support Việt Nam</h2>
+            </header>
+            <div class="row">
+                <div class="col-lg-12">
+                    <h5>CÔNG TY </h5>
 
-                    @foreach ($products as $product)
-                        <div class="col-lg-3 col-md-6 mb-4">
-                            <a href="{{ $product->avatar }}" data-lightbox="image-1" data-title="{{ $product->name }}" class="d-block mb-1">
-                                <img src="{{ $product->avatar }}" alt="..." class="img-fluid d-block mx-auto">
-                            </a>
-                            <p class="product-category-name text-center"><i>{{ $product->category->name }}</i></p>
-                            <p class="product-name text-center">{{ $product->name }}</p>
-                            <p class="product-price text-center">Liên hệ</p>
-                        </div>
-                    @endforeach
+                        <p>Công ty Thái Công GmbH & Co.KG được thành lập năm 2007 tại Hamburg, Đức. Người sáng lập công ty là nhà thiết kế nội thất Quách Thái Công, anh là người Đức gốc Việt có hơn 20 năm kinh nghiệm trong lĩnh vực thiết kế và cung cấp nội thất cao cấp. Tại Đức và Châu Âu, thương hiệu THÁI CÔNG nổi tiếng với những thiết kế ấn tượng, sang trọng, đẳng cấp. Năm 2014, Thái Công mở thêm văn phòng và showroom tại thành phố Hồ Chí Minh. Công ty TNHH Thái Công Việt Nam mang đến những thiết kế giao thoa tinh tế giữa văn hoá phương Đông và phương Tây, chinh phục được những khách hàng khó tính nhất. Hiện tại, công ty Thái Công chuyên thực hiện những dự án thiết kế-trang trí nội thất và cung cấp nội thất cho các biệt thự, căn hộ cá nhân và các dự án nhà hàng, khách sạn, bất động sản cao cấp.</p>
+                        <p>Thông tin chi tiết:</p>
+                        <p>Công ty TNHH MTV Thái Công Việt Nam - giấy chứng nhận đăng ký doanh nghiệp số 0312788280 do Sở Kế Hoạch và Đầu Tư TP. HCM cấp lần đầu ngày 14/05/2014, đăng ký thay đổi lần thứ ba, ngày 18/11/2015.</p>
+                            <p>Đại diện pháp luật: Thái Công Patrick Quách</p>
+                                <p>Địa chỉ trụ sở: 215A1 Nguyễn Văn Hưởng, Phường Thảo Điền, Quận 2, Thành phố Hồ Chí Minh</p>
+
+                    <br>
+                        <h5>THƯƠNG HIỆU ĐÃ ĐƯỢC KHẲNG ĐỊNH</h5>
+
+                        Thương hiệu Thái Công được khẳng định là một công ty thiết kế nội thất ấn tượng, uy tín và chuyên môn cao. Khách hàng tìm đến Thái Công để tìm thấy một chuyên gia trong thiết kế và trang trí nội thất luôn sáng tạo những công trình độc đáo và ấn tượng. Mỗi công trình, Thái Công và cộng sự tiếp nhận là một thử thách mới được hoàn thiện trên tình thần trách nhiệm cao.
+
+
+                        ĐẶT HÀNG ONLINE CHƯA TỚI 1 PHÚT!
+
+                        Nhằm tạo điều kiện cho khách hàng trải nghiệm những sản phẩm cao cấp nhất một cách thuận tiện, ngoài việc mua hàng trực tiếp tại showroom Thái Công, hiện nay, quý khách có thể đặt hàng online tại website: www.thaicong.com
+
+
+                        Tất cả những sản phẩm đều được lựa chọn bởi NTK nội thất Quách Thái Công, đảm bảo đạt chuẩn về vật liệu cao cấp, thiết kế tinh xảo và chất lượng thi công hoàn hảo.
+
+                        </p>
                 </div>
-              </div>
+            </div>
           </div>
         </div>
       </section>

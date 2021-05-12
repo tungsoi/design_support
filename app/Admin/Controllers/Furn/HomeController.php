@@ -17,8 +17,8 @@ class HomeController extends Controller
         foreach ($products as $product) {
             if ($product->pictures != null && is_array($product->pictures))
             {
-                // $product->avatar = asset($product->pictures[0]);
-                $product->avatar = "https://picsum.photos/500";
+                $product->avatar = asset("uploads/".$product->pictures[0]);
+                // $product->avatar = "https://picsum.photos/500";
             }
             else {
                 $product->avatar = "https://picsum.photos/500";
