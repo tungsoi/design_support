@@ -28,7 +28,7 @@
                         @endif
                     </div>
                     <div class="col-lg-7" style="height: 90%; overflow: hidden !important;">
-                        <img class="image-avatar" src="{{ $product->avatar }}" alt="" style="height: 90%; width: 100%">
+                        <img class="image-avatar" src="{{ $product->avatar }}" alt="" style="height: 800px; width: 800px">
                     </div>
                     <div class="col-lg-4">
                         <div class="row">
