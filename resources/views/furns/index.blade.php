@@ -21,7 +21,7 @@
                     class="d-block"
                     style="">
 
-                    <img src="{{ asset('uploads/'.$category->avatar) }}" alt="" style="width: 255px !important; height: 255px !important;">
+                    <img src="{{ asset('uploads/'.$category->avatar) }}" alt="">
                 </a>
                 <div class="category-text">
                   <h1>{{ $category->name }}</h2>
@@ -67,7 +67,7 @@
                     @foreach ($products as $product)
                         <div class="col-lg-3 col-md-6 mb-4">
                             <a href="{{ $product->avatar }}" data-lightbox="image-1" data-title="{{ $product->name }}" class="d-block mb-1">
-                                <img src="{{ $product->avatar }}" alt="..." class="img-fluid d-block mx-auto">
+                                <img src="{{ $product->avatar }}" alt="..." class="img-fluid d-block mx-auto" style="width: 255px !important; height: 255px !important;">
                             </a>
                             <p class="product-category-name text-center"><i>{{ $product->category->name }}</i></p>
                             <p class="product-name text-center">{{ $product->name }}</p>
