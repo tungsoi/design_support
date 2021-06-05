@@ -8,7 +8,7 @@
 
     <div id="fullpage" class="">
         <div class="section" id="section0">
-            <video id="myVideo" loop muted data-autoplay>
+            <video id="myVideo" loop muted data-autoplay playsinline>
                 <source src="{{ asset('assets/furn/video/intro.mp4') }}" type="video/mp4">
             </video>
         </div>
