@@ -58,7 +58,7 @@
             </div>
             </div>
         </div>
-        <div class="section" id="category-second">
+        <div class="section" id="products">
             <h2>oke</h2>
         </div>
     </div>
