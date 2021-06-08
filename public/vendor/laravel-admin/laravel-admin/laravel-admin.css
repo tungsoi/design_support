@@ -290,3 +290,34 @@ section.content .grid-box {
     padding-top: 15%;
     display: none;
 }
+.pd-0 {
+    padding: 0px !important;
+}
+.mg-t-50 {
+    margin-top: 50px !important;
+}
+.h-100 {
+    height: 100% !important;
+}
+.bg-white {
+    background: white;
+}
+.pd-t-50 {
+    padding-top: 50px !important;
+}
+.product-box img {
+    width: 255px !important;
+    height: 255px !important;
+}
+.product-avatar {
+    position: absolute;
+    width: 90%;
+    background-color: red;
+    height: 90%;
+}
+.product-box {
+    padding: 30px !important;
+}
+.text-black {
+    color: #646464 !important;
+}

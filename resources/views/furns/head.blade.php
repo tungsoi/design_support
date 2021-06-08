@@ -12,7 +12,7 @@
 <!-- Lightbox-->
 {{-- <link rel="stylesheet" href="{{ asset('assets/furn/lightbox2/css/lightbox.min.css') }}"> --}}
 <!-- Font Awesome-->
-{{-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> --}}
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <!-- Parallax-->
 {{-- <link rel="stylesheet" href="{{ asset('assets/furn/onepage-scroll/onepage-scroll.css') }}"> --}}
 <!-- theme stylesheet-->
@@ -22,7 +22,7 @@
 {{-- <link rel="stylesheet" href="{{ asset('assets/furn/fullPage/examples.css') }}"> --}}
 <link rel="stylesheet" href="{{ asset('assets/furn/css/custom.css') }}">
 <!-- Favicon-->
-{{-- <link rel="shortcut icon" href="favicon.png"> --}}
+<link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
 <style>
 
 	/* Style for our header texts
