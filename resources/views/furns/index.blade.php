@@ -73,7 +73,15 @@
                             <img class="card-img-top" src="{{ $product->avatar }}" alt="Card image cap">
                             <div class="card-body">
                                 <h5 class="card-title" style="color: #646464">{{ $product->code . "-" . $product->name }}</h5>
-                                <h6 class="card-title" style="color: #cd3333"><b>10,000,000 VND</b></h6>
+                                <h6 class="card-title" style="color: #cd3333">
+                                    <b>
+                                        @if (Admin::user())
+                                        {{ $product->price }}
+                                        @else
+                                        Liên hệ
+                                        @endif
+                                    </b>
+                                </h6>
                                 <div class="row">
                                     <div class="col">
                                         <a href="#" class="btn btn-info btn-block btn-sm">

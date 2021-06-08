@@ -23,6 +23,15 @@ class HomeController extends Controller
             else {
                 $product->avatar = "https://picsum.photos/500";
             }
+            $price = "Liên hệ";
+
+            if ($product->properties->count() > 0)
+            {
+                $price = $product->properties->first()->price;
+                $price = number_format($price) . " VND";
+            }
+
+            $product->price = $price;
         }
         return view('furns.index', compact('categorie_row_1', 'categorie_row_2', 'products'));
     }
