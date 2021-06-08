@@ -92,6 +92,14 @@ html, body {
         height: 33.33% !important;
     }
 }
+
+ul.pagination {
+    justify-content: center !important;
+}
+.pagination .page-item.active .page-link {
+    background-color: #343a40;
+    border-color: #343a40;
+}
 /* @media only screen and (max-width: 1140px){
     #myVideo {
         height: 100%;

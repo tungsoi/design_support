@@ -12,7 +12,7 @@ class HomeController extends Controller
     {
         $categorie_row_1 = Category::whereIsShowShop(Category::ACTIVE)->limit(2)->get();
         $categorie_row_2 = Category::whereIsShowShop(Category::ACTIVE)->whereNotIn('id', $categorie_row_1->pluck('id'))->limit(3)->get();
-        $products = Product::orderBy('created_at', 'desc')->limit(8)->get();
+        $products = Product::orderBy('created_at', 'desc')->paginate(12);
 
         foreach ($products as $product) {
             if ($product->pictures != null && is_array($product->pictures))
