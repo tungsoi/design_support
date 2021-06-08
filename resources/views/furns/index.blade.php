@@ -59,13 +59,13 @@
         <div class="section pd-0" id="products">
             <div class="container-fluid pd-0 bg-white">
 
-                <div class="row justify-content-center">
+                {{-- <div class="row justify-content-center">
                     <div class="col-lg-12">
                         <center>
                             {{ $products->links() }}
                         </center>
                     </div>
-                </div>
+                </div> --}}
                 <div class="row pd-0" style="justify-content: center;">
                     @foreach ($products as $product)
                     <div class="col-12 col-md-6 col-lg-3 product-box" style="padding: 30px 30px 0px 30px !important; max-width: 320px;">
