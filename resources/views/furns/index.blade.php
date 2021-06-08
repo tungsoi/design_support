@@ -7,7 +7,7 @@
     @include('furns.menu')
 
     <div id="fullpage" class="">
-        {{-- <div class="section" id="section0">
+        <div class="section" id="section0">
             <video id="myVideo" loop muted data-autoplay playsinline>
                 <source src="{{ asset('assets/furn/video/intro.mp4') }}" type="video/mp4">
             </video>
@@ -55,7 +55,7 @@
                     @endforeach
                 </div>
             </div>
-        </div> --}}
+        </div>
         <div class="section pd-0" id="products">
             <div class="container-fluid pd-0 bg-white">
 
