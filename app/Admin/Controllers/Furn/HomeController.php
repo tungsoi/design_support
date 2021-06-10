@@ -33,17 +33,23 @@ class HomeController extends Controller
 
             $product->price = $price;
         }
-        return view('furns.index', compact('categorie_row_1', 'categorie_row_2', 'products'));
+
+        $category_menu = Category::all();
+        return view('furns.index', compact('categorie_row_1', 'categorie_row_2', 'products', 'category_menu'));
     }
 
     public function aboutus()
     {
-        return view('furns.aboutus');
+
+        $category_menu = Category::all();
+        return view('furns.aboutus', compact('category_menu'));
     }
 
     public function contact()
     {
-        return view('furns.contact');
+
+        $category_menu = Category::all();
+        return view('furns.contact', compact('category_menu'));
     }
 
     public function blog()

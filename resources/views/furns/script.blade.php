@@ -7,14 +7,11 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('#fullpage').fullpage({
-            sectionsColor: ['white', 'white', 'white', 'white'],
+            sectionsColor: ['white', 'white', 'white', 'white', 'black'],
             navigation: true,
             responsiveWidth: 758,
-            scrollOverflow: true
+            scrollOverflow: true,
+            fitToSection: true
         });
-
-        // if ($(window).width() < 1024) {
-        //     $('#fullpage').removeAttr('id');
-        // }
     });
 </script>

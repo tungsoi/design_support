@@ -39,12 +39,13 @@ class ProductController extends Controller
             $product->avatar = "https://picsum.photos/500";
         }
 
-        return view('furns.product-detail', compact('product'));
+        $category_menu = Category::all();
+        return view('furns.product-detail', compact('product', 'category_menu'));
     }
 
     public function getByCategoryCode($code, Request $request) {
         $category = Category::whereCode($code)->first();
-        $products = Product::whereCategoryId($category->id)->paginate(8);
+        $products = Product::whereCategoryId($category->id)->orderBy('id', 'desc')->get();
 
         foreach ($products as $product) {
             if ($product->pictures != null && is_array($product->pictures))
@@ -57,6 +58,8 @@ class ProductController extends Controller
             }
         }
         $count = $category->products->count();
-        return view('furns.product-category', compact('products', 'category', 'count'));
+
+        $category_menu = Category::all();
+        return view('furns.product-category', compact('products', 'category', 'count', 'category_menu'));
     }
 }

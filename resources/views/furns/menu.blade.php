@@ -11,11 +11,9 @@
                 SẢN PHẨM
               </a>
               <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                <li><a class="dropdown-item" href="#">Phòng khách</a></li>
-                <li><a class="dropdown-item" href="#">Phòng ngủ</a></li>
-                <li><a class="dropdown-item" href="#">Phòng ăn</a></li>
-                <li><a class="dropdown-item" href="#">Đèn</a></li>
-                <li><a class="dropdown-item" href="#">Đồ decor</a></li>
+                  @foreach ($category_menu as $category)
+                    <li><a class="dropdown-item" href="{{ route('furn.product.product-by-category', $category->code) }}">{{ $category->name }}</a></li>
+                  @endforeach
               </ul>
             </li>
             <li class="nav-item active">

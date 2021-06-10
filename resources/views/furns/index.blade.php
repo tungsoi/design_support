@@ -56,23 +56,19 @@
                 </div>
             </div>
         </div>
-        <div class="section pd-0" id="products">
+        <div class="section pd-0" id="products" style="padding-top: 50px !important">
             <div class="container-fluid pd-0 bg-white">
-
-                {{-- <div class="row justify-content-center">
-                    <div class="col-lg-12">
-                        <center>
-                            {{ $products->links() }}
-                        </center>
-                    </div>
-                </div> --}}
                 <div class="row pd-0" style="justify-content: center;">
                     @foreach ($products as $product)
                     <div class="col-12 col-md-6 col-lg-3 product-box" style="padding: 30px 30px 0px 30px !important; max-width: 320px;">
                         <div class="card">
                             <img class="card-img-top" src="{{ $product->avatar }}" alt="Card image cap">
                             <div class="card-body">
-                                <h5 class="card-title" style="color: #646464">{{ $product->code . "-" . $product->name }}</h5>
+                                <h5 class="card-title" style="color: #646464">
+                                    <a href="{{ route('furn.product.detail', $product->code) }}" style="color: #646464 !important;">
+                                        {{ $product->code . "-" . $product->name }}
+                                    </a>
+                                </h5>
                                 <h6 class="card-title" style="color: #cd3333">
                                     <b>
                                         @if (Admin::user())
@@ -98,6 +94,23 @@
                         </div>
                     </div>
                     @endforeach
+                </div>
+            </div>
+        </div>
+        <div class="section pd-0" id="contact" style="padding-top: 50px !important;">
+            <div class="container-fluid pd-0" style=" margin-top: 10% !important;">
+                <div class="row">
+                    <div class="col-lg-2"></div>
+                    <div class="col-lg-8">
+                        <h5 style="font-weight: 400">Dịch vụ chăm sóc khách hàng của Design Support không chỉ hỗ trợ khách hàng khi có vấn đề phát sinh, mà còn lắng nghe và tiếp thu những ý kiến đóng góp của khách hàng. Chỉ cần liên hệ, chúng tôi sẵn sàng hỗ trợ bạn!</h5>
+                        <br> <br> <br>
+                        <p style="font-weight: bold">CÔNG TY TNHH DESIGN SUPPORT VIỆT NAM</p>
+                        <p style="font-weight: 400; margin-bottom: 5px">Thứ 2 - Chủ nhật (10:00 - 19:00)</p>
+                        <p style="font-weight: 400; margin-bottom: 5px">Tel: 0971.226.601</p>
+                        <p style="font-weight: 400; margin-bottom: 5px">Email: info@designsupport.com</p>
+                        <p style="font-weight: 400; margin-bottom: 5px">521 Bạch Mai, Hai Bà Trưng, Hà Nội</p>
+                        <p class="font-italic mb-0 text-gray">&copy; 2021 DesignSupport@rec</p>
+                    </div>
                 </div>
             </div>
         </div>
