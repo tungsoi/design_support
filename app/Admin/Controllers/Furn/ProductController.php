@@ -28,9 +28,9 @@ class ProductController extends Controller
         return view('furns.product-list', compact('products', 'categories', 'count'));
     }
 
-    public function show($code)
+    public function show($id)
     {
-        $product = Product::whereCode($code)->first();
+        $product = Product::find($id);
         if ($product->pictures != null && is_array($product->pictures))
         {
             $product->avatar = asset("uploads/".$product->pictures[0]);

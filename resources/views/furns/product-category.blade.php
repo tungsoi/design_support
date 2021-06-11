@@ -17,7 +17,7 @@
                                 <img class="card-img-top" src="{{ $product->avatar }}" alt="Card image cap">
                                 <div class="card-body">
                                     <h5 class="card-title" style="color: #646464">
-                                        <a href="{{ route('furn.product.detail', $product->code) }}" style="color: #646464 !important;">
+                                        <a href="{{ route('furn.product.detail', $product->id) }}" style="color: #646464 !important;">
                                             {{ $product->code . "-" . $product->name }}
                                         </a>
                                     </h5>

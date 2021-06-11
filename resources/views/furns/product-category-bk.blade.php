@@ -19,7 +19,7 @@
                 <div class="row">
                     @foreach ($products as $product)
                         <div class="col-lg-3 col-md-6 mb-4">
-                            <a href="{{ route('furn.product.detail', $product->code) }}" data-title="{{ $product->name }}" class="d-block mb-1">
+                            <a href="{{ route('furn.product.detail', $product->id) }}" data-title="{{ $product->name }}" class="d-block mb-1">
                                 <img src="{{ $product->avatar }}" alt="..." class="img-fluid d-block mx-auto" style="width: 255px !important; height: 255px !important;">
                             </a>
                             <p class="product-category-name text-center"><i>{{ $product->category->name }}</i></p>
