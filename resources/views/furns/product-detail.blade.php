@@ -8,7 +8,7 @@
 
     <div id="fullpage" class="">
         <div class="section pd-0" id="products">
-            <div class="container-fluid pd-0 bg-white h-100" style="margin-top: 50px;">
+            <div class="container-fluid pd-0 bg-white h-100" style="margin-top: 70px;">
                 <div class="row">
                     <div class="col-lg-12" style="padding: 20px 20px;">
                         <h6 style="color: #646464 !important; text-align: left">

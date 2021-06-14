@@ -130,4 +130,11 @@
 	  display:none !important;
 	}
 
+    .card {
+        border: none;
+    }
+    .card-img-top {
+        height: 250px;
+        width: 250px;
+    }
 </style>
