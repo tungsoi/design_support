@@ -78,18 +78,6 @@
                                         @endif
                                     </b>
                                 </h6>
-                                <div class="row">
-                                    <div class="col">
-                                        <a href="#" class="btn btn-info btn-block btn-sm">
-                                            <i class="fa fa-eye" aria-hidden="true"></i>
-                                        </a>
-                                    </div>
-                                    <div class="col">
-                                        <a href="#" class="btn btn-success btn-block btn-sm">
-                                            <i class="fa fa-cart-plus" aria-hidden="true"></i>
-                                        </a>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
