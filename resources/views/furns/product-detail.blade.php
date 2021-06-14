@@ -8,20 +8,22 @@
 
     <div id="fullpage" class="">
         <div class="section pd-0" id="products">
-            <div class="container-fluid pd-0 bg-white">
+            <div class="container-fluid pd-0 bg-white h-100" style="margin-top: 50px;">
                 <div class="row">
-                    <div class="col-lg-12">
-                        <br>
+                    <div class="col-lg-12" style="padding: 20px 20px;">
                         <h6 style="color: #646464 !important; text-align: left">
                             <a href="{{ route('furn.home') }}" style="color: #646464 !important; text-align: left">Trang chủ</a> /
                             <a href="{{ route('furn.product.product-by-category', $product->category->code) }}" style="color: #646464 !important; text-align: left">{{ $product->category->name }}</a> /
                             {{ $product->code}}
                         </h6>
-                        <br>
+                        <hr>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-1">
+                    <div class="col-lg-6" style="height: 100%; overflow: hidden !important; padding: 20px !important;">
+                        <img class="image-avatar" src="{{ $product->avatar }}" alt="" style="max-height: 750px; width: 100%;">
+                    </div>
+                    <div class="col-lg-1" style="height: 100%; overflow: hidden !important; padding: 20px !important;">
                         @if ($product->pictures != null && is_array($product->pictures))
                             @foreach ($product->pictures as $key => $picture)
                                 <img class="image-detail"
@@ -35,11 +37,8 @@
                             @endforeach
                         @endif
                     </div>
-                    <div class="col-lg-7" style="height: 90%; overflow: hidden !important;">
-                        <img class="image-avatar" src="{{ $product->avatar }}" alt="" style="height: 750px; width: 750px">
-                    </div>
-                    <div class="col-lg-4" style="color: #646464;
-                    text-align: left;">
+                    <div class="col-lg-5" style="color: #646464;
+                    text-align: left; height: 100%; overflow: hidden !important; padding: 20px !important;">
                         <div class="row">
                             <div class="col-lg-6">
                                 {{ $product->category->name }}

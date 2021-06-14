@@ -16,11 +16,11 @@
             <div class="container-fluid" style="height: 100%; padding: 0px;">
                 <div class="row" style="height: 100%">
                     @foreach ($categorie_row_1 as $category)
-                    <div class="col-lg-6 col-md-12 col-sm-12 category" style="
+                    <div class="col-lg-6 col-md-12 col-sm-12 category category-link" style="
                         background-image: url({{ asset('uploads/'.$category->avatar) }});
                         background-repeat: no-repeat;
-                        background-size: cover;
-                    ">
+                        background-size: cover;"
+                        data-link="{{ route('furn.product.product-by-category', $category->code) }}">
                         <div class="category-overlay"></div>
                         <div class="category-text">
                         <h2>{{ $category->name }}</h2>
@@ -36,16 +36,16 @@
                 <div class="row" style="height: 100%">
                     @foreach ($categorie_row_2 as $key => $category)
                         @php
-                            $class = "col-lg-4 col-md-6 col-sm-12 category";
+                            $class = "col-lg-4 col-md-6 col-sm-12 category category-link";
                             if ($key == 2) {
-                                $class = "col-lg-4 col-md-12 col-sm-12 category";
+                                $class = "col-lg-4 col-md-12 col-sm-12 category category-link";
                             }
                         @endphp
                     <div class="{{ $class }}" style="
                         background-image: url({{ asset('uploads/'.$category->avatar) }});
                         background-repeat: no-repeat;
-                        background-size: cover;
-                    ">
+                        background-size: cover;"
+                        data-link="{{ route('furn.product.product-by-category', $category->code) }}">
                         <div class="category-overlay"></div>
                         <div class="category-text">
                         <h2>{{ $category->name }}</h2>
@@ -116,7 +116,12 @@
         </div>
     </div>
 
-
     @include('furns.script')
+
+    <script>
+        $(document).on('click', '.category-link', function () {
+            window.location.href = $(this).data('link');
+        })
+    </script>
   </body>
 </html>
