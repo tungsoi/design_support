@@ -89,10 +89,10 @@ class ProductController extends AdminController
         $grid->category()->name('Danh mục sản phẩm');
         $grid->supplier()->name('Nhà cung cấp');
         $grid->link_3d('Link 3D')->display(function () {
-            return "<a href='.$this->link_3d.'>Xem</a>";
+            return "<a href=".$this->link_3d.">Xem</a>";
         });
         $grid->link_order('Link mua hàng')->display(function () {
-            return "<a href='.$this->link_order.'>Xem</a>";
+            return "<a href=".$this->link_order.">Xem</a>";
         });
         $grid->option_count('Số Options')->display(function () {
             return $this->properties->count();
