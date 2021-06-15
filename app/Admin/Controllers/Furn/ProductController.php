@@ -58,6 +58,15 @@ class ProductController extends Controller
             }
         }
         $count = $category->products->count();
+        $price = "Liên hệ";
+
+        if ($product->properties->count() > 0)
+        {
+            $price = $product->properties->first()->price;
+            $price = number_format($price) . " VND";
+        }
+
+        $product->price = $price;
 
         $category_menu = Category::all();
         return view('furns.product-category', compact('products', 'category', 'count', 'category_menu'));
