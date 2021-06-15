@@ -23,7 +23,14 @@
                 <a class="nav-link" href="{{ route('furn.contact') }}">LIÊN HỆ</a>
             </li>
             <li class="nav-item active">
-                <a class="nav-link" href="{{ route('admin.login') }}">ĐĂNG NHẬP</a>
+                <a class="nav-link" href="{{ route('admin.login') }}">
+                    @if (Admin::user())
+                        {{ Admin::user()->name }}
+                    @else
+                        ĐĂNG NHẬP
+                    @endif
+
+                </a>
             </li>
           </ul>
         </div>
