@@ -56,17 +56,19 @@ class ProductController extends Controller
             else {
                 $product->avatar = "https://picsum.photos/500";
             }
+
+
+            $price = "Liên hệ";
+
+            if ($product->properties->count() > 0)
+            {
+                $price = $product->properties->first()->price;
+                $price = number_format($price) . " VND";
+            }
+
+            $product->price = $price;
         }
         $count = $category->products->count();
-        $price = "Liên hệ";
-
-        if ($product->properties->count() > 0)
-        {
-            $price = $product->properties->first()->price;
-            $price = number_format($price) . " VND";
-        }
-
-        $product->price = $price;
 
         $category_menu = Category::all();
         return view('furns.product-category', compact('products', 'category', 'count', 'category_menu'));
