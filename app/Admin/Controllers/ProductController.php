@@ -77,7 +77,7 @@ class ProductController extends AdminController
 
                 return null;
             } catch (\Exception $e) {
-                dd($array);
+                return null;
             }
 
         })->lightbox(['width' => 80, 'height' => 50]);

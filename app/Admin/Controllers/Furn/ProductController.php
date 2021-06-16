@@ -50,7 +50,8 @@ class ProductController extends Controller
         foreach ($products as $product) {
             if ($product->pictures != null && is_array($product->pictures))
             {
-                $product->avatar = asset("uploads/".$product->pictures[0]);
+                $avatar = isset($product->pictures[0]) ? $product->pictures[0] : $product->pictures[1];
+                $product->avatar = asset("uploads/".$avatar);
                 // $product->avatar = "https://picsum.photos/500";
             }
             else {
