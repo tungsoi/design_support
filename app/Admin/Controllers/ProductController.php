@@ -66,15 +66,20 @@ class ProductController extends AdminController
         $grid->column('avatar', 'Ảnh đại diện')->display(function () {
             $array = $this->pictures;
 
-            if ($array != null && sizeof($array) > 0)
-            {
-                $data = [];
-                $data[] = $array[0];
+            try {
+                if ($array != null && sizeof($array) > 0)
+                {
+                    $data = [];
+                    $data[] = $array[0];
 
-                return $data;
+                    return $data;
+                }
+
+                return null;
+            } catch (\Exception $e) {
+                dd($array);
             }
 
-            return null;
         })->lightbox(['width' => 80, 'height' => 50]);
         $grid->column('pictures', 'Ảnh sản phẩm')->display(function () {
             $array = $this->pictures;
