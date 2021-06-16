@@ -70,7 +70,7 @@ class ProductController extends AdminController
                 if ($array != null && sizeof($array) > 0)
                 {
                     $data = [];
-                    $data[] = $array[0];
+                    $data[] = isset($array[0]) ? $array[0] : $array[1];
 
                     return $data;
                 }
