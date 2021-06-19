@@ -14,11 +14,13 @@
                     @foreach ($products as $product)
                         <div class="col-12 col-md-6 col-lg-3 product-box" style="padding: 30px 30px 0px 30px !important; max-width: 320px;">
                             <div class="card">
-                                <img class="card-img-top" src="{{ $product->avatar }}" alt="Card image cap">
+                                <a href="{{ route('furn.product.detail', $product->id) }}" style="color: #646464 !important;">
+                                    <img class="card-img-top" src="{{ $product->avatar }}" alt="Card image cap">
+                                </a>
                                 <div class="card-body">
                                     <h5 class="card-title" style="color: #646464">
                                         <a href="{{ route('furn.product.detail', $product->id) }}" style="color: #646464 !important;">
-                                            {{ $product->code . "-" . $product->name }}
+                                            {{ $product->code }}
                                         </a>
                                     </h5>
                                     <h6 class="card-title" style="color: #cd3333">
