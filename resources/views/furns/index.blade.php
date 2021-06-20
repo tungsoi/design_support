@@ -94,11 +94,11 @@
                     <div class="col-lg-8">
                         <h5 style="font-weight: 400">Dịch vụ chăm sóc khách hàng của Design Support không chỉ hỗ trợ khách hàng khi có vấn đề phát sinh, mà còn lắng nghe và tiếp thu những ý kiến đóng góp của khách hàng. Chỉ cần liên hệ, chúng tôi sẵn sàng hỗ trợ bạn!</h5>
                         <br> <br> <br>
-                        <p style="font-weight: bold; text-transform: uppercase">Công ty tư vấn thiết kế và cung cấp giải pháp ánh sáng ida lighting</p>
+                        <p style="font-weight: bold; text-transform: uppercase">Công ty tư vấn thiết kế và cung cấp giải pháp nội thất design support</p>
                         <p style="font-weight: 400; margin-bottom: 5px">Thứ 2 - Chủ nhật (10:00 - 19:00)</p>
-                        <p style="font-weight: 400; margin-bottom: 5px">Tel: 0924.222.888</p>
-                        <p style="font-weight: 400; margin-bottom: 5px">Email: idalighting.vn@gmail.com</p>
-                        <p style="font-weight: 400; margin-bottom: 5px">153 Hà Huy Tập, Phường Nam hà, TP Hà Tĩnh</p>
+                        <p style="font-weight: 400; margin-bottom: 5px">Tel: 0971.226.601</p>
+                        <p style="font-weight: 400; margin-bottom: 5px">Email: designsupport@gmail.com</p>
+                        <p style="font-weight: 400; margin-bottom: 5px">521 Minh Khai, Hai Bà Trưng, Hà Nội</p>
                         <p class="font-italic mb-0 text-gray">&copy; 2021 DesignSupport@rec</p>
                     </div>
                 </div>
