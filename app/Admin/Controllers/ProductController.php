@@ -166,17 +166,28 @@ class ProductController extends AdminController
             });
         });
 
-        $form->saving(function (Form $form) {
-            if ($form->category_id != null) {
-                $category = Category::find($form->category_id)->name;
-                $category_code = Str::upper(str_replace("-", '', Str::slug($category)));
-                $form->code = $category_code."-".str_pad((string) Product::count(), 4, "0", STR_PAD_LEFT);
-            }
-            else {
-                $form->code = "SP-".str_pad((string) Product::count(), 4, "0", STR_PAD_LEFT);
-            }
+        $form->saved(function (Form $form) {
 
+            $count = Product::where('category_id', $form->model()->category_id)->where('id', '<=', $form->model()->id)->count();
+            $category = Category::find($form->model()->category_id)->code;
+            $code = Str::upper($category) ."-". str_pad($count, 4, "0", STR_PAD_LEFT);
+
+            Product::find($form->model()->id)->update([
+                'code'  =>  $code
+            ]);
         });
+
+        // $form->saving(function (Form $form) {
+        //     if ($form->category_id != null) {
+        //         $category = Category::find($form->category_id)->name;
+        //         $category_code = Str::upper(str_replace("-", '', Str::slug($category)));
+        //         $form->code = $category_code."-".str_pad((string) Product::count(), 4, "0", STR_PAD_LEFT);
+        //     }
+        //     else {
+        //         $form->code = "SP-".str_pad((string) Product::count(), 4, "0", STR_PAD_LEFT);
+        //     }
+
+        // });
 
         $form->confirm('Xác nhận lưu dữ liệu ?');
 
