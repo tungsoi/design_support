@@ -32,7 +32,7 @@
                                             @endif
                                         </b>
                                         <br>
-                                        <i>+ Phí vận chuyển</i>
+                                        <i style="color: #646464 !important">+ Phí vận chuyển</i>
                                     </h6>
                                     {{-- <div class="row">
                                         <div class="col">
