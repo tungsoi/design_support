@@ -79,6 +79,9 @@
                                         Liên hệ
                                         @endif
                                     </b>
+
+                                    <br>
+                                    <i>+ Phí vận chuyển</i>
                                 </h6>
                             </div>
                         </div>
