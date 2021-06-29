@@ -5,6 +5,7 @@ namespace App\Admin\Controllers\Furn;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductProperty;
 use Illuminate\Http\Request;
 
 class ProductController extends Controller
@@ -61,10 +62,23 @@ class ProductController extends Controller
 
             $price = "Liên hệ";
 
-            if ($product->properties->count() > 0)
+            if ($product->properties->count() == 1)
             {
                 $price = $product->properties->first()->price;
                 $price = number_format($price) . " VND";
+            } else if ($product->properties->count() > 1) {
+                $minPrice = (int) $product->properties->first()->price;
+                $maxPrice = (int) $product->properties->first()->price;
+                foreach ($product->properties as $row) {
+                    if ( (int) $row->price > $minPrice) {
+                        $maxPrice = $row->price;
+                    }
+                    if ( (int) $row->price < $minPrice) {
+                        $minPrice = $row->price;
+                    }
+                }
+
+                $price = number_format($minPrice) . " VND - " . number_format($maxPrice) . " VND";
             }
 
             $product->price = $price;

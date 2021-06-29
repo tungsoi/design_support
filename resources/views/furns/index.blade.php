@@ -80,8 +80,10 @@
                                         @endif
                                     </b>
 
+                                    @if (Admin::user())
                                     <br> <br>
                                     <i style="color: #646464 !important;">+ Phí vận chuyển</i>
+                                    @endif
                                 </h6>
                             </div>
                         </div>
