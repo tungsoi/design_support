@@ -42,7 +42,7 @@ class ProductController extends Controller
 
         $price = "Liên hệ";
 
-        if ($product->properties->count() == 1)
+        if ($product->properties->count() >= 1)
         {
             $price = $product->properties->first()->price;
             $price = number_format($price) . " VND";
