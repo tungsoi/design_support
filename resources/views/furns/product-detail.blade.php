@@ -61,6 +61,7 @@
                                         <h4 class="text-uppercase" style="font-weight: 400; color: rgb(172, 83, 83);">
                                             {{ $price }}
                                         </h4>
+                                        <br>
                                     </div>
                                     <div class="col-lg-12">
                                         {!! $product->description !!}
