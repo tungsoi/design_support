@@ -59,7 +59,11 @@
                                     <div class="col-lg-12">
                                         <br>
                                         <h4 class="text-uppercase" style="font-weight: 400; color: rgb(172, 83, 83);">
+                                            @if (Admin::user())
                                             {{ $price }}
+                                            @else
+                                            Liên hệ
+                                            @endif
                                         </h4>
                                         <br>
                                     </div>

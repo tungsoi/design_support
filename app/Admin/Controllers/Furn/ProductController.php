@@ -42,10 +42,23 @@ class ProductController extends Controller
 
         $price = "Liên hệ";
 
-        if ($product->properties->count() >= 1)
+        if ($product->properties->count() == 1)
         {
             $price = $product->properties->first()->price;
             $price = number_format($price) . " VND";
+        } else if ($product->properties->count() > 1) {
+            $minPrice = (int) $product->properties->first()->price;
+            $maxPrice = (int) $product->properties->first()->price;
+            foreach ($product->properties as $row) {
+                if ( (int) $row->price > $minPrice) {
+                    $maxPrice = $row->price;
+                }
+                if ( (int) $row->price < $minPrice) {
+                    $minPrice = $row->price;
+                }
+            }
+
+            $price = number_format($minPrice) . " VND - " . number_format($maxPrice) . " VND";
         }
 
         $category_menu = Category::all();
