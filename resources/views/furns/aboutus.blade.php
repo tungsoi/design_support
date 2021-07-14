@@ -8,12 +8,13 @@
 
     <div id="fullpage" class="">
         <div class="section pd-0" id="contact" style="padding-top: 50px !important;">
-            <div class="container-fluid pd-0" style=" margin-top: 5% !important;">
+            <div class="container-fluid pd-0" style="">
                 <div class="row">
                     <div class="col-lg-12">
-                        <img src="{{ asset('assets/img/about3.jpg') }}" alt="" style="max-width: 100%">
-                        <img src="{{ asset('assets/img/about1.jpg') }}" alt="" style="max-width: 100%">
-                        <img src="{{ asset('assets/img/about2.jpg') }}" alt="" style="max-width: 100%">
+                        <img src="{{ asset('assets/img/about1.png') }}" alt="" style="max-width: 100%">
+                        <img src="{{ asset('assets/img/about2.png') }}" alt="" style="max-width: 100%">
+                        <img src="{{ asset('assets/img/about3.png') }}" alt="" style="max-width: 100%">
+                        <img src="{{ asset('assets/img/about4.png') }}" alt="" style="max-width: 100%">
                     </div>
                     {{-- <div class="col-lg-2"></div>
                     <div class="col-lg-8" style="text-align: left">
