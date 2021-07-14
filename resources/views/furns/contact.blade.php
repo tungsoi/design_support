@@ -23,7 +23,7 @@
                     </div> --}}
 
                     <div class="col-lg-12">
-                        <img src="{{ asset('assets/img/contact.png') }}" alt="" style="max-width: 100%; max-height: 100%; height: 100%">
+                        <img src="{{ asset('assets/img/contact.png') }}" alt="" style="max-width: 100%;">
                     </div>
                 </div>
             </div>
