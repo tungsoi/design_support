@@ -10,16 +10,21 @@
         <div class="section pd-0" id="contact" style="padding-top: 50px !important;">
             <div class="container-fluid pd-0" style=" margin-top: 5% !important;">
                 <div class="row">
-                    <div class="col-lg-2"></div>
+                    <div class="col-lg-12">
+                        <img src="{{ asset('assets/img/about1.jpg') }}" alt="">
+                        <img src="{{ asset('assets/img/about2.jpg') }}" alt="">
+                        <img src="{{ asset('assets/img/about3.jpg') }}" alt="">
+                    </div>
+                    {{-- <div class="col-lg-2"></div>
                     <div class="col-lg-8" style="text-align: left">
-                        {{-- <h5 style="font-weight: 400">Dịch vụ chăm sóc khách hàng của Design Support không chỉ hỗ trợ khách hàng khi có vấn đề phát sinh, mà còn lắng nghe và tiếp thu những ý kiến đóng góp của khách hàng. Chỉ cần liên hệ, chúng tôi sẵn sàng hỗ trợ bạn!</h5>
+                        <h5 style="font-weight: 400">Dịch vụ chăm sóc khách hàng của Design Support không chỉ hỗ trợ khách hàng khi có vấn đề phát sinh, mà còn lắng nghe và tiếp thu những ý kiến đóng góp của khách hàng. Chỉ cần liên hệ, chúng tôi sẵn sàng hỗ trợ bạn!</h5>
                         <br> <br> <br>
                         <p style="font-weight: bold">CÔNG TY TNHH DESIGN SUPPORT VIỆT NAM</p>
                         <p style="font-weight: 400; margin-bottom: 5px">Thứ 2 - Chủ nhật (10:00 - 19:00)</p>
                         <p style="font-weight: 400; margin-bottom: 5px">Tel: 0971.226.601</p>
                         <p style="font-weight: 400; margin-bottom: 5px">Email: info@designsupport.com</p>
                         <p style="font-weight: 400; margin-bottom: 5px">521 Bạch Mai, Hai Bà Trưng, Hà Nội</p>
-                        <p class="font-italic mb-0 text-gray">&copy; 2021 DesignSupport@rec</p> --}}
+                        <p class="font-italic mb-0 text-gray">&copy; 2021 DesignSupport@rec</p>
                         <h3>CÔNG TY </h3>
 
                         <p>Công ty Design Support GmbH & Co.KG được thành lập năm 2007 tại Hamburg, Đức. Người sáng lập công ty là nhà thiết kế nội thất Quách Design Support, anh là người Đức gốc Việt có hơn 20 năm kinh nghiệm trong lĩnh vực thiết kế và cung cấp nội thất cao cấp. Tại Đức và Châu Âu, thương hiệu Design Support nổi tiếng với những thiết kế ấn tượng, sang trọng, đẳng cấp. Năm 2014, Design Support mở thêm văn phòng và showroom tại thành phố Hồ Chí Minh. Công ty TNHH Design Support Việt Nam mang đến những thiết kế giao thoa tinh tế giữa văn hoá phương Đông và phương Tây, chinh phục được những khách hàng khó tính nhất. Hiện tại, công ty Design Support chuyên thực hiện những dự án thiết kế-trang trí nội thất và cung cấp nội thất cho các biệt thự, căn hộ cá nhân và các dự án nhà hàng, khách sạn, bất động sản cao cấp.</p>
@@ -43,8 +48,9 @@
                         Tất cả những sản phẩm đều được lựa chọn bởi NTK nội thất Quách Design Support, đảm bảo đạt chuẩn về vật liệu cao cấp, thiết kế tinh xảo và chất lượng thi công hoàn hảo.
 
                         </p>
-                    </div>
+                    </div> --}}
                 </div>
+                <br> <br><br><br>
             </div>
         </div>
     </div>

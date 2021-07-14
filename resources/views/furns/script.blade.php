@@ -7,7 +7,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
         $('#fullpage').fullpage({
-            sectionsColor: ['white', 'white', 'white', 'white', 'black'],
+            sectionsColor: ['black', 'white', 'white', 'white', 'black'],
             navigation: true,
             responsiveWidth: 758,
             scrollOverflow: true,
