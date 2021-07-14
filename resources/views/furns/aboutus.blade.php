@@ -15,6 +15,7 @@
                         <img src="{{ asset('assets/img/about2.png') }}" alt="" style="max-width: 100%">
                         <img src="{{ asset('assets/img/about3.png') }}" alt="" style="max-width: 100%">
                         <img src="{{ asset('assets/img/about4.png') }}" alt="" style="max-width: 100%">
+                        <img src="{{ asset('assets/img/about5.png') }}" alt="" style="max-width: 100%;">
                     </div>
                     {{-- <div class="col-lg-2"></div>
                     <div class="col-lg-8" style="text-align: left">
