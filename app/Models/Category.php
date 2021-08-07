@@ -37,4 +37,12 @@ class Category extends Model
     public function products() {
         return $this->hasMany('App\Models\Product', 'category_id', 'id');
     }
+
+    public function parent() {
+        return $this->hasOne('App\Models\Category', 'id', 'parent_id');
+    }
+
+    public function childrens() {
+        return $this->hasMany('App\Models\Category', 'parent_id', 'id');
+    }
 }

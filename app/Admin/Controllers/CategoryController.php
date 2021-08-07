@@ -52,12 +52,20 @@ class CategoryController extends AdminController
         $grid->code('Mã danh mục')->editable();
         $grid->parent_id('Danh mục quản lý')->display(function ()
         {
-            return Category::find($this->parent_id)->name ?? "";
+            if ($this->parent_id == null) {
+                return "";
+            } else {
+                if ($this->parent->parent_id == null) {
+                    return $this->parent->name;
+                } else {
+                    return $this->parent->parent->name . " / " . $this->parent->name ;
+                }
+            }
         })->label();
-        $grid->column('items', 'Danh mục con')->display(function ()
-        {
-            return Category::whereParentId($this->id)->pluck('name');
-        })->label();
+//        $grid->column('items', 'Danh mục con')->display(function ()
+//        {
+//            return Category::whereParentId($this->id)->pluck('name');
+//        })->label();
         $grid->products('Số sản phẩm')->display(function () {
             return $this->products->count();
         });
@@ -97,16 +105,32 @@ class CategoryController extends AdminController
     {
         $form = new Form(new Category);
 
-        $form->select('parent_id', 'Danh mục quản lý')->options(Category::whereNull('parent_id')->pluck('name', 'id'));
+        $categorys = Category::all();
+
+        $arr_category = [];
+        foreach ($categorys as $category) {
+            if ($category->parent_id == null) {
+                $arr_category[$category->id] = $category->name;
+            } else {
+                if ($category->parent->parent_id == null) {
+                    $arr_category[$category->id] = $category->parent->name . " / " . $category->name;
+                } else {
+                    $arr_category[$category->id] = $category->parent->parent->name . " / " . $category->parent->name . " / " . $category->name;
+                }
+
+            }
+        }
+        $form->select('parent_id', 'Danh mục quản lý')->options($arr_category);
         $form->text('name', 'Tên danh mục')->rules('required');
         $form->image('avatar', 'Ảnh đại diện')
-        ->thumbnail('small', $width = 100, $height = 100)
-        ->rules('required');
-        $form->hidden('code');
-
-        $form->saving(function (Form $form) {
-            $form->code = Str::slug($form->name);
-        });
+        ->thumbnail('small', $width = 100, $height = 100);
+//
+//        $states = [
+//            'on'  => ['value' => 1, 'text' => 'Mở', 'color' => 'success'],
+//            'off' => ['value' => 0, 'text' => 'Khoá', 'color' => 'danger'],
+//        ];
+//        $form->switch('is_show_shop', 'Hiển thị trên trang chủ')->states($states);
+        $form->text('code', 'Mã danh mục')->rules('required');
 
         $form->disableEditingCheck();
         $form->disableCreatingCheck();

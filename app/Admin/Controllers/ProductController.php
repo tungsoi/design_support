@@ -91,7 +91,19 @@ class ProductController extends AdminController
                 return $array;
             }
         })->lightbox(['width' => 80, 'height' => 50]);
-        $grid->category()->name('Danh mục sản phẩm');
+        $grid->category_id('Danh mục sản phẩm')->display(function () {
+            $category = $this->category;
+
+            if ($category->parent_id == null) {
+                return $category->name;
+            } else {
+                if ($category->parent->parent_id == null) {
+                    return $category->parent->name . " / " . $category->name;
+                } else {
+                    return $category->parent->parent->name . " / " . $category->parent->name . " / " . $category->name;
+                }
+            }
+        })->label();
         $grid->supplier()->name('Nhà cung cấp');
         $grid->link_3d('Link 3D')->display(function () {
             return "<a href=".$this->link_3d.">Xem</a>";
@@ -143,8 +155,23 @@ class ProductController extends AdminController
             ->help('Ảnh đầu tiên sẽ hiển thị là ảnh đại diện')
             ->removable();
 
+            $categorys = Category::all();
+
+            $arr_category = [];
+            foreach ($categorys as $category) {
+                if ($category->parent_id == null) {
+                    $arr_category[$category->id] = $category->name;
+                } else {
+                    if ($category->parent->parent_id == null) {
+                        $arr_category[$category->id] = $category->parent->name . " / " . $category->name;
+                    } else {
+                        $arr_category[$category->id] = $category->parent->parent->name . " / " . $category->parent->name . " / " . $category->name;
+                    }
+
+                }
+            }
             $form->select('category_id', 'Danh mục')
-            ->options(Category::all()->pluck('name', 'id'));
+            ->options($arr_category);
 
             $form->text('name', 'Tên sản phẩm');
 
