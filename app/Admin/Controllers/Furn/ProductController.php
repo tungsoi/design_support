@@ -61,7 +61,7 @@ class ProductController extends Controller
             $price = number_format($minPrice) . " VND - " . number_format($maxPrice) . " VND";
         }
 
-        $category_menu = Category::all();
+        $category_menu = Category::whereNull('parent_id')->get();
         return view('furns.product-detail', compact('product', 'category_menu', 'price'));
     }
 
@@ -106,7 +106,7 @@ class ProductController extends Controller
         }
         $count = $category->products->count();
 
-        $category_menu = Category::all();
+        $category_menu = Category::whereNull('parent_id')->get();
         return view('furns.product-category', compact('products', 'category', 'count', 'category_menu'));
     }
 }

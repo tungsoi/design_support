@@ -6,7 +6,7 @@
 <body>
     @include('furns.menu')
 
-    <div id="fullpage" class="">
+    <div id="fullpage" class="" style="background-color: black !important;">
         <div class="section pd-0" id="contact" style="padding-top: 50px !important;">
             <div class="container-fluid pd-0" style="">
                 <div class="row">

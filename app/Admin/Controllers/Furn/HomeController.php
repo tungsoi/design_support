@@ -48,44 +48,20 @@ class HomeController extends Controller
         }
 
         $category_menu = Category::whereNull('parent_id')->get();
-//        $menu_arr = [];
-//        foreach ($category_menu_res as $menu) {
-//            $parent = $menu->toArray();
-//            $parent['type'] = 'level_1';
-//            $menu_arr[] = $parent;
-//
-//            if ($menu->childrens->count() > 0) {
-//                foreach ($menu->childrens as $level_2) {
-//                    $lv2 = $level_2->toArray();
-//                    $lv2['type'] = 'level_2';
-//                    $menu_arr[] = $lv2;
-//
-//                    if ($level_2->childrens->count() > 0) {
-//                        foreach ($level_2->childrens as $level_3) {
-//                            $lv3 = $level_3->toArray();
-//                            $lv3['type'] = 'level_3';
-//                            $menu_arr[] = $lv3;
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        $category_menu = $menu_arr;
         return view('furns.index', compact('categorie_row_1', 'categorie_row_2', 'products', 'category_menu'));
     }
 
     public function aboutus()
     {
 
-        $category_menu = Category::all();
+        $category_menu = Category::whereNull('parent_id')->get();
         return view('furns.aboutus', compact('category_menu'));
     }
 
     public function contact()
     {
 
-        $category_menu = Category::all();
+        $category_menu = Category::whereNull('parent_id')->get();
         return view('furns.contact', compact('category_menu'));
     }
 
