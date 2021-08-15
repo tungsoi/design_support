@@ -67,7 +67,24 @@ class ProductController extends Controller
 
     public function getByCategoryCode($code, Request $request) {
         $category = Category::whereCode($code)->first();
-        $products = Product::whereCategoryId($category->id)->orderBy('id', 'desc')->get();
+
+        $ids = [];
+        $ids[] = $category->id;
+        $childs = $category->childrens;
+
+        if ($category->childrens->count() > 0) {
+            foreach ($category->childrens as $level2) {
+                $ids[] = $level2->id;
+
+                if ($level2->childrens->count() > 0) {
+                    foreach ($level2->childrens as $level3) {
+                        $ids[] = $level3->id;
+                    }
+                }
+            }
+        }
+
+        $products = Product::whereCategoryId($ids)->orderBy('id', 'desc')->get();
 
         foreach ($products as $product) {
             if ($product->pictures != null && is_array($product->pictures))
