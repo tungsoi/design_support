@@ -84,7 +84,7 @@ class ProductController extends Controller
             }
         }
 
-        $products = Product::whereCategoryId($ids)->orderBy('id', 'desc')->get();
+        $products = Product::whereIn('category_id', $ids)->orderBy('id', 'desc')->get();
 
         foreach ($products as $product) {
             if ($product->pictures != null && is_array($product->pictures))
