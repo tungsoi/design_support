@@ -52,25 +52,28 @@
                                     <div class="col-lg-12">
                                         <h3 class="text-uppercase">{{ $product->name }}</h3>
                                     </div>
-                                    <div class="col-lg-12 size-product">
-                                        <span>Kích thước</span>
-                                        <select class="none-boder-sl" id="select-size">
-                                            @foreach($properties_product as $properties)
-                                                <option data-price={{ $properties['price']  }}>{{$properties['size']}}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
+                                    @if (Admin::user())
+                                        <div class="col-lg-12 size-product">
+                                            <span>Kích thước</span>
+                                            <select class="none-boder-sl" id="select-size">
+                                                @foreach($properties_product as $properties)
+                                                    <option data-price={{ $properties['price']  }}>{{$properties['size']}}</option>
+                                                @endforeach
+                                            </select>
+                                        </div>
 
-                                    <div class="col-lg-12">
-                                        <br><span>Giá tiền </span>
-                                        <div id="show-price">
+                                        <div class="col-lg-12 price-product">
+                                            <br><span>Giá tiền </span>
+                                            <div id="show-price">
+                                            </div>
+                                        </div>
+                                    @else
+                                        <div class="col-lg-12">
+                                            <span id="lien-he">Giá liên hệ
+                                            </span>
 
                                         </div>
-                                        {{--<h4 class="text-uppercase" style="font-weight: 400; color: rgb(172, 83, 83);">--}}
-                                            {{--Liên hệ--}}
-                                        {{--</h4>--}}
-                                        <br>
-                                    </div>
+                                    @endif
                                     <div class="col-lg-12">
                                         {!! $product->description !!}
                                     </div>

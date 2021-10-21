@@ -381,3 +381,10 @@ select:focus /* => from bootstrap css */
     background: #f9f9f9;
     padding:10px 10px
 }
+.price-product{
+    margin-bottom: 20px;
+}
+#lien-he{
+    font-weight: 600;
+    color: #db5d5d;
+}
