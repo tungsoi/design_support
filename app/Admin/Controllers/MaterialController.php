@@ -49,11 +49,11 @@ class MaterialController extends AdminController
         $grid->rows(function (Grid\Row $row) {
             $row->column('number', ($row->number+1));
         });
+
         $grid->column('number', 'STT');
         $grid->title('Tên chất liệu');
         $grid->column('created_at', 'Ngày tạo');
         $grid->disableBatchActions();
-
         return $grid;
     }
 

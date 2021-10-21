@@ -35,7 +35,6 @@ class OrderController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Order);
-
         $grid->expandFilter();
         $grid->filter(function($filter) {
             $filter->disableIdFilter();
@@ -58,6 +57,19 @@ class OrderController extends AdminController
             $actions->disableEdit();
         });
         return $grid;
+    }
+    /*
+     * detail
+     */
+
+    protected function detail($id)
+    {
+        $show = new Show(Order::findOrFail($id));
+
+        $show->name('Tên danh mục');
+        $show->created_at();
+
+        return $show;
     }
 
     /**

@@ -343,3 +343,41 @@ ul.pagination {
     margin-right: auto;
     height: 100%;
 } */
+
+.none-boder-sl{
+    border:none;
+}
+select {
+    /* for Firefox */
+    -moz-appearance: none;
+    /* for Chrome */
+    -webkit-appearance: none;
+}
+
+/* For IE10 */
+select::-ms-expand {
+    display: none;
+}
+
+select:focus /* => from bootstrap css */
+{
+    outline: 0;
+}
+/*.lien-he:hover{*/
+    /*background: #f9f9f9;*/
+    /*height: 40p*/
+/*}*/
+.size-product{
+    margin-top: 20px;
+}
+.size-product select{
+    width: 100%;
+    background: #f9f9f9;
+    padding:10px 10px
+}
+#show-price{
+    width: 100%;
+    height: 40px;
+    background: #f9f9f9;
+    padding:10px 10px
+}

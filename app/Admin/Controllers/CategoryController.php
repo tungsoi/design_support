@@ -46,10 +46,10 @@ class CategoryController extends AdminController
             $row->column('number', ($row->number+1));
         });
         $grid->column('number', 'STT');
+        ;
 
         $grid->column('avatar', 'Ảnh đại diện')->lightbox(['width' => 80, 'height' => 50]);
         $grid->name('Tên danh mục')->editable();
-        $grid->code('Mã danh mục')->editable();
         $grid->parent_id('Danh mục quản lý')->display(function ()
         {
             if ($this->parent_id == null) {
@@ -69,7 +69,6 @@ class CategoryController extends AdminController
         $grid->products('Số sản phẩm')->display(function () {
             return $this->products->count();
         });
-
         $grid->disableColumnSelector();
         $grid->paginate(100);
 

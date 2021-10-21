@@ -21,6 +21,13 @@
 <link rel="stylesheet" href="{{ asset('assets/furn/fullPage/fullpage.css') }}">
 {{-- <link rel="stylesheet" href="{{ asset('assets/furn/fullPage/examples.css') }}"> --}}
 <link rel="stylesheet" href="{{ asset('assets/furn/css/custom.css') }}">
+{{--<link rel="stylesheet" href="{{ asset('assets/furn/lightallery/lightgallery.css') }}">--}}
+<link rel="stylesheet" href="{{ asset('assets/furn/lightallery/lightgallery.css') }}">
+{{--<script type="text/javascript" src="{{ asset('assets/furn/lightallery/lightgallery-all.min.js') }}"></script>--}}
+
+
+
+
 <!-- Favicon-->
 <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
 <style>

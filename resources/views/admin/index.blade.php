@@ -39,7 +39,6 @@
         {!! Admin::script() !!}
         {!! Admin::html() !!}
     </div>
-
     {{-- <div class="overlay-loading">
         <img src="{{ asset("assets/img/index.svg") }}" alt="">
     </div> --}}
@@ -55,5 +54,8 @@
 <!-- REQUIRED JS SCRIPTS -->
 {!! Admin::js() !!}
 
+
+<span>
+</span>
 </body>
 </html>

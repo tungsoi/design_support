@@ -147,7 +147,6 @@ class ProductController extends AdminController
     protected function form()
     {
         $form = new Form(new Product);
-
         $form->column(2/3, function ($form) {
             $form->hidden('code');
             $form->multipleFile('pictures', 'Ảnh')
@@ -156,7 +155,6 @@ class ProductController extends AdminController
             ->removable();
 
             $categorys = Category::all();
-
             $arr_category = [];
             foreach ($categorys as $category) {
                 if ($category->parent_id == null) {
