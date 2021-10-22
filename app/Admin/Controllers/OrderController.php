@@ -50,6 +50,12 @@ class OrderController extends AdminController
             $row->column('number', ($row->number+1));
         });
         $grid->column('number', 'STT');
+        $grid->column('number', 'Khách hàng');
+        $grid->column('number', 'Tổng tiền');
+        $grid->column('number', 'Tổng cọc');
+        $grid->column('number', 'Thời gian cọc');
+        $grid->column('number', 'Tiền còn lại');
+        $grid->column('number', 'Trạng ');
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
 
@@ -80,12 +86,12 @@ class OrderController extends AdminController
     protected function form()
     {
         $form = new Form(new Order);
-
         Admin::style('
         .col-md-3 .col-sm-2, .col-md-3 .col-sm-8{width:100% !important; text-align: left;}
         .col-md-3, .col-md-9 {border-right: 1px solid #b3b3b3 !important}
         .col-md-3 hr, .col-md-9 hr {border-top: 1px solid #b3b3b3;}
         ');
+
         $form->column(3, function ($form) {
             $customers = User::whereIsCustomer(User::CUSTOMER)->orderBy('id', 'desc')->get();
             $temp_customer = [];
@@ -94,13 +100,8 @@ class OrderController extends AdminController
                 $temp_customer[$customer->id] = $customer->profile->code . " - " .$customer->profile->company_name;
             }
             $form->select('user_id', 'Khách hàng')->options($temp_customer)->rules('required')->attribute(['class' => 'custom-width']);
+//            $form->select('user_id', 'Sản ')->options($temp_customer)->rules('required')->attribute(['class' => 'custom-width']);
             $form->display('action.created_datetime', 'Thời gian tạo - Người thực hiện')->default(date('H:i | d-m-Y', strtotime(now())) . " - " .Admin::user()->name)->disable();
-            $form->divider();
-            $form->currency('total_item_amount', 'Tổng tiền sản phẩm')
-                    ->width(100)
-                    ->readonly()
-                    ->symbol('VND')
-                    ->digits(0);
             $form->divider();
             $form->radio('is_discount','Giảm giá')
                 ->options([
@@ -115,7 +116,6 @@ class OrderController extends AdminController
                     ->digits(0);
                     $form->text('discount_reason', 'Lý do giảm giá');
                 })->default(1);
-            $form->divider();
             $form->radio('is_bonus','Phí phát sinh')
                 ->options([
                     1 =>'Không',
@@ -129,8 +129,15 @@ class OrderController extends AdminController
                     ->digits(0);
                 })->default(1);
             $form->divider();
-            $form->currency('final_amount', 'Tổng tiền đơn hàng')
+            $form->currency('total_item_amount', 'Tổng tiền sản phẩm')
                 ->width(100)
+                ->readonly()
+                ->symbol('VND')
+                ->digits(0);
+            $form->divider();
+
+            $form->currency('deposit', 'Tổng tiền cọc ')
+             ->width(100)
                 ->readonly()
                 ->symbol('VND')
                 ->digits(0);
@@ -146,10 +153,11 @@ class OrderController extends AdminController
 
                 $form->select('product_id', 'Sản phẩm')
                 ->options($temp_product)
-                ->loads(
-                    ['product_property_id', 'product_color_id'],
-                    ['/admin/products/product_properties', '/admin/products/product_colors']
-                )
+//                ->loads(
+//                    ['product_property_id', 'product_color_id'],
+//                    ['/admin/products/product_properties', '/admin/products/product_colors']
+//                )
+                ->attribute(['id' => 'product_id'])
                 ->rules('required');
                 $form->number('order_qty', 'Số lượng đặt mua (1)')->rules('required')->width('100%')->default(1);
 
@@ -158,15 +166,19 @@ class OrderController extends AdminController
                 ->load('price', '/admin/products/product_property_price')
                 ->rules('required');
                 $form->select('price', 'Giá tiền sản phẩm  (2)')->options()->readonly();
-                $form->select('product_color_id', 'Màu sắc sản phẩm')->options()->rules('required');
                 $form->text('amount_one_item', 'Tổng tiền sản phẩm (3) = (1) * (2)')->readonly();
+                $form->hidden('picture');
+//                dd($form->pictures_id);die();
+                $route_get_product = route('admin.products.getInfoProduct');
+                $form->html(view('furns.partials.picture_product', [
+                    'route_get_product' => $route_get_product,
+                ]),'Ảnh');
+//                    ->removable();
             });
         });
-
         $form->confirm('Xác nhận lưu dữ liệu đơn hàng ?');
 
         $form->saved(function (Form $form) {
-
             $action = OrderAction::whereOrderId($form->model()->id)->first();
             if ($action == 0)
             {
@@ -185,6 +197,8 @@ class OrderController extends AdminController
             $tools->disableDelete();
             $tools->disableView();
         });
+
+        Admin::js('assets/furn/js/script_design.js');
 
         return $form;
     }

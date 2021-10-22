@@ -25,7 +25,8 @@ class OrderItem extends Model
         'product_color_id',
         'order_qty',
         'reality_qty',
-        'price'
+        'price',
+        'picture'
     ];
 
     public function order()

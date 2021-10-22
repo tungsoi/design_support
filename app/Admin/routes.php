@@ -19,6 +19,8 @@ Route::group([
     $router->get('/products/product_colors', 'ProductController@getColor')->name('products.getColor');
     $router->get('/products/product_prices', 'ProductController@getPrice')->name('products.getPrice');
     $router->get('/products/product_property_price', 'ProductController@getPriceFromProperty')->name('products.getPriceFromProperty');
+    $router->get('/products/products_pictures', 'ProductController@getPicture')->name('products.getPicture');
+    $router->get('/products/products_info', 'ProductController@getInfoProduct')->name('products.getInfoProduct');
 
     $router->resources([
         'auth/users'    =>  'UserController',

@@ -388,3 +388,8 @@ select:focus /* => from bootstrap css */
     font-weight: 600;
     color: #db5d5d;
 }
+#list-pictures-product img{
+    width: 50px !important;
+    height: 50px;
+    border-radius: 3px;
+}

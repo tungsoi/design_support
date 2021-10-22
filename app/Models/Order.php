@@ -28,7 +28,8 @@ class Order extends Model
         'other_amount',
         'final_amount',
         'is_discount',
-        'is_bonus'
+        'is_bonus',
+        'deposit'
     ];
 
     public function action()

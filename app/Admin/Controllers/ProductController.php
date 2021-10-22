@@ -229,7 +229,7 @@ class ProductController extends AdminController
 
     public function getProperty(Request $request)
     {
-        $product = Product::find($request->get('q'));
+        $product = Product::find($request->data);
 
         if ($product) {
             $options = $product->properties;
@@ -245,12 +245,52 @@ class ProductController extends AdminController
                 $option_data[] = collect([
                     'id'    =>  $option->id,
                     'text'  =>  "Size: ".$option->size." (".$option->lenght." x ".$option->width." x ".$option->height.")  - "
-                                . $option->material->title
+                                . ($option->material->title ?? null)
                                 ." - "
                                 .number_format($option->price)." VND"
                 ]);
             }
+
             return $option_data;
+        }
+
+        return null;
+    }
+
+    public function getInfoProduct(Request $request){
+        $product = Product::find($request->data);
+
+        $data = [];
+
+        if ($product) {
+            $properties = $product->properties;
+            foreach ($properties as $option)
+            {
+                if (! $properties)
+                {
+                    return null;
+                }
+
+                $data['property'][] = collect([
+                    'id'    =>  $option->id,
+                    'text'  =>  "Size: ".$option->size." (".$option->lenght." x ".$option->width." x ".$option->height.")  - "
+                        . ($option->material->title ?? null)
+                        ." - "
+                        .number_format($option->price)." VND",
+                    'price' => $option->price
+                ]);
+            }
+
+            $pictures = $product->pictures;
+            if ($pictures) {
+                foreach ($pictures as $picture){
+                    $data['pictures'][] = [
+                        'asset' => $picture,
+                        'link' => asset('uploads/'.$picture)
+                    ];
+                }
+            }
+            return $data;
         }
 
         return null;
@@ -319,6 +359,20 @@ class ProductController extends AdminController
             ];
         }
 
+        return null;
+    }
+
+    public function getPicture(Request $request){
+        $product_pciture = Product::find($request->data)->pictures;
+        if ($product_pciture) {
+            foreach ($product_pciture as $picture){
+                $pictures[] = [
+                    'asset' => $picture,
+                    'link' => asset('uploads/'.$picture)
+                ];
+            }
+            return  $pictures;
+        }
         return null;
     }
 }
