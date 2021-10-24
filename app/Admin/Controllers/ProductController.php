@@ -349,7 +349,6 @@ class ProductController extends AdminController
     public function getPriceFromProperty(Request $request)
     {
         $product_property = ProductProperty::find($request->get('q'));
-
         if ($product_property) {
             return [
                 collect([

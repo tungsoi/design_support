@@ -17,6 +17,7 @@ use Encore\Admin\Layout\Content;
 use Illuminate\Http\Request;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Row;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends AdminController
 {
@@ -50,12 +51,19 @@ class OrderController extends AdminController
             $row->column('number', ($row->number+1));
         });
         $grid->column('number', 'STT');
-        $grid->column('number', 'Khách hàng');
-        $grid->column('number', 'Tổng tiền');
-        $grid->column('number', 'Tổng cọc');
-        $grid->column('number', 'Thời gian cọc');
-        $grid->column('number', 'Tiền còn lại');
-        $grid->column('number', 'Trạng ');
+        $grid->column('user_id', 'Khách hàng')->display(function (){
+            $user = $this->user;
+            return $user->username ?? null;
+        });
+        $grid->column('total_item_amount', 'Tổng tiền')->display(function (){
+            return number_format($this->total_item_amount);
+        });
+        $grid->column('deposit', 'Tổng cọc')->display(function (){
+            return number_format($this->deposit);
+        });
+//        $grid->column('number', 'Thời gian cọc');
+//        $grid->column('number', 'Tiền còn lại');
+        $grid->column('status', 'Trạng thái');
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
 
@@ -133,7 +141,8 @@ class OrderController extends AdminController
                 ->width(100)
                 ->readonly()
                 ->symbol('VND')
-                ->digits(0);
+                ->digits(0)
+                ->attribute(["data_amount" => 0]);
             $form->divider();
 
             $form->currency('deposit', 'Tổng tiền cọc ')
@@ -163,10 +172,19 @@ class OrderController extends AdminController
 
                 $form->select('product_property_id', 'Option sản phẩm')
                 ->options()
-                ->load('price', '/admin/products/product_property_price')
+//                ->load('price', '/admin/products/product_property_price')
                 ->rules('required');
-                $form->select('price', 'Giá tiền sản phẩm  (2)')->options()->readonly();
-                $form->text('amount_one_item', 'Tổng tiền sản phẩm (3) = (1) * (2)')->readonly();
+
+                $form->currency('price', 'Giá tiền sản phẩm  (2)') ->readonly()
+                    ->width(100)
+                    ->symbol('VND')
+                    ->digits(0);
+
+                $form->currency('amount_one_item', 'Tổng tiền sản phẩm (3) = (1) * (2)')
+                    ->readonly()
+                    ->width(100)
+                    ->symbol('VND')
+                    ->digits(0);
                 $form->hidden('picture');
 //                dd($form->pictures_id);die();
                 $route_get_product = route('admin.products.getInfoProduct');
@@ -174,11 +192,12 @@ class OrderController extends AdminController
                     'route_get_product' => $route_get_product,
                 ]),'Ảnh');
 //                    ->removable();
-            });
+            })->attribute(['class' => 'form-property']);
         });
         $form->confirm('Xác nhận lưu dữ liệu đơn hàng ?');
 
         $form->saved(function (Form $form) {
+
             $action = OrderAction::whereOrderId($form->model()->id)->first();
             if ($action == 0)
             {

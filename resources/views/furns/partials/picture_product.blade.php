@@ -1,4 +1,4 @@
-<div id="list-pictures-product">
+<div class="list-pictures-product">
 
 </div>
 
@@ -7,13 +7,14 @@
 <script>
     $('body').on('click','.picture',function () {
         asset = $(this).attr('data-asset');
-        $('#list-pictures-product img').css('border','none');
+        $(this).parents(".list-pictures-product").find('img').css('border','none');
+        // $('.list-pictures-product img').css('border','none');
         $(this).css('border','2px solid red');
         $('.picture').val(asset);
     });
 </script>
 <style>
-    #list-pictures-product img{
+    .list-pictures-product img{
         cursor: pointer;
         width: 50px !important;
         height: 50px;
