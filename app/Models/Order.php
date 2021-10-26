@@ -29,7 +29,8 @@ class Order extends Model
         'final_amount',
         'is_discount',
         'is_bonus',
-        'deposit'
+        'deposit',
+        'user_create'
     ];
 
     public function action()
@@ -41,7 +42,16 @@ class Order extends Model
     {
         return $this->hasMany('App\Models\OrderItem', 'order_id');
     }
+
     public function user(){
         return $this->belongsTo('App\User', 'user_id');
+    }
+
+    public function userCreate(){
+        return $this->belongsTo('App\User', 'user_create');
+    }
+
+    public function statusText() {
+        return $this->hasOne('App\Models\OrderStatus', 'id', 'status');
     }
 }

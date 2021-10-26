@@ -1,10 +1,9 @@
 
 $(document).on('change', ".product_id", function () {
-    parent = $(this).parents(".has-many-items-form");
-    $('.product_property_id').find('option').remove().end().append('<option value=""></option>');
+    parent = $(this).parents(".parent-tr");
     var token = $('._token').val();
+    console.log($('.route_get_product').val());
     $.ajaxSetup({ headers:{ 'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content') } });
-    parent.find('.list-pictures-product').empty();
     $.ajax({
         url: $('.route_get_product').val(),
         type: "GET",
@@ -15,16 +14,23 @@ $(document).on('change', ".product_id", function () {
             'X-CSRF-TOKEN': token
         },
         success: function (response) {
+            console.log(response);
             if (response.pictures){
-                // renderPicture(response.pictures);
                 data = response.pictures;
                 for (var i = 0; i < data.length; i++) {
-                    parent.find('.list-pictures-product').append('<img class="picture" data-asset="'+ data[i].asset +'" src="'+ data[i].link +'" />');
+                    parent.find('.list-pictures-product').append('<img style="width: 30px;height: 30px;margin: 2px 2px;" class="picture" data-asset="'+ data[i].asset +'" src="'+ data[i].link +'" />');
                 }
             }
             if (response.property) {
-                // parent.find('.price').val()
-                renderProperty(response.property);
+                data = response.property;
+                $.each(data, function (i, item) {
+                    parent.find('.product_property_id').append($('<option>', {
+                        value: item.id,
+                        data_price: item.price,
+                        text : item.text
+                    }));
+                });
+                //renderProperty(response.property);
             }
 
         },
@@ -73,3 +79,29 @@ function getTotalDeposit() {
     $('.total_item_amount').val(total);
     $('.deposit').val(total * 0.7);
 }
+// product = $('.product').val();
+// console.log(JSON.parse(product) );
+// $.each(product, function (i, item) {
+//     $('#mySelect').append($('<option>', {
+//         value: item.value,
+//         text : item.text
+//     }));
+// });
+
+$('.btn-add-order').click(function ($e) {
+    content = $('.option-default ').clone().removeClass('option-default');
+    content.find('select.select2').removeClass('select2-hidden-accessible');
+    if (content.find('.select-custom').data('select2')) {
+        content.find('.select-custom').select2('destroy');
+    }
+    content.find('.select2').remove();
+    content.show();
+    content.appendTo('.table ');
+    content.find('.select2').select2();
+    var data = {
+    };
+    content.find(".mySelect2").select2({
+        data: data
+    });
+
+});

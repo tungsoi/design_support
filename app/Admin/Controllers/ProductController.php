@@ -259,7 +259,6 @@ class ProductController extends AdminController
 
     public function getInfoProduct(Request $request){
         $product = Product::find($request->data);
-
         $data = [];
 
         if ($product) {

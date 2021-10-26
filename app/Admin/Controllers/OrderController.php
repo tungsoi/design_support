@@ -2,6 +2,8 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Extensions\ExcelExporter;
+use App\Admin\Extensions\PostsExporter;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -46,14 +48,29 @@ class OrderController extends AdminController
                 $filter->like('mobile_phone', 'Số điện thoại');
             });
         });
+        $grid->exporter(new ExcelExporter());
+//        $grid->export(function ($export) {
+//
+//            $export->filename('Filename.csv');
+//
+//            $export->except(['user_id']);
+//
+//            $export->only(['user_id']);
+//
+//            $export->originalValue(['user_id']);
+//
+//            $export->column('user_id', function ($value, $original) {
+//                return $value;
+//            )};
+//        });
+//        $grid->exporter(new PostsExporter());
 
         $grid->rows(function (Grid\Row $row) {
             $row->column('number', ($row->number+1));
         });
         $grid->column('number', 'STT');
         $grid->column('user_id', 'Khách hàng')->display(function (){
-            $user = $this->user;
-            return $user->username ?? null;
+            return $this->user->profile->company_name  ?? null;
         });
         $grid->column('total_item_amount', 'Tổng tiền')->display(function (){
             return number_format($this->total_item_amount);
@@ -61,14 +78,22 @@ class OrderController extends AdminController
         $grid->column('deposit', 'Tổng cọc')->display(function (){
             return number_format($this->deposit);
         });
+        $grid->column('owed', 'Con lai');
 //        $grid->column('number', 'Thời gian cọc');
-//        $grid->column('number', 'Tiền còn lại');
-        $grid->column('status', 'Trạng thái');
+        $grid->column('user_create', 'Người tạo đơn')->display(function (){
+            return $this->userCreate->username ?? null;
+        });
+        $grid->column('status', 'Trạng thái')->display(function (){
+            $html = $this->statusText->title;
+            $label = $this->statusText->label;
+
+            return "<span class='label label-".$label."'>".$html."</span>";
+        });
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
 
         $grid->actions(function (Grid\Displayers\Actions $actions) {
-            $actions->disableEdit();
+//            $actions->disableEdit();
         });
         return $grid;
     }
@@ -76,124 +101,181 @@ class OrderController extends AdminController
      * detail
      */
 
+    public function show($id, Content $content)
+    {
+        return $content->header(trans($this->title))->description('Chi tiết')->row(function (Row $row) use ($id) {
+            $row->column(12, $this->detail($id)); // thong tin don hang
+            $row->column(12, $this->showOrderProperty($id)); // thong tin san pham -> chon theo table
+        });
+    }
+
     protected function detail($id)
     {
         $show = new Show(Order::findOrFail($id));
 
-        $show->name('Tên danh mục');
+        $show->user_id('Tên khách hàng')->as(function(){
+            return $this->user->profile->company_name;
+        });
+
+        $show->status('Trạng thái')->as(function(){
+            return $this->statux == 1 ? 'N/A' : 'Đơn mới ';
+        });
+
+        $show->total_item_amount('Tổng tiền')->as(function(){
+            return number_format($this->total_item_amount);
+        });
+
+        $show->deposit('Tổng cọc')->as(function(){
+            return number_format($this->deposit);
+        });
+
+        $show->user_create('Người tạo đơn ')->as(function(){
+            return $this->userCreate->username ?? null ;
+        });
+
+
+
         $show->created_at();
 
+        $show->panel()
+            ->tools(function ($tools) {
+                $tools->disableEdit();
+//                $tools->disableList();
+                $tools->disableDelete();
+            });;
         return $show;
     }
 
+    protected function showOrderProperty($id){
+        return OrderItem::grid(function (Grid $grid) use ($id){
+
+            $grid->model()->where('order_id', $id);
+            $key = 1;
+            $grid->setTitle('Chi tiết sản phẩm');
+            $grid->key('STT')->display(function () use ($key){
+               return $key ++;
+            });
+            $grid->product_id('Sản phẩm')->display(function (){
+                return $this->product->name ?? null;
+            });
+            $grid->order_qty('Số lượng đặt mua');
+            $grid->product_property_id('Option sản phẩm')->display(function (){
+               return $this->productProperty->size ??  null ;
+            });
+            $grid->price('Giá tiền sản phẩm')->display(function (){
+                return $this->productProperty ? number_format($this->productProperty->price ) : null ;
+            });
+            $grid->amount_one_item('Tổng tiền sản phẩm')->display(function (){
+                return number_format($this->amount_one_item )??  null ;
+            });
+
+            $grid->picture('Ảnh')->display(function(){
+//                dd($this->picture);die();
+                $picture = $this->picture  ? asset('uploads/' . $this->picture ) : null;
+//                var_dump($picture);
+                return "<img style='width: 50px;height: 50px; border-radius: 3px' src='{$picture}' />";
+            });
+
+            $grid->disableRowSelector();
+            $grid->disableColumnSelector();
+            $grid->disableCreateButton();
+            $grid->disableFilter();
+            $grid->disableActions();
+//            $grid->disableExport();
+        });
+//        $show = new Show(OrderItem::findOrFail($id));
+//        dd($show);
+    }
     /**
      * Make a form builder.
      *
      * @return Form
      */
+//
+//    public function edit($id, Content $content)
+//    {
+//        dd($id);
+//        return parent::edit($id, $content); // TODO: Change the autogenerated stub
+//    }
+
     protected function form()
     {
+
         $form = new Form(new Order);
-        Admin::style('
-        .col-md-3 .col-sm-2, .col-md-3 .col-sm-8{width:100% !important; text-align: left;}
-        .col-md-3, .col-md-9 {border-right: 1px solid #b3b3b3 !important}
-        .col-md-3 hr, .col-md-9 hr {border-top: 1px solid #b3b3b3;}
-        ');
-
-        $form->column(3, function ($form) {
-            $customers = User::whereIsCustomer(User::CUSTOMER)->orderBy('id', 'desc')->get();
-            $temp_customer = [];
-            foreach ($customers as $customer)
-            {
-                $temp_customer[$customer->id] = $customer->profile->code . " - " .$customer->profile->company_name;
-            }
-            $form->select('user_id', 'Khách hàng')->options($temp_customer)->rules('required')->attribute(['class' => 'custom-width']);
-//            $form->select('user_id', 'Sản ')->options($temp_customer)->rules('required')->attribute(['class' => 'custom-width']);
-            $form->display('action.created_datetime', 'Thời gian tạo - Người thực hiện')->default(date('H:i | d-m-Y', strtotime(now())) . " - " .Admin::user()->name)->disable();
-            $form->divider();
-            $form->radio('is_discount','Giảm giá')
-                ->options([
-                    1 =>'Không',
-                    2 =>'Có',
-                ])->when(1, function (Form $form) {
-
-                })->when(2, function (Form $form) {
-                    $form->currency('discount_amount', 'Tiền giảm giá')
-                    ->width(100)
-                    ->symbol('VND')
-                    ->digits(0);
-                    $form->text('discount_reason', 'Lý do giảm giá');
-                })->default(1);
-            $form->radio('is_bonus','Phí phát sinh')
-                ->options([
-                    1 =>'Không',
-                    2 =>'Có',
-                ])->when(1, function (Form $form) {
-
-                })->when(2, function (Form $form) {
-                    $form->currency('other_amount', 'Tiền phí phát sinh')
-                    ->width(100)
-                    ->symbol('VND')
-                    ->digits(0);
-                })->default(1);
-            $form->divider();
-            $form->currency('total_item_amount', 'Tổng tiền sản phẩm')
-                ->width(100)
-                ->readonly()
-                ->symbol('VND')
-                ->digits(0)
-                ->attribute(["data_amount" => 0]);
-            $form->divider();
-
-            $form->currency('deposit', 'Tổng tiền cọc ')
-             ->width(100)
-                ->readonly()
-                ->symbol('VND')
-                ->digits(0);
-        });
-        $form->column(9, function ($form) {
-            $form->hasMany('items', "-", function (Form\NestedForm $form) {
-                $products = Product::orderBy('id', 'desc')->get();
-                $temp_product = [];
-                foreach ($products as $product)
+//        Admin::style('
+//        .col-md-3 .col-sm-2, .col-md-3 .col-sm-8{width:100% !important; text-align: left;}
+//        .col-md-3, .col-md-9 {border-right: 1px solid #b3b3b3 !important}
+//        .col-md-3 hr, .col-md-9 hr {border-top: 1px solid #b3b3b3;}
+//        ');
+        $form->column(12, function ($form) {
+            $form->column(6, function ($form) {
+                $customers = User::whereIsCustomer(User::CUSTOMER)->orderBy('id', 'desc')->get();
+                $temp_customer = [];
+                foreach ($customers as $customer)
                 {
-                    $temp_product[$product->id] = $product->code . " - " .$product->name;
+                    $temp_customer[$customer->id] = $customer->profile->code . " - " .$customer->profile->company_name;
                 }
+                $form->select('user_id', 'Khách hàng')->options($temp_customer)->rules('required')->attribute(['class' => 'custom-width']);
+                $form->radio('is_discount','Giảm giá')
+                    ->options([
+                        1 =>'Không',
+                        2 =>'Có',
+                    ])->when(1, function (Form $form) {
 
-                $form->select('product_id', 'Sản phẩm')
-                ->options($temp_product)
-//                ->loads(
-//                    ['product_property_id', 'product_color_id'],
-//                    ['/admin/products/product_properties', '/admin/products/product_colors']
-//                )
-                ->attribute(['id' => 'product_id'])
-                ->rules('required');
-                $form->number('order_qty', 'Số lượng đặt mua (1)')->rules('required')->width('100%')->default(1);
+                    })->when(2, function (Form $form) {
+                        $form->currency('discount_amount', 'Tiền giảm giá')
+                            ->width(100)
+                            ->symbol('VND')
+                            ->digits(0);
+                        $form->text('discount_reason', 'Lý do giảm giá');
+                    })->default(1);
+                $form->radio('is_bonus','Phí phát sinh')
+                    ->options([
+                        1 =>'Không',
+                        2 =>'Có',
+                    ])->when(1, function (Form $form) {
 
-                $form->select('product_property_id', 'Option sản phẩm')
-                ->options()
-//                ->load('price', '/admin/products/product_property_price')
-                ->rules('required');
-
-                $form->currency('price', 'Giá tiền sản phẩm  (2)') ->readonly()
+                    })->when(2, function (Form $form) {
+                        $form->currency('other_amount', 'Tiền phí phát sinh')
+                            ->width(100)
+                            ->symbol('VND')
+                            ->digits(0);
+                    })->default(1);
+            });
+            $form->column(6, function ($form) {
+                $form->display('action.created_datetime', 'Thời gian tạo - Người thực hiện')->default(date('H:i | d-m-Y', strtotime(now())) . " - " .Admin::user()->name)->disable();
+                $form->currency('total_item_amount', 'Tổng tiền sản phẩm')
                     ->width(100)
-                    ->symbol('VND')
-                    ->digits(0);
-
-                $form->currency('amount_one_item', 'Tổng tiền sản phẩm (3) = (1) * (2)')
                     ->readonly()
+                    ->symbol('VND')
+                    ->digits(0)
+                    ->attribute(["data_amount" => 0]);
+                $form->currency('deposit', 'Tổng tiền cọc ')
                     ->width(100)
+                    ->readonly()
                     ->symbol('VND')
                     ->digits(0);
-                $form->hidden('picture');
-//                dd($form->pictures_id);die();
-                $route_get_product = route('admin.products.getInfoProduct');
-                $form->html(view('furns.partials.picture_product', [
-                    'route_get_product' => $route_get_product,
-                ]),'Ảnh');
-//                    ->removable();
-            })->attribute(['class' => 'form-property']);
+            });
+//            $form->select('user_id', 'Sản ')->options($temp_customer)->rules('required')->attribute(['class' => 'custom-width']);
         });
+
+        $form->column(12, function ($form) {
+            $form->divider();
+        });
+
+        $form->column(12, function ($form) {
+            $route_get_product = route('admin.products.getInfoProduct');
+            $products = Product::orderBy('id', 'desc')->get();
+            $form->html(view('furns.partials.property_order',[
+                'products' => $products,
+                'route_get_product' => $route_get_product,
+            ]));
+            $form->tools(function (Form\Tools $tools) {
+                $tools->add('<a class="btn btn-add-order btn-sm btn-primary">Thêm sản phẩm</a>');
+            });
+        })->setWidth(12, 0);
+
+        $form->hidden('user_create')->default(Auth::user()->id);
         $form->confirm('Xác nhận lưu dữ liệu đơn hàng ?');
 
         $form->saved(function (Form $form) {
@@ -218,6 +300,7 @@ class OrderController extends AdminController
         });
 
         Admin::js('assets/furn/js/script_design.js');
+        Admin::css('assets/furn/css/custom.css');
 
         return $form;
     }

@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Encore\Admin\Traits\AdminBuilder;
 use Illuminate\Database\Eloquent\Model;
 
 class OrderItem extends Model
 {
+    use AdminBuilder;
     /**
      * Table name
      *
