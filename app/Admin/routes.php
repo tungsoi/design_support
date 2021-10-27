@@ -28,10 +28,15 @@ Route::group([
         'products'      =>  'ProductController',
         'materials'     =>  'MaterialController',
         'suppliers'     =>  'SupplierController',
-        'customers'     =>  'CustomerController',
-        'orders'        =>  'OrderController'
+        'customers'     =>  'CustomerController'
     ]);
 
+    $router->resource('orders', 'OrderController')->except(['update']);
+
+    $router->post('orders', 'OrderController@storeRebuild')->name('orders.store');
+    $router->put('orders/{order}', 'OrderController@updateRebuild')->name('orders.update');
+    $router->post('orders/deposit', 'OrderController@updateDeposit')->name('orders.deposit');
+    $router->post('orders/test', 'OrderController@test')->name('orders.test');
 });
 
 

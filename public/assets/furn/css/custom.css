@@ -394,3 +394,7 @@ select:focus /* => from bootstrap css */
 .control-label{
     margin-left: 18px;
 }
+
+.btn-add-order{
+    margin-bottom: 20px;
+}
