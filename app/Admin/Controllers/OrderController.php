@@ -2,7 +2,10 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Order\ConfirmDeposite;
+use App\Admin\Extensions\BtnDelete;
 use App\Admin\Extensions\ExcelExporter;
+use App\Admin\Extensions\ModalAction;
 use App\Admin\Extensions\PostsExporter;
 use App\Models\ProductProperty;
 use Encore\Admin\Controllers\AdminController;
@@ -17,6 +20,7 @@ use App\Models\Product;
 use App\User;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Layout\Content;
+use function foo\func;
 use Illuminate\Http\Request;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Row;
@@ -70,18 +74,26 @@ class OrderController extends AdminController
             $row->column('number', ($row->number+1));
         });
         $grid->column('number', 'STT');
+        $grid->column('order_number', 'Ma don hang')->display(function () {
+            return $this->orderNumber();
+        });
         $grid->column('user_id', 'Khách hàng')->display(function (){
             return $this->user->profile->company_name  ?? null;
         });
         $grid->column('total_item_amount', 'Tổng tiền')->display(function (){
             return number_format($this->total_item_amount);
         });
-        $grid->column('deposit', 'Tổng cọc')->display(function (){
-            return number_format($this->deposit);
+        $grid->column('deposit_default', 'Tien coc mac dinh')->display(function (){
+            return number_format($this->total_item_amount * 0.7);
+        });
+        $grid->column('deposit', 'da Coc')->display(function () {
+            $html = number_format($this->deposit) . " (VND)";
+            $html .= "<br>" . ($this->deposited_at != null ? date('H:i | d-m-Y', strtotime($this->deposited_at)) : "");
+
+            return $html;
         });
         $grid->column('owed', 'Con lai');
-//        $grid->column('number', 'Thời gian cọc');
-        $grid->column('user_create', 'Người tạo đơn')->display(function (){
+        $grid->column('user_id_created', 'Người tạo đơn')->display(function (){
             return $this->userCreate->username ?? null;
         });
         $grid->column('status', 'Trạng thái')->display(function (){
@@ -95,9 +107,28 @@ class OrderController extends AdminController
 
         $grid->actions(function (Grid\Displayers\Actions $actions) {
 //            $actions->disableEdit();
-            $route = route("admin.orders.test");
-            $actions->append('<a href=" '. $route .' " ><i class="fa fa-credit-card" aria-hidden="true"></i></a>');
+            $route = '/admin/orders/updateStatus';
+            $actions->disableDelete();
+            if ($this->row->status == 1){
+//                $actions->append(new BtnDelete($actions->getKey(), null,'Đặt cọc','fa-dollar','btn-success'));
+                $actions->append('<a href="'. route("admin.orders.deposite", $this->row->id) .'" class="btn btn-sm btn-success" data-toggle="tooltip" title="Đặt cọc"><i class="fa fa-dollar" aria-hidden="true"></i></a>');
+            }elseif ($this->row->status == 2){
+
+                $actions->append(new BtnDelete($actions->getKey(),$route, 'Xác nhận đặt hàng','fa-check','btn-info',3));
+//                $actions->append('<a href="'. route('admin.orders.index') .'" class="btn btn-sm btn-info" data-toggle="tooltip" title="Xac nhan da dat hang"><i class="fa fa-check" aria-hidden="true"></i> </a>');
+            }elseif ($this->row->status == 3){
+                $actions->append(new BtnDelete($actions->getKey(), $route,'Xác nhận thành công','fa-info-circle','btn-danger',4));
+//                $actions->append('<a href="'. route('admin.orders.index') .'" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Xac nhan thanh cong"><i class="fa fa-times" aria-hidden="true"></i></a>');
+            }else{
+                $actions->append(new BtnDelete($actions->getKey(), $route,'Xác nhận xoá đơn hàng','fa-trash','btn-danger',5));
+            }
+
         });
+
+
+//        $grid->tools(function (Grid\Tools $tools) {
+//            $tools->add(new ModalAction());
+//        });
         return $grid;
     }
     /*
@@ -300,7 +331,10 @@ class OrderController extends AdminController
     }
 
     public function storeRebuild(Request $request) {
-       $order = Order::create($request->all());
+//        dd('ok');die();
+        $data = $request->only(['id', 'status','product_id', 'deposite', 'total_item_amount', 'discount_amount', 'discount_reason', 'other_amount', 'final_amount', 'is_discount', 'is_bonus', 'deposit', 'user_id_created']);
+        $order = Order::create($data);
+
         $data = $request->all();
         for ($i = 1; $i < count($data['product_id']); $i++){
             $item = new OrderItem([
@@ -335,7 +369,7 @@ class OrderController extends AdminController
                 $item = new OrderItem([
                     'order_id' => $id,
                     'product_id' => $data['product_id'][$i],
-                    'product_property_id' => $data['product_property_id'][$i-1],
+                    'product_property_id' => $data['product_property_id'] ? $data['product_property_id'][$i] : null,
                     'order_qty' => $data['order_qty'][$i],
                     'price' => $data['price'][$i],
                 ]);
@@ -346,10 +380,70 @@ class OrderController extends AdminController
         return redirect(route('admin.orders.show',$id));
     }
 
-    public function updateDeposit(Request $request){
-        dd($request->all());
+    public function deposite($id, Content $content) {
+        return $content
+            ->title($this->title())
+            ->description($this->description['edit'] ?? trans('admin.edit'))
+            ->body($this->formDeposite($id));
     }
-    public function test(){
-        dd('o');
+
+    public function formDeposite($id) {
+        $order = Order::find($id);
+        $form = new Form(new Order());
+
+        $form->setAction(route('admin.orders.submitDeposite'));
+        $form->display('order_number')->default(
+            $order->orderNumber()
+        );
+
+        $form->display('final_amount', 'Tổng tiền')->default(number_format($order->final_amount));
+        $form->display('deposite_default', 'Tổng tiền cọc')->default(number_format($order->total_item_amount * 0.7))
+            ->help('70% tong gia tri san pham'); // tien coc mac dinh theo tat ca cac don
+
+        $form->currency('deposit', 'Tiền cọc')->symbol('VND')->digits(0)->required(); // tien khach hang chuyen khoan de vao coc
+        $form->hidden('user_id_deposited')->default(Admin::user()->id);
+        $form->hidden('deposited_at')->default(now());
+        $form->hidden('id_order')->default($id);
+//        $form->hidden('status')->default(3);
+        $form->disableEditingCheck();
+        $form->disableCreatingCheck();
+        $form->disableViewCheck();
+        $form->disableReset();
+        return $form;
+    }
+
+    public function submitDeposite(Request $request) {
+//        $data = $request->only(['deposit', 'user_id_deposited','status']);
+        $order = Order::find($request->id_order);
+        if ($order){
+            $order->status = 2;
+            $order->deposited_at = $request->deposited_at;
+            $order->deposit =  $request->deposit;
+            $order->user_id_deposited =  $request->user_id_deposited;
+            $order->save();
+        };
+        return redirect(route('admin.orders.index'));
+    }
+
+    public function updateStatus(Request $request){
+//        dd('ppp');
+        try{
+            $order = Order::find($request->id);
+
+            if ($order){
+                $order->status = $request->status;
+                $order->save();
+            };
+            return [
+                'code' => 200
+            ];
+
+        }catch (\Exception $e){
+            return [
+                'code' => 500
+            ];
+        }
+
+
     }
 }

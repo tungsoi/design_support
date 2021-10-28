@@ -31,7 +31,9 @@ class Order extends Model
         'is_discount',
         'is_bonus',
         'deposit',
-        'user_create'
+        'deposited_at',
+        'user_id_created',
+        'user_id_deposited',
     ];
 
     public function action()
@@ -49,10 +51,14 @@ class Order extends Model
     }
 
     public function userCreate(){
-        return $this->belongsTo('App\User', 'user_create');
+        return $this->hasOne('App\User', 'id', 'user_id_created');
     }
 
     public function statusText() {
         return $this->hasOne('App\Models\OrderStatus', 'id', 'status');
+    }
+
+    public function orderNumber() {
+        return "NT".str_pad($this->id, 4, 0, STR_PAD_LEFT);
     }
 }

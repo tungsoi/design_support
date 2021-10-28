@@ -130,3 +130,12 @@ $(document).on('click','.remove-order',function () {
      $(this).parents(".parent-tr").remove();
 
 });
+
+$(document).on('click','.ok',function ($e) {
+     console.log('asasasa',$e);
+
+});
+
+$('body').on('click','#change-status',function () {
+   console.log('ok');
+});

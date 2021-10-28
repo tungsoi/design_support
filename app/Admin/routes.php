@@ -35,8 +35,9 @@ Route::group([
 
     $router->post('orders', 'OrderController@storeRebuild')->name('orders.store');
     $router->put('orders/{order}', 'OrderController@updateRebuild')->name('orders.update');
-    $router->post('orders/deposit', 'OrderController@updateDeposit')->name('orders.deposit');
-    $router->post('orders/test', 'OrderController@test')->name('orders.test');
+    $router->post('orders/submitDeposite', 'OrderController@submitDeposite')->name('orders.submitDeposite');
+    $router->get('orders/{order}/confirm-deposite', 'OrderController@deposite')->name('orders.deposite');
+    $router->post('orders/updateStatus', 'OrderController@updateStatus')->name('orders.updateStatus');
 });
 
 
