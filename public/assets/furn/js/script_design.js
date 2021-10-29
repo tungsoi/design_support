@@ -1,6 +1,7 @@
 
 $(document).on('change', ".product_id", function () {
-    parent = $(this).parents(".parent-tr");
+    // console.log($(this).val());
+    parent = $(this).parents(".has-many-list_items-form");
     var token = $('._token').val();
     $.ajaxSetup({ headers:{ 'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content') } });
     $.ajax({
@@ -13,15 +14,17 @@ $(document).on('change', ".product_id", function () {
             'X-CSRF-TOKEN': token
         },
         success: function (response) {
-            if (response.pictures){
-                parent.find('.list-pictures-product').empty();
-                data = response.pictures;
-                for (var i = 0; i < data.length; i++) {
-                    parent.find('.list-pictures-product').append('<img style="width: 30px;height: 30px;margin: 2px 2px;" class="picture" data-asset="'+ data[i].asset +'" src="'+ data[i].link +'" />');
-                }
-            }
+            console.log(response);
+            // if (response.pictures){
+            //     parent.find('.list-pictures-product').empty();
+            //     data = response.pictures;
+            //     for (var i = 0; i < data.length; i++) {
+            //         parent.find('.list-pictures-product').append('<img style="width: 30px;height: 30px;margin: 2px 2px;" class="picture" data-asset="'+ data[i].asset +'" src="'+ data[i].link +'" />');
+            //     }
+            // }
             if (response.property) {
                 data = response.property;
+                console.log(data);
                 parent.find('.product_property_id').empty();
                 parent.find('.price').empty();
                 parent.find('.amount_one_item').empty();
@@ -44,59 +47,43 @@ $(document).on('change', ".product_id", function () {
 
 $(document).on('change', ".product_property_id", function () {
     price = $(this).find(':selected').attr('data_price');
-    parent = $(this).parents(".parent-tr");
+    parent = $(this).parents(".has-many-list_items-form");
     order_qty = parent.find('.order_qty').val();
-    // parent.find('.amount_one_item').val(order_qty * price).attr("data_price",(price * order_qty));
     parent.find('.price').html(parseInt(price).toLocaleString()).val(parseInt(price)).attr('data_price',price);
-    parent.find('.amount_one_item').html(parseInt(order_qty * price).toLocaleString());
-    parent.find('.amount_one_item_val').val((order_qty * price));
-    // parent.find('.price').val(price).attr('data_price',price);
+    parent.find('.amount_one_item').html(price * order_qty).val(price * order_qty).attr('data_price',price * order_qty);
     getTotalDeposit();
 });
 
 $(document).on('change', ".order_qty", function () {
     renderPrice($(this));
-    // price = parent.find('.price').attr('data_price');
-    // parent.find('.amount_one_item').val(price * order_qty).attr("data_price",(price * order_qty));
-    // getTotalDeposit();
 });
 
 function renderPrice($this) {
-    parent = $this.parents(".parent-tr");
+    parent = $this.parents(".has-many-list_items-form");
     order_qty = $this.val();
     price = parent.find('.price').attr('data_price');
-    parent.find('.price').html(parseInt(price).toLocaleString()).val(parseInt(price));
-    parent.find('.amount_one_item').html(parseInt(order_qty * price).toLocaleString()).val(parseInt(order_qty * price));
-    parent.find('.amount_one_item_val').val((order_qty * price));
+    parent.find('.amount_one_item').html(price * order_qty).val(price * order_qty).attr('data_price',price * order_qty);
     getTotalDeposit();
 }
 
 function getTotalDeposit() {
-    as = $('.amount_one_item_val').length;
-    console.log(as);
+    as = $('.amount_one_item').length;
+    console.log(as,'ok');
     var total = 0;
 
-    $(".amount_one_item_val").each(function (index,e) {
-        value = $(this).val();
-        console.log(e,'e');
-        console.log(typeof value,'value');
+    $(".amount_one_item").each(function (index,e) {
+        value = $(this).attr("data_price");
+        console.log(value,'value');
         total += parseInt(value) ;
         return total;
     });
+
     $('.total_item_amount').val(total);
     $('.deposit').val(total * 0.7);
 }
-// product = $('.product').val();
-// console.log(JSON.parse(product) );
-// $.each(product, function (i, item) {
-//     $('#mySelect').append($('<option>', {
-//         value: item.value,
-//         text : item.text
-//     }));
-// });
 
-
-$('.btn-add-order').click(function ($e) {
+$(document).on('click', '#btn-add-order', function ($e) {
+    console.log('ok');
     content = $('.option-default ').clone().removeClass('option-default');
     content.find('select.select2').removeClass('select2-hidden-accessible');
     if (content.find('.select-custom').data('select2')) {

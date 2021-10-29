@@ -1,5 +1,5 @@
 <input type="hidden" class="route_get_product" value="{{$route_get_product}}">
-<a style="margin-bottom: 20px;float: right;" class="btn btn-add-order btn-sm btn-primary">Thêm sản phẩm</a>
+<div class="add btn btn-success btn-sm" id="btn-add-order"><i class="fa fa-save"></i>Thêm sản phẩm</div>
 <table class="table">
     <thead>
     <tr>

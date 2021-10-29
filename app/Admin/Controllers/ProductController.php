@@ -229,8 +229,7 @@ class ProductController extends AdminController
 
     public function getProperty(Request $request)
     {
-        $product = Product::find($request->data);
-
+        $product = Product::find($request->get('q'));
         if ($product) {
             $options = $product->properties;
 
@@ -322,8 +321,9 @@ class ProductController extends AdminController
 
     public function getPrice(Request $request)
     {
+        dd('pplp');
         $product = Product::find($request->get('q'));
-
+        dd($product);
         if ($product) {
             $options = $product->properties;
             if (! $options)
@@ -349,12 +349,17 @@ class ProductController extends AdminController
     {
         $product_property = ProductProperty::find($request->get('q'));
         if ($product_property) {
-            return [
-                collect([
-                    'id'    =>  $product_property->price,
-                    'text'  =>  number_format($product_property->price)." VND"
-                ])
-            ];
+//            return ($product_property->price);
+            $data = collect([
+//                'id'    =>  $product_property->price,
+                'text'  =>  number_format($product_property->price)." VND"
+            ]);
+            return $data;
+            return response()->json([
+                'id'    =>  $product_property->price,
+                'value'  =>  number_format($product_property->price)." VND"
+            ]);
+
         }
 
         return null;
