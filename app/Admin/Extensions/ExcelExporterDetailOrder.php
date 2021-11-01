@@ -2,16 +2,17 @@
 
 namespace App\Admin\Extensions;
 
-use App\Models\Order;
+use App\Models\OrderItem;
 use Encore\Admin\Grid\Exporters\AbstractExporter;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ExcelExporter extends AbstractExporter
+class ExcelExporterDetailOrder extends AbstractExporter
 {
     public function export()
     {
-        Excel::create('Danh sách đơn', function($excel) {
-
+        dd('cc');
+        Excel::create('Chi tiết đơn', function($excel) {
+            dd('ccs');die();
             $excel->sheet('Sheetname', function($sheet) {
                 $rows = collect($this->getData())->map(function ($item) {
 
@@ -21,7 +22,8 @@ class ExcelExporter extends AbstractExporter
                 $data[] = $this->header();
                 $key = 1;
                 foreach ($rows->toArray() as $row) {
-                    $order = Order::find($row['id']);
+                    dd($row);die();
+                    $order = OrderItem::find($row['id']);
                     $customer = $order->user->username ?? null;
 //                    $product = User::find($row['user_id'])->username;
                     $total_amount = $order->total_item_amount ? number_format($order->total_item_amount) : 0;

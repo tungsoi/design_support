@@ -5,6 +5,7 @@ namespace App\Admin\Controllers;
 use App\Admin\Actions\Order\ConfirmDeposite;
 use App\Admin\Extensions\BtnDelete;
 use App\Admin\Extensions\ExcelExporter;
+use App\Admin\Extensions\ExcelExporterDetailOrder;
 use App\Admin\Extensions\ModalAction;
 use App\Admin\Extensions\PostsExporter;
 use App\Models\ProductProperty;
@@ -58,21 +59,6 @@ class OrderController extends AdminController
         });
         $grid->model()->orderBy('id','desc');
         $grid->exporter(new ExcelExporter());
-//        $grid->export(function ($export) {
-//
-//            $export->filename('Filename.csv');
-//
-//            $export->except(['user_id']);
-//
-//            $export->only(['user_id']);
-//
-//            $export->originalValue(['user_id']);
-//
-//            $export->column('user_id', function ($value, $original) {
-//                return $value;
-//            )};
-//        });
-//        $grid->exporter(new PostsExporter());
 
         $grid->rows(function (Grid\Row $row) {
             $row->column('number', ($row->number + 1));
@@ -83,7 +69,7 @@ class OrderController extends AdminController
         });
         $grid->column('user_id', 'Khách hàng')->display(function () {
             return $this->user->profile->company_name ?? null;
-        });
+        })->width(200);
         $grid->column('products', 'Sản phẩm')
         ->display(function () {
             return "Chi tiết";
@@ -243,12 +229,15 @@ class OrderController extends AdminController
     {
         return OrderItem::grid(function (Grid $grid) use ($id) {
 
+//            $grid->exporter(new ExcelExporterDetailOrder());
+
             $grid->model()->where('order_id', $id);
-            $key = 1;
             $grid->setTitle('Chi tiết sản phẩm');
-            $grid->key('STT')->display(function () use ($key) {
-                return $key++;
+
+            $grid->rows(function (Grid\Row $row) {
+                $row->column('number', ($row->number + 1));
             });
+            $grid->column('number', 'STT');
             $grid->product_id('Sản phẩm')->display(function () {
                 return $this->product->name ?? null;
             });
@@ -277,7 +266,7 @@ class OrderController extends AdminController
             $grid->disableCreateButton();
             $grid->disableFilter();
             $grid->disableActions();
-//            $grid->disableExport();
+            $grid->disableExport();
         });
 //        $show = new Show(OrderItem::findOrFail($id));
 //        dd($show);
@@ -371,12 +360,32 @@ class OrderController extends AdminController
             }
 
             $form->table('products', 'Danh sách sản phẩm ', function ($table) use ($temp_product) {
-                $table->select('product_id', 'Sản phẩm')->options($temp_product);
+                $table->select('product_id', 'Sản phẩm')->options($temp_product)->rules('required');
                 $table->select('product_property_id', 'Option sản phẩm')->options(ProductProperty::pluck('size', 'id'));
                 $table->html('image', 'Ảnh sản phẩm');
                 $table->number('order_qty', 'Số lượng đặt mua (1)')->rules('required')->default(1);
                 $table->currency('price', 'Giá tiền sản phẩm (2)')->readonly()->symbol('VND')->digits(0);
                 $table->currency('amount_one_item', 'Tổng tiền sản phẩm (3 = 1*2)')->symbol('VND')->digits(0)->readonly();
+//                $table->rawColumns('Hành động',function (){
+//                    return 'ok';
+//                });
+
+//                $table->embeds('','Hành động', function ($form) {
+//                    $form->html('<div class=" btn btn-danger btn-sm pull-right remove-tr"><i class="fa fa-trash"></i></div>');
+//                });
+
+//                $table->tools(function (Form $tools){
+//                    $tools->disableSubmit();
+//                });
+//                $table->action(function (Grid $action){
+//                    $action->batch(function ($batch) {
+//                        $batch->disableDelete();
+//                    });
+//                });
+//                $table->actions(function (Grid\Displayers\Actions $actions) {
+//                    $actions->disableDelete(true);
+//                });
+
             });
         })->setWidth(12, 0);
 
@@ -392,41 +401,83 @@ class OrderController extends AdminController
 
         $form->saving(function (Form $form) {
             try {
-                $order = Order::create([
-                    'total_item_amount' => $form->total_item_amount,
-                    'discount_amount' => $form->discount_amount,
-                    'discount_reason' => $form->discount_reason,
-                    'other_amount' => $form->other_amount,
-                    'final_amount' => $form->final_amount,
-                    'is_discount' => $form->is_discount,
-                    'is_bonus' => $form->is_bonus,
-                    'user_id_created' => Auth::user()->id,
-                    'user_id' => $form->user_id,
-                    'status' => 1,
-                ]);
-
-                $list_item = $form->products ?? [];
-
-                if (sizeof($list_item) > 0) {
-                    foreach ($list_item as $key => $item) {
-                        $item = new OrderItem([
-                            'order_id' => $order->id,
-                            'product_id' => $item['product_id'],
-                            'product_property_id' => $item['product_property_id'] ?? null,
-                            'order_qty' => $item['order_qty'] ?? null,
-                            'price' => $item['price'] ?? null,
-                            'amount_one_item'    =>  $item['amount_one_item'] ?? 0
-                        ]);
-                        $item->save();
+                if($form->model()->update()){
+                    $order = Order::find($form->model()->id);
+//                    dd($order);
+                    $order->update([
+                        'total_item_amount' => $form->total_item_amount,
+                        'discount_amount' => $form->discount_amount,
+                        'discount_reason' => $form->discount_reason,
+                        'other_amount' => $form->other_amount,
+                        'final_amount' => $form->final_amount,
+                        'is_discount' => $form->is_discount,
+                        'is_bonus' => $form->is_bonus,
+                        'user_id_created' => Auth::user()->id,
+                        'user_id' => $form->user_id,
+                        'status' => 1,
+                    ]);
+                    $orderItem = OrderItem::where('order_id',$form->model()->id)->get();
+                    if($orderItem){
+                        foreach ($orderItem as $item){
+                            $item->delete();
+                        }
                     }
+
+                    $list_item = $form->products ?? [];
+
+                    if (sizeof($list_item) > 0) {
+                        foreach ($list_item as $key => $item) {
+                            $item = new OrderItem([
+                                'order_id' => $order->id,
+                                'product_id' => $item['product_id'],
+                                'product_property_id' => $item['product_property_id'] ?? null,
+                                'order_qty' => $item['order_qty'] ?? null,
+                                'price' => $item['price'] ?? null,
+                                'amount_one_item'    =>  $item['amount_one_item'] ?? 0
+                            ]);
+                            $item->save();
+                        }
+                    }
+
+                }else{
+                    $order = Order::create([
+                        'total_item_amount' => $form->total_item_amount,
+                        'discount_amount' => $form->discount_amount,
+                        'discount_reason' => $form->discount_reason,
+                        'other_amount' => $form->other_amount,
+                        'final_amount' => $form->final_amount,
+                        'is_discount' => $form->is_discount,
+                        'is_bonus' => $form->is_bonus,
+                        'user_id_created' => Auth::user()->id,
+                        'user_id' => $form->user_id,
+                        'status' => 1,
+                    ]);
+
+                    $list_item = $form->products ?? [];
+
+                    if (sizeof($list_item) > 0) {
+                        foreach ($list_item as $key => $item) {
+                            $item = new OrderItem([
+                                'order_id' => $order->id,
+                                'product_id' => $item['product_id'],
+                                'product_property_id' => $item['product_property_id'] ?? null,
+                                'order_qty' => $item['order_qty'] ?? null,
+                                'price' => $item['price'] ?? null,
+                                'amount_one_item'    =>  $item['amount_one_item'] ?? 0
+                            ]);
+                            $item->save();
+                        }
+                    }
+
                 }
 
                 admin_toastr('Tạo thành công', 'success');
                 return redirect(route('admin.orders.index'));
 
             } catch (\Exception $e) {
-                admin_toastr('Có lỗi xảy ra: ' . $e->getMessage(), 'error');
-                return back()->withInput();
+                dd($e->getMessage());
+//                admin_toastr('Có lỗi xảy ra: ' . $e->getMessage(), 'error');
+//                return back()->withInput();
             }
 
         });
@@ -439,18 +490,6 @@ class OrderController extends AdminController
 
 
         return $form;
-    }
-
-    public function getColumnNameAttribute($value)
-    {
-        dd($value);die();
-        return array_values(json_decode($value, true) ?: []);
-    }
-
-    public function setColumnNameAttribute($value)
-    {
-        dd('cc');die();
-        $this->attributes['list_items'] = json_encode(array_values($value));
     }
 
 

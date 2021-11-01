@@ -1,4 +1,8 @@
 
+// $( document ).ready(function() {
+//     $('.has-many-products').find('th:last, td:last').remove();
+// });
+
 $(document).on('change', ".product_id", function () {
     console.log($(this).val());
     parent = $(this).parents(".has-many-products-form");
@@ -60,12 +64,15 @@ $(document).on('change', ".order_qty", function () {
 
 function renderPrice($this) {
     parent = $this.parents(".has-many-products-form");
+    console.log(parent);
     order_qty = $this.val();
     price = parent.find('.price').val();
+    console.log(price);
+
     price = price.replace(/,/g, "");
 
-    let numb = price * order_qty;
-    let amount = parent.find('.amount_one_item');
+    numb = price * order_qty;
+    amount = parent.find('.amount_one_item');
     // let amount = parent.find('.amount_one_item').html(price * order_qty).val(price * order_qty).attr('data_price',price * order_qty);
     amount.html(numb);
     amount.val(numb);
@@ -73,8 +80,7 @@ function renderPrice($this) {
 }
 
 function getTotalDeposit() {
-    // as = $('.amount_one_item').length;
-    // console.log(as,'ok');
+
     var total = 0;
 
     $(".amount_one_item").each(function (index,e) {
@@ -108,28 +114,16 @@ $(document).on('click', '#btn-add-order', function ($e) {
 
 });
 
-$(document).on('click','.btn-up',function () {
-    value = $(this).parents(".form-order_qty").find('input').val();
-    $(this).parents(".form-order_qty").find('input').val(parseInt(value)+1);
-    renderPrice($(this));
-});
-
-$(document).on('click','.btn-dow',function () {
-    value = $(this).parents(".form-order_qty").find('input').val();
-    $(this).parents(".form-order_qty").find('input').val(parseInt(value)-1);
-    renderPrice($(this));
-});
-
 $(document).on('click','.remove-order',function () {
      $(this).parents(".parent-tr").remove();
 
 });
 
-$(document).on('click','.ok',function ($e) {
-     console.log('asasasa',$e);
-
+$('body').on('click','.remove-tr',function () {
+    $(this).parents(".has-many-products-form").remove();
+    getTotalDeposit();
 });
 
-$('body').on('click','#change-status',function () {
-   console.log('ok');
-});
+
+
+

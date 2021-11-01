@@ -43,7 +43,9 @@
                         @if($options['allowDelete'])
                             <td class="form-group">
                                 <div>
-                                    <div class="remove btn btn-danger btn-sm pull-right"><i class="fa fa-trash"></i></div>
+                                    <div class="remove-tr btn btn-danger btn-sm pull-right"><i class="fa fa-trash"></i></div>
+                                    {{--<div class="remove btn btn-danger btn-sm pull-right"><i class="fa fa-trash"></i></div>--}}
+
                                 </div>
                             </td>
                         @endif
@@ -59,7 +61,7 @@
 
                     <td class="form-group">
                         <div>
-                            <div class="remove btn btn-danger btn-sm pull-right"><i class="fa fa-trash"></i></div>
+                            <div class="remove-tr btn btn-danger btn-sm pull-right"><i class="fa fa-trash"></i></div>
                         </div>
                     </td>
                 </tr>
