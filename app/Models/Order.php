@@ -34,6 +34,12 @@ class Order extends Model
         'deposited_at',
         'user_id_created',
         'user_id_deposited',
+        'ordered_at',
+        'user_id_ordered',
+        'success_at',
+        'user_id_success',
+        'cancel_at',
+        'user_id_cancel'
     ];
 
     public function action()
@@ -41,7 +47,7 @@ class Order extends Model
         return $this->hasMany('App\Models\OrderAction', 'order_id');
     }
 
-    public function items()
+    public function products()
     {
         return $this->hasMany('App\Models\OrderItem', 'order_id');
     }
@@ -60,5 +66,20 @@ class Order extends Model
 
     public function orderNumber() {
         return "NT".str_pad($this->id, 4, 0, STR_PAD_LEFT);
+    }
+
+    public function userDeposite(){
+        return $this->hasOne('App\User', 'id', 'user_id_deposited');
+    }
+
+    public function userOrdered(){
+        return $this->hasOne('App\User', 'id', 'user_id_success');
+    }
+
+    public function userSuccess(){
+        return $this->hasOne('App\User', 'id', 'user_id_ordered');
+    }
+    public function userCancel(){
+        return $this->hasOne('App\User', 'id', 'user_id_cancel');
     }
 }

@@ -26,6 +26,8 @@ use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Row;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\MessageBag;
+Use Encore\Admin\Widgets\Table;
+
 
 class OrderController extends AdminController
 {
@@ -82,22 +84,33 @@ class OrderController extends AdminController
         $grid->column('user_id', 'Khách hàng')->display(function () {
             return $this->user->profile->company_name ?? null;
         });
-        $grid->column('total_item_amount', 'Tổng tiền')->display(function () {
-            return number_format($this->total_item_amount) . " (VND)";
+        $grid->column('products', 'Sản phẩm')
+        ->display(function () {
+            return "Chi tiết";
+        })
+        ->expand(function ($model) {
+
+            $data = [];
+
+            return new Table(['STT', 'Hành động', 'Thời gian', 'Người thực hiện'], $data);
+        })->width(100);
+
+        $grid->column('total_item_amount', 'Tổng tiền (VND)')->display(function () {
+            return number_format($this->total_item_amount);
         });
-        $grid->column('deposit_default', 'Tiền cọc mặc định ')->display(function () {
-            return number_format($this->total_item_amount * 0.7) . " (VND)";
+        $grid->column('deposit_default', 'Tiền cọc mặc định (VND)')->display(function () {
+            return number_format($this->total_item_amount * 0.7);
         });
-        $grid->column('deposit', 'Đã cọc ')->display(function () {
-            $html = number_format($this->deposit) . " (VND)";
-            $html .= "<br>" . ($this->deposited_at != null ? date('H:i | d-m-Y', strtotime($this->deposited_at)) : "");
+        $grid->column('deposit', 'Đã cọc (VND)')->display(function () {
+            $html = number_format($this->deposit);
+            // $html .= "<br> <i style='color: gray'>" . ($this->deposited_at != null ? date('H:i | d-m-Y', strtotime($this->deposited_at)) : "") . "</i>";
 
             return $html;
-        });
-        $grid->column('owed', 'Còn ')->display(function (){
+        })->width(150);
+        $grid->column('owed', 'Còn lại (VND) ')->display(function (){
             $owed = $this->total_item_amount - $this->deposit;
-            return  number_format($owed) . " (VND)";
-        });
+            return  number_format($owed);
+        })->label('danger');
         $grid->column('user_id_created', 'Người tạo đơn')->display(function () {
             return $this->userCreate->username ?? null;
         });
@@ -107,8 +120,48 @@ class OrderController extends AdminController
 
             return "<span class='label label-" . $label . "'>" . $html . "</span>";
         });
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
+        $grid->column('created_at', 'Timeline')
+        ->display(function () {
+            return "Chi tiết";
+        })
+        ->expand(function ($model) {
+
+            $data = [
+                [
+                    1,
+                    'Tạo đơn',
+                    $this->created_at != null ? date('H:i | d-m-Y', strtotime($this->created_at)) : "",
+                    $this->userCreate->name ?? ""
+                ],
+                [
+                    2,
+                    'Đặt cọc',
+                    $this->deposited_at != null ? date('H:i | d-m-Y', strtotime($this->deposited_at)) : "",
+                    $this->userDeposite->name ?? ""
+                ],
+                [
+                    3,
+                    'Đặt hàng',
+                    $this->ordered_at != null ? date('H:i | d-m-Y', strtotime($this->ordered_at)) : "",
+                    $this->userOrdered->name ?? ""
+                ],
+                [
+                    4,
+                    'Thành công',
+                    $this->success_at != null ? date('H:i | d-m-Y', strtotime($this->success_at)) : "",
+                    $this->userSuccess->name ?? ""
+                ],
+                [
+                    5,
+                    'Huỷ',
+                    $this->cancel_at != null ? date('H:i | d-m-Y', strtotime($this->cancel_at)) : "",
+                    $this->userCancel->name ?? ""
+                ],
+            ];
+
+            return new Table(['STT', 'Hành động', 'Thời gian', 'Người thực hiện'], $data);
+        });
+
 
         $grid->actions(function (Grid\Displayers\Actions $actions) {
             $route = '/admin/orders/updateStatus';
@@ -127,7 +180,7 @@ class OrderController extends AdminController
 //                $actions->append('<a href="'. route('admin.orders.index') .'" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Xac nhan thanh cong"><i class="fa fa-times" aria-hidden="true"></i></a>');
             } else {
                 $actions->disableEdit();
-                $actions->append(new BtnDelete($actions->getKey(), $route, 'Xác nhận xoá đơn hàng', 'fa-trash', 'btn-danger', 5));
+                $actions->append(new BtnDelete($actions->getKey(), $route, 'Xác nhận huỷ đơn', 'fa-trash', 'btn-danger', 5));
             }
 
         });
@@ -241,7 +294,7 @@ class OrderController extends AdminController
 //        return $this->form($getID);
 //    }
 
-    protected function form($id = null)
+    protected function form()
     {
         Admin::js('assets/furn/js/script_design.js');
 
@@ -307,30 +360,27 @@ class OrderController extends AdminController
             });
         });
 
-        $route_get_product = route('admin.products.getInfoProduct');
-
-        $form->hidden('route_get_product')->default($route_get_product);
-        $form->hidden('user_create')->default(Auth::user()->id);
+        $form->hidden('user_id_created')->default(Auth::user()->id);
 
         $form->column(12, function ($form) {
-
+            $form->divider();
             $products = Product::orderBy('id', 'desc')->get();
             $temp_product = [];
             foreach ($products as $product) {
                 $temp_product[$product->id] = $product->code . " - " . $product->name;
             }
 
-            $form->table('list_items', 'Danh sách sản phẩm ', function ($table) use ($temp_product) {
+            $form->table('products', 'Danh sách sản phẩm ', function ($table) use ($temp_product) {
                 $table->select('product_id', 'Sản phẩm')->options($temp_product);
-                $table->select('product_property_id', 'Option sản phẩm')->attribute(['id' => 'product_id']);
+                $table->select('product_property_id', 'Option sản phẩm')->options(ProductProperty::pluck('size', 'id'));
                 $table->html('image', 'Ảnh sản phẩm');
                 $table->number('order_qty', 'Số lượng đặt mua (1)')->rules('required')->default(1);
-                $table->currency('price', 'Giá tiền sản phẩm2')->readonly()->symbol('VND')->digits(0);
-                $table->currency('amount_one_item', 'Tổng tiền sản phẩm')->symbol('VND')->digits(0)->readonly();
+                $table->currency('price', 'Giá tiền sản phẩm (2)')->readonly()->symbol('VND')->digits(0);
+                $table->currency('amount_one_item', 'Tổng tiền sản phẩm (3 = 1*2)')->symbol('VND')->digits(0)->readonly();
             });
         })->setWidth(12, 0);
 
-        $form->confirm('Xác nhận lưu dữ liệu đơn hàng ?');
+        $form->confirm('Lưu dữ liệu đơn hàng ?');
 
         $form->disableEditingCheck();
         $form->disableCreatingCheck();
@@ -354,8 +404,8 @@ class OrderController extends AdminController
                     'user_id' => $form->user_id,
                     'status' => 1,
                 ]);
-//
-                $list_item = $form->list_items ?? [];
+
+                $list_item = $form->products ?? [];
 
                 if (sizeof($list_item) > 0) {
                     foreach ($list_item as $key => $item) {
@@ -365,6 +415,7 @@ class OrderController extends AdminController
                             'product_property_id' => $item['product_property_id'] ?? null,
                             'order_qty' => $item['order_qty'] ?? null,
                             'price' => $item['price'] ?? null,
+                            'amount_one_item'    =>  $item['amount_one_item'] ?? 0
                         ]);
                         $item->save();
                     }
@@ -381,7 +432,10 @@ class OrderController extends AdminController
         });
 
 
-        Admin::style('.form-group label {margin-left: 18px !important;}, .has-many-list_items thead tr tdp:first-child: {width:15%}');
+        Admin::style('
+        .form-group label {margin-left: 18px !important;},
+        .has-many-list_items thead tr tdp:first-child: {width:25%}
+        input { width: 100% !important; }');
 
 
         return $form;
@@ -422,6 +476,7 @@ class OrderController extends AdminController
         $order = Order::find($id);
         $form = new Form(new Order());
 
+        $form->setTitle('Đặt cọc đơn hàng');
         $form->setAction(route('admin.orders.submitDeposite'));
         $form->display('order_number')->default(
             $order->orderNumber()
@@ -459,24 +514,30 @@ class OrderController extends AdminController
 
     public function updateStatus(Request $request)
     {
-//        dd('ppp');
-        try {
-            $order = Order::find($request->id);
+        $order = Order::find($request->id);
 
-            if ($order) {
-                $order->status = $request->status;
-                $order->save();
-            };
-            return [
-                'code' => 200
-            ];
-
-        } catch (\Exception $e) {
-            return [
-                'code' => 500
-            ];
+        $data = [
+            'status'    =>  $request->status
+        ];
+        if ($request->status == 3) {
+            $data['user_id_ordered']    =  Admin::user()->id;
+            $data['ordered_at'] =   now();
+        } else if ($request->status == 4) {
+            $data['user_id_success']    =  Admin::user()->id;
+            $data['success_at'] =   now();
+        } else if ($request->status == 5) {
+            $data['user_id_cancel']    =  Admin::user()->id;
+            $data['cancel_at'] =   now();
         }
 
+        $order->update($data);
+
+        admin_toastr('Lưu thành công', 'success');
+
+        return response()->json([
+            'status'    =>  true,
+            'message'   =>  'success'
+        ]);
 
     }
 }

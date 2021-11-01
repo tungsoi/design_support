@@ -1,7 +1,7 @@
 
 $(document).on('change', ".product_id", function () {
-    // console.log($(this).val());
-    parent = $(this).parents(".has-many-list_items-form");
+    console.log($(this).val());
+    parent = $(this).parents(".has-many-products-form");
     var token = $('._token').val();
     $.ajaxSetup({ headers:{ 'X-CSRF-TOKEN' : $('meta[name="csrf-token"]').attr('content') } });
     $.ajax({
@@ -47,7 +47,7 @@ $(document).on('change', ".product_id", function () {
 
 $(document).on('change', ".product_property_id", function () {
     price = $(this).find(':selected').attr('data_price');
-    parent = $(this).parents(".has-many-list_items-form");
+    parent = $(this).parents(".has-many-products-form");
     order_qty = parent.find('.order_qty').val();
     parent.find('.price').html(parseInt(price).toLocaleString()).val(parseInt(price)).attr('data_price',price);
     parent.find('.amount_one_item').html(price * order_qty).val(price * order_qty).attr('data_price',price * order_qty);
@@ -59,21 +59,28 @@ $(document).on('change', ".order_qty", function () {
 });
 
 function renderPrice($this) {
-    parent = $this.parents(".has-many-list_items-form");
+    parent = $this.parents(".has-many-products-form");
     order_qty = $this.val();
-    price = parent.find('.price').attr('data_price');
-    parent.find('.amount_one_item').html(price * order_qty).val(price * order_qty).attr('data_price',price * order_qty);
+    price = parent.find('.price').val();
+    price = price.replace(/,/g, "");
+
+    let numb = price * order_qty;
+    let amount = parent.find('.amount_one_item');
+    // let amount = parent.find('.amount_one_item').html(price * order_qty).val(price * order_qty).attr('data_price',price * order_qty);
+    amount.html(numb);
+    amount.val(numb);
     getTotalDeposit();
 }
 
 function getTotalDeposit() {
-    as = $('.amount_one_item').length;
-    console.log(as,'ok');
+    // as = $('.amount_one_item').length;
+    // console.log(as,'ok');
     var total = 0;
 
     $(".amount_one_item").each(function (index,e) {
-        value = $(this).attr("data_price");
-        console.log(value,'value');
+        value = $(this).val();
+        value = value.replace(/,/g, "");
+        console.log(value, "value");
         total += parseInt(value) ;
         return total;
     });

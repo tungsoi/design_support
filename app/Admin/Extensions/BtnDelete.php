@@ -74,7 +74,7 @@ class BtnDelete
                                     window.location.reload();
                                 }, 1000);
                             }
-                            
+
                         }
                     });
                 } else {

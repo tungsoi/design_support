@@ -85,7 +85,7 @@ a.editable-empty {
 }
 body {
     font-family: "Tahoma" !important;
-    font-size: 12px !important;
+    font-size: 13px !important;
 }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
@@ -320,4 +320,8 @@ section.content .grid-box {
 }
 .text-black {
     color: #646464 !important;
+}
+.label {
+    font-size: 12px;
+    border: 1px solid #646464;
 }

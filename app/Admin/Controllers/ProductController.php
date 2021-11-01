@@ -271,10 +271,11 @@ class ProductController extends AdminController
 
                 $data['property'][] = collect([
                     'id'    =>  $option->id,
-                    'text'  =>  "Size: ".$option->size." (".$option->lenght." x ".$option->width." x ".$option->height.")  - "
-                        . ($option->material->title ?? null)
-                        ." - "
-                        .number_format($option->price)." VND",
+                    'text'  =>  $option->size,
+                    // 'text'  =>  "Size: ".$option->size." (".$option->lenght." x ".$option->width." x ".$option->height.")  - "
+                    //     . ($option->material->title ?? null)
+                    //     ." - "
+                    //     .number_format($option->price)." VND",
                     'price' => $option->price
                 ]);
             }
