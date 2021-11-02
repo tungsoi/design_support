@@ -1,7 +1,14 @@
 
-// $( document ).ready(function() {
-//     $('.has-many-products').find('th:last, td:last').remove();
-// });
+$( document ).ready(function() {
+    domain = ($('.domain').val());
+    $(".picture").each(function (index,e) {
+        asset = $(this).val();
+        parent = $(this).parents(".has-many-products-form");
+        if (asset){
+            parent.find('.list-image-product').html('<img style="width: 30px;height: 30px;margin: 2px 2px;cursor: pointer;" class="picture" src="'+ domain + '/uploads/' +asset +'" />');
+        }
+    });
+});
 
 $(document).on('change', ".product_id", function () {
     console.log($(this).val());
@@ -18,17 +25,16 @@ $(document).on('change', ".product_id", function () {
             'X-CSRF-TOKEN': token
         },
         success: function (response) {
-            console.log(response);
-            // if (response.pictures){
-            //     parent.find('.list-pictures-product').empty();
-            //     data = response.pictures;
-            //     for (var i = 0; i < data.length; i++) {
-            //         parent.find('.list-pictures-product').append('<img style="width: 30px;height: 30px;margin: 2px 2px;" class="picture" data-asset="'+ data[i].asset +'" src="'+ data[i].link +'" />');
-            //     }
-            // }
+            console.log(response,'');
+            if (response.pictures){
+                parent.find('.list-image-product').empty();
+                data = response.pictures;
+                for (var i = 0; i < data.length; i++) {
+                    parent.find('.list-image-product').append('<img style="width: 30px;height: 30px;margin: 2px 2px;cursor: pointer;" class="picture" data-asset="'+ data[i].asset +'" src="'+ data[i].link +'" />');
+                }
+            }
             if (response.property) {
                 data = response.property;
-                console.log(data);
                 parent.find('.product_property_id').empty();
                 parent.find('.price').empty();
                 parent.find('.amount_one_item').empty();
@@ -96,7 +102,6 @@ function getTotalDeposit() {
 }
 
 $(document).on('click', '#btn-add-order', function ($e) {
-    console.log('ok');
     content = $('.option-default ').clone().removeClass('option-default');
     content.find('select.select2').removeClass('select2-hidden-accessible');
     if (content.find('.select-custom').data('select2')) {
@@ -125,5 +130,12 @@ $('body').on('click','.remove-tr',function () {
 });
 
 
-
-
+$('body').on('click','.picture',function () {
+    parent = $(this).parents(".list-image-product");
+    asset = $(this).attr('data-asset');
+    // console.log(asset);
+    // console.log(parent.parent().find('.image-product'));
+    parent.find('img').css('border','none');
+    $(this).css('border','2px solid red');
+    $(this).parents(".has-many-products-form").find('.picture').val(asset);
+});

@@ -140,11 +140,11 @@ class CustomerController extends AdminController
             $form->text('profile.address', 'Địa chỉ')->rules('required');
             $form->text('profile.mobile_phone', 'Điện thoại liên hệ')->rules('required');
             $form->hidden('profile.code');
-        })
-        ->tab('Thanh toán', function ($form) {
-            $form->text('profile.discount_percent', '% giảm giá đơn hàng')->rules('required');
-            $form->text('profile.min_deposite_percent', '% tối thiểu đặt cọc đơn hàng')->rules('required|email');
         });
+//        ->tab('Thanh toán', function ($form) {
+//            $form->text('profile.discount_percent', '% giảm giá đơn hàng')->rules('required');
+//            $form->text('profile.min_deposite_percent', '% tối thiểu đặt cọc đơn hàng')->rules('required|email');
+//        });
 
         $form->saving(function (Form $form) {
             if ($form->password && $form->model()->password != $form->password) {

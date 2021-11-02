@@ -73,11 +73,11 @@ class Order extends Model
     }
 
     public function userOrdered(){
-        return $this->hasOne('App\User', 'id', 'user_id_success');
+        return $this->hasOne('App\User', 'id', 'user_id_ordered');
     }
 
     public function userSuccess(){
-        return $this->hasOne('App\User', 'id', 'user_id_ordered');
+        return $this->hasOne('App\User', 'id', 'user_id_success');
     }
     public function userCancel(){
         return $this->hasOne('App\User', 'id', 'user_id_cancel');

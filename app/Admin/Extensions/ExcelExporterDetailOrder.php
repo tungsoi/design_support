@@ -4,17 +4,17 @@ namespace App\Admin\Extensions;
 
 use App\Models\OrderItem;
 use Encore\Admin\Grid\Exporters\AbstractExporter;
+use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ExcelExporterDetailOrder extends AbstractExporter
 {
     public function export()
     {
-        dd('cc');
-        Excel::create('Chi tiết đơn', function($excel) {
-            dd('ccs');die();
-            $excel->sheet('Sheetname', function($sheet) {
-                $rows = collect($this->getData())->map(function ($item) {
+        $data =  OrderItem::where('order_id',$id)->get();
+        Excel::create('Chi tiết đơn', function($excel) use ($data) {
+            $excel->sheet('Sheetname', function($sheet) use ($data) {
+                $rows = collect($data)->map(function ($item) {
 
                     return $item;
                 });
@@ -22,22 +22,18 @@ class ExcelExporterDetailOrder extends AbstractExporter
                 $data[] = $this->header();
                 $key = 1;
                 foreach ($rows->toArray() as $row) {
-                    dd($row);die();
                     $order = OrderItem::find($row['id']);
-                    $customer = $order->user->username ?? null;
-//                    $product = User::find($row['user_id'])->username;
-                    $total_amount = $order->total_item_amount ? number_format($order->total_item_amount) : 0;
-                    $total_deposite = $order->deposite ? number_format($order->deposite) : 0;
-                    $user_id_created = $order->userCreate->username ?? null;
-                    $status = $order->statusText ? $order->statusText->title : '';
+                    $product = Product::find($order->product_id) ? Product::find($order->product_id)->name : null;
+                    $productProperty = ProductProperty::find($order->product_property_id) ? ProductProperty::find($order->product_property_id)->size : null;
+                    $price = $order->price ? number_format($order->price): null;
+                    $order_qty = $order->order_qty ? ($order->order_qty): null;
                     $created_at = $order->created_at ? date('H:i | d-m-Y', strtotime($order->created_at)) : null;
                     $data[] = [
                         $key++,
-                        $customer,
-                        $total_amount,
-                        $total_deposite,
-                        $status,
-                        $user_id_created,
+                        $product,
+                        $productProperty,
+                        $price,
+                        $order_qty,
                         $created_at
                     ];
                 }
@@ -45,11 +41,13 @@ class ExcelExporterDetailOrder extends AbstractExporter
             });
         })->export('xlsx');
 
+        return redirect(route('admin.orders.index'));
+
     }
 
     public function header()
     {
-        return ['STT','KHÁCH HÀNG','TỔNG TIỀN (VND)','ĐÃ CỌC (VND)','TRẠNG THÁI	','NGƯỜI TẠO ĐƠN','THỜI GIAN TẠO'];
+        return ['STT','SẢN PHẨM','OPTION SẢN PHẨM','GIÁ','SỐ LƯỢNG','THỜI GIAN TẠO'];
     }
 
 //'SẢN PHẨM',

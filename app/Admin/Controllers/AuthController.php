@@ -22,7 +22,7 @@ class AuthController extends Controller
 
     /**
      * Show the login page.
-     *
+     *a
      * @return \Illuminate\Contracts\View\Factory|Redirect|\Illuminate\View\View
      */
     public function getLogin()

@@ -4,6 +4,7 @@ namespace App\Admin\Controllers;
 
 use App\Admin\Actions\Order\ConfirmDeposite;
 use App\Admin\Extensions\BtnDelete;
+use App\Admin\Extensions\BtnExport;
 use App\Admin\Extensions\ExcelExporter;
 use App\Admin\Extensions\ExcelExporterDetailOrder;
 use App\Admin\Extensions\ModalAction;
@@ -26,8 +27,10 @@ use Illuminate\Http\Request;
 use Encore\Admin\Layout\Column;
 use Encore\Admin\Layout\Row;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\MessageBag;
 Use Encore\Admin\Widgets\Table;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class OrderController extends AdminController
@@ -50,13 +53,14 @@ class OrderController extends AdminController
         $grid->expandFilter();
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
+
             $filter->column(1 / 3, function ($filter) {
-                $filter->like('name', 'Tên nhà cung cấp');
-            });
-            $filter->column(1 / 3, function ($filter) {
-                $filter->like('mobile_phone', 'Số điện thoại');
+                $users = User::join('user_profiles','user_profiles.user_id','=','admin_users.id')->pluck('user_profiles.company_name','admin_users.id')->all();
+                $filter->equal('user_id', 'Khách hàng')
+                    ->select($users);
             });
         });
+
         $grid->model()->orderBy('id','desc');
         $grid->exporter(new ExcelExporter());
 
@@ -70,16 +74,30 @@ class OrderController extends AdminController
         $grid->column('user_id', 'Khách hàng')->display(function () {
             return $this->user->profile->company_name ?? null;
         })->width(200);
+//        $countProduct = OrderItem::where('order_id',$this->id)->get();
+//        dd($countProduct);
         $grid->column('products', 'Sản phẩm')
         ->display(function () {
-            return "Chi tiết";
+            return $this->products->count() .' Sản phẩm';
         })
         ->expand(function ($model) {
-
             $data = [];
 
-            return new Table(['STT', 'Hành động', 'Thời gian', 'Người thực hiện'], $data);
-        })->width(100);
+            $orderItem = OrderItem::where('order_id',$this->id)->get();
+            if (count($orderItem) > 0){
+                foreach ($orderItem as $key => $item)
+                $data[] = [
+                    $key+1,
+                    $item['product_id'] ? Product::find($item['product_id'])->name : null,
+                    $item['product_property_id'] ? ProductProperty::find($item['product_property_id'])->size : null ,
+                    $item['price'] ? number_format($item['price']) : null,
+                    $item['order_qty'],
+                    $item['created_at'],
+                ];
+            }
+
+            return new Table(['STT', 'Sản phẩm','Option sản phẩm','Giá tiền','Số lượng', 'Thời gian'], $data);
+        })->width(150);
 
         $grid->column('total_item_amount', 'Tổng tiền (VND)')->display(function () {
             return number_format($this->total_item_amount);
@@ -153,28 +171,29 @@ class OrderController extends AdminController
             $route = '/admin/orders/updateStatus';
             $actions->disableDelete();
             if ($this->row->status == 1) {
-//                $actions->disableEdit();
-//                $actions->append(new BtnDelete($actions->getKey(), null,'Đặt cọc','fa-dollar','btn-success'));
                 $actions->append('<a href="' . route("admin.orders.deposite", $this->row->id) . '" class="btn btn-sm btn-success" data-toggle="tooltip" title="Đặt cọc"><i class="fa fa-dollar" aria-hidden="true"></i></a>');
             } elseif ($this->row->status == 2) {
                 $actions->disableEdit();
                 $actions->append(new BtnDelete($actions->getKey(), $route, 'Xác nhận đặt hàng', 'fa-check', 'btn-info', 3));
-//                $actions->append('<a href="'. route('admin.orders.index') .'" class="btn btn-sm btn-info" data-toggle="tooltip" title="Xac nhan da dat hang"><i class="fa fa-check" aria-hidden="true"></i> </a>');
             } elseif ($this->row->status == 3) {
                 $actions->disableEdit();
                 $actions->append(new BtnDelete($actions->getKey(), $route, 'Xác nhận thành công', 'fa-info-circle', 'btn-danger', 4));
-//                $actions->append('<a href="'. route('admin.orders.index') .'" class="btn btn-sm btn-warning" data-toggle="tooltip" title="Xac nhan thanh cong"><i class="fa fa-times" aria-hidden="true"></i></a>');
-            } else {
+            } elseif ($this->row->status == 4){
                 $actions->disableEdit();
                 $actions->append(new BtnDelete($actions->getKey(), $route, 'Xác nhận huỷ đơn', 'fa-trash', 'btn-danger', 5));
+            }else{
+                $actions->disableEdit();
             }
+            $actions->append(new BtnExport($actions->getKey(), $route, ' Xuất excel', 'fa-file-excel-o', 'btn-success'));
+
 
         });
-
 
 //        $grid->tools(function (Grid\Tools $tools) {
 //            $tools->add(new ModalAction());
 //        });
+        Admin::style('
+        .column-__actions__ a.btn { margin-bottom: 3px !important; }');
         return $grid;
     }
 
@@ -229,7 +248,7 @@ class OrderController extends AdminController
     {
         return OrderItem::grid(function (Grid $grid) use ($id) {
 
-//            $grid->exporter(new ExcelExporterDetailOrder());
+            $grid->exporter(new ExcelExporterDetailOrder());
 
             $grid->model()->where('order_id', $id);
             $grid->setTitle('Chi tiết sản phẩm');
@@ -266,7 +285,7 @@ class OrderController extends AdminController
             $grid->disableCreateButton();
             $grid->disableFilter();
             $grid->disableActions();
-            $grid->disableExport();
+//            $grid->disableExport();
         });
 //        $show = new Show(OrderItem::findOrFail($id));
 //        dd($show);
@@ -286,7 +305,6 @@ class OrderController extends AdminController
     protected function form()
     {
         Admin::js('assets/furn/js/script_design.js');
-
         $form = new Form(new Order);
 //        Admin::style('
 //        .col-md-3 .col-sm-2, .col-md-3 .col-sm-8{width:100% !important; text-align: left;}
@@ -352,39 +370,25 @@ class OrderController extends AdminController
         $form->hidden('user_id_created')->default(Auth::user()->id);
 
         $form->column(12, function ($form) {
+//            $getID = $this->getId(request()->url());
             $form->divider();
             $products = Product::orderBy('id', 'desc')->get();
             $temp_product = [];
             foreach ($products as $product) {
                 $temp_product[$product->id] = $product->code . " - " . $product->name;
             }
-
             $form->table('products', 'Danh sách sản phẩm ', function ($table) use ($temp_product) {
+//                dd($table->form->form());
+//                    dd($table->form());
                 $table->select('product_id', 'Sản phẩm')->options($temp_product)->rules('required');
                 $table->select('product_property_id', 'Option sản phẩm')->options(ProductProperty::pluck('size', 'id'));
-                $table->html('image', 'Ảnh sản phẩm');
+
+                $table->html('<div class="list-image-product"></div>', 'Ảnh sản phẩm')
+                    ->default('<img style="width: 30px;height: 30px;margin: 2px 2px;cursor: pointer;" class="picture"  src="" />');
+                $table->hidden('picture');
                 $table->number('order_qty', 'Số lượng đặt mua (1)')->rules('required')->default(1);
                 $table->currency('price', 'Giá tiền sản phẩm (2)')->readonly()->symbol('VND')->digits(0);
                 $table->currency('amount_one_item', 'Tổng tiền sản phẩm (3 = 1*2)')->symbol('VND')->digits(0)->readonly();
-//                $table->rawColumns('Hành động',function (){
-//                    return 'ok';
-//                });
-
-//                $table->embeds('','Hành động', function ($form) {
-//                    $form->html('<div class=" btn btn-danger btn-sm pull-right remove-tr"><i class="fa fa-trash"></i></div>');
-//                });
-
-//                $table->tools(function (Form $tools){
-//                    $tools->disableSubmit();
-//                });
-//                $table->action(function (Grid $action){
-//                    $action->batch(function ($batch) {
-//                        $batch->disableDelete();
-//                    });
-//                });
-//                $table->actions(function (Grid\Displayers\Actions $actions) {
-//                    $actions->disableDelete(true);
-//                });
 
             });
         })->setWidth(12, 0);
@@ -433,6 +437,7 @@ class OrderController extends AdminController
                                 'product_property_id' => $item['product_property_id'] ?? null,
                                 'order_qty' => $item['order_qty'] ?? null,
                                 'price' => $item['price'] ?? null,
+                                'picture' => $item['picture'] ?? null,
                                 'amount_one_item'    =>  $item['amount_one_item'] ?? 0
                             ]);
                             $item->save();
@@ -463,7 +468,8 @@ class OrderController extends AdminController
                                 'product_property_id' => $item['product_property_id'] ?? null,
                                 'order_qty' => $item['order_qty'] ?? null,
                                 'price' => $item['price'] ?? null,
-                                'amount_one_item'    =>  $item['amount_one_item'] ?? 0
+                                'amount_one_item'    =>  $item['amount_one_item'] ?? 0,
+                                'picture' => $item['picture'] ?? null,
                             ]);
                             $item->save();
                         }
@@ -558,6 +564,7 @@ class OrderController extends AdminController
         $data = [
             'status'    =>  $request->status
         ];
+
         if ($request->status == 3) {
             $data['user_id_ordered']    =  Admin::user()->id;
             $data['ordered_at'] =   now();
@@ -578,5 +585,38 @@ class OrderController extends AdminController
             'message'   =>  'success'
         ]);
 
+    }
+
+    public function exportExcelDetailOrder($id){
+        $data =  OrderItem::where('order_id',$id)->get();
+        Excel::create('Chi tiết đơn', function($excel) use ($data) {
+            $header = ['STT','SẢN PHẨM','OPTION SẢN PHẨM','GIÁ','SỐ LƯỢNG','THỜI GIAN TẠO'];
+            $excel->sheet('Sheetname', function($sheet) use ($data,$header) {
+                $rows = collect($data)->map(function ($item) {
+
+                    return $item;
+                });
+                $data = [];
+                $data[] = $header;
+                $key = 1;
+                foreach ($rows->toArray() as $row) {
+                    $order = OrderItem::find($row['id']);
+                    $product = Product::find($order->product_id) ? Product::find($order->product_id)->name : null;
+                    $productProperty = ProductProperty::find($order->product_property_id) ? ProductProperty::find($order->product_property_id)->size : null;
+                    $price = $order->price ? number_format($order->price): null;
+                    $order_qty = $order->order_qty ? ($order->order_qty): null;
+                    $created_at = $order->created_at ? date('H:i | d-m-Y', strtotime($order->created_at)) : null;
+                    $data[] = [
+                        $key++,
+                        $product,
+                        $productProperty,
+                        $price,
+                        $order_qty,
+                        $created_at
+                    ];
+                }
+                $sheet->rows($data);
+            });
+        })->export('xlsx');
     }
 }

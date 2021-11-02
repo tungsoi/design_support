@@ -43,7 +43,7 @@
         <img src="{{ asset("assets/img/index.svg") }}" alt="">
     </div> --}}
     <input type="hidden" value="{{ route('admin.products.getInfoProduct') }}" name="route_get_product" class="route_get_product" id="route_get_product"/>
-
+    <input type="hidden" value="{{  request()->getSchemeAndHttpHost() }}" name="domain" class="domain">
 </div>
 
 <script>

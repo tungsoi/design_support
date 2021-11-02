@@ -22,6 +22,9 @@ Route::group([
     $router->get('/products/products_pictures', 'ProductController@getPicture')->name('products.getPicture');
     $router->get('/products/products_info', 'ProductController@getInfoProduct')->name('products.getInfoProduct');
 
+
+
+
     $router->resources([
         'auth/users'    =>  'UserController',
         'categories'    =>  'CategoryController',
@@ -38,6 +41,7 @@ Route::group([
     $router->post('orders/submitDeposite', 'OrderController@submitDeposite')->name('orders.submitDeposite');
     $router->get('orders/{order}/confirm-deposite', 'OrderController@deposite')->name('orders.deposite');
     $router->post('orders/updateStatus', 'OrderController@updateStatus')->name('orders.updateStatus');
+    $router->get('orders/{order}/export-excel-detail', 'OrderController@exportExcelDetailOrder')->name('orders.exportExcelDetailOrder');
 });
 
 
