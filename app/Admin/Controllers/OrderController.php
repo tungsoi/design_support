@@ -90,7 +90,7 @@ class OrderController extends AdminController
         $form->column(12, function ($form) use ($service) {
 
             $form->divider();
-            $form->hasMany('products', 'Danh sách sản phẩm', function (Form\NestedForm $form) {
+            $form->hasMany('products', '- Danh sách sản phẩm', function (Form\NestedForm $form) {
                 $form->select('status')->options(OrderProductStatus::pluck('name', 'id'))->default(1)->disable();
                 $form->number('quality')->default(1);
                 $form->currency('price')->digits(0)->symbol('VND');
