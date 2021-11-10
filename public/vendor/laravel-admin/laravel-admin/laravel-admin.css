@@ -341,3 +341,7 @@ section.content .grid-box {
 .has-many-products-form .form-group:nth-child(14) {
     width: 75% !important;
 }
+
+.column-__actions__ a.btn {
+    margin-top: 5px !important;
+}

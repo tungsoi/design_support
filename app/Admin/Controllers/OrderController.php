@@ -2,6 +2,13 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Order\Cancel;
+use App\Admin\Actions\Order\ConfirmOrdered;
+use App\Admin\Actions\Order\ConfirmSuccess;
+use App\Admin\Actions\Order\Deposite;
+use App\Admin\Actions\Order\ExportAmount;
+use App\Admin\Actions\Order\ExportPaymentBill;
+use App\Admin\Actions\Order\ExportShipBill;
 use App\Models\Category;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
@@ -31,16 +38,64 @@ class OrderController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Order);
-        $grid->model()->orderBy('id', 'desc');
+        $grid->model()->orderBy('id', 'desc')
+        ->with('products')
+        ->with('statusText');
+
+        $grid->expandFilter();
+        $grid->filter(function($filter) {
+            $filter->disableIdFilter();
+            $filter->column(1/3, function ($filter) {
+                $filter->like('id', 'Mã đơn hàng');
+            });
+        });
 
         $grid->rows(function (Grid\Row $row) {
             $row->column('number', ($row->number+1));
         });
 
         $grid->column('number', 'STT');
-        $grid->name();
-        $grid->color();
+        $grid->order_number('Mã đơn hàng')->display(function () {
+            return 'NT-'.str_pad($this->id, 4, 0, STR_PAD_LEFT);
+        })->label('primary');
+        $grid->column('products', 'Sản phẩm')->display(function ($products) {
+            return sizeof($products);
+        });
+        $grid->column('customer_id', 'Khách hàng')->display(function () {
+            return $this->customer->profile->company_name ?? "";
+        });
+        $grid->column('status', 'Trạng thái')->display(function () {
+            $color = $this->statusText->color;
+            $name  = $this->statusText->name;
+            return "<span class='label label-{$color}'>{$name}</span>";
+        });
+        $grid->column('amount_products_price', 'Tổng tiền sản phẩm (VND)');
+        $grid->column('amount_ship_service', 'Tổng phí vận chuyển (VND)');
+        $grid->column('amount_other_service', 'Tổng phí phát sinh (VND)');
+        $grid->column('discount_value', 'Tổng tiền giảm (VND)');
+        $grid->column('total_amount', 'Tổng giá cuối (VND)');
+        $grid->column('deposited', 'Đã cọc (VND)');
+        $grid->column('owed', 'Còn lại (VND)')->display(function () {
+            return "-";
+        });
+        $grid->column('logs', 'Timeline')->display(function () {
+            return "-";
+        });
+
         $grid->disableBatchActions();
+        $grid->actions(function ($actions) {
+            $actions->disableDelete();
+            // $actions->disableEdit();
+            // $actions->disableView();
+
+            $actions->append(new Deposite());
+            $actions->append(new Cancel());
+            $actions->append(new ConfirmOrdered());
+            $actions->append(new ConfirmSuccess());
+            $actions->append(new ExportAmount());
+            $actions->append(new ExportShipBill());
+            $actions->append(new ExportPaymentBill());
+        });
         return $grid;
     }
 
