@@ -68,6 +68,7 @@ class OrderController extends AdminController
      */
     protected function form()
     {
+        Admin::js('assets/furn/js/order.js');
         $form = new Form(new Order);
 
         $service = new PortalService();
@@ -79,11 +80,11 @@ class OrderController extends AdminController
         });
 
         $form->column(6, function ($form) use ($service) {
-            $form->currency('amount_products_price')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
-            $form->currency('default_deposite')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
-            $form->currency('amount_ship_service')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
-            $form->currency('amount_other_service')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
-            $form->currency('discount_value')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('amount_products_price')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('default_deposite')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('amount_ship_service')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('amount_other_service')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('discount_value')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
             $form->currency('total_amount')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
         });
 
