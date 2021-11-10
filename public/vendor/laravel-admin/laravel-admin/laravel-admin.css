@@ -327,13 +327,17 @@ section.content .grid-box {
 }
 
 .has-many-products-form .form-group {
-    width: 25% !important;
+    width: 20% !important;
     display: inline-block !important;
 }
 .has-many-products-form .form-group .col-sm-2, .has-many-products-form .form-group .col-sm-8 {
-    width: 90% !important;
+    width: 95% !important;
     text-align: left !important;
 }
 .has-many-products-form input {
     width: 100% !important;
+}
+
+.has-many-products-form .form-group:nth-child(14) {
+    width: 75% !important;
 }

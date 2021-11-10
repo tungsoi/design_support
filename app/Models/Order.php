@@ -17,7 +17,8 @@ class Order extends Model
         'deposited',
         'is_discount',
         'type_discount',
-        'discount_value'
+        'discount_value',
+        'total_amount'
     ];
 
     public function products()

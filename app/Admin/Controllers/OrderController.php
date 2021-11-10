@@ -72,25 +72,42 @@ class OrderController extends AdminController
 
         $service = new PortalService();
 
-        $form->select('customer_id')->options($service->getListCustomer());
-        $form->display('user_action_name')->default(Admin::user()->name);
-        $form->display('action_time')->default(now());
+        $form->column(6, function ($form) use ($service) {
+            $form->select('customer_id')->options($service->getListCustomer());
+            $form->display('user_action_name')->default(Admin::user()->name);
+            $form->display('action_time')->default(now());
+        });
 
-        $form->hasMany('products', 'Danh sách sản phẩm', function (Form\NestedForm $form) {
-            $form->image('images');
-            $form->number('quality')->default(1);
-            $form->currency('price')->digits(0)->symbol('VND');
-            $form->currency('amount')->digits(0)->symbol('VND')->readonly();
-            $form->select('status')->options(OrderProductStatus::pluck('name', 'id'))->default(1)->disable();
-            $form->text('link');
-            $form->text('description');
-            $form->text('note');
-            $form->select('payment_type')->options(OrderProductStatus::PAYMENT_TYPE)->default(0);
-            $form->currency('value_use_payment')->digits(2)->symbol('KG / M3');
-            $form->currency('service_price')->digits(0)->symbol('VND');
-            $form->currency('payment_amount')->digits(0)->symbol('VND');
-            $form->text('transport_code');
-            $form->text('payment_code');
+        $form->column(6, function ($form) use ($service) {
+            $form->currency('amount_products_price')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('default_deposite')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('amount_ship_service')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('amount_other_service')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('discount_value')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('total_amount')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
+        });
+
+        $form->column(12, function ($form) use ($service) {
+
+            $form->divider();
+            $form->hasMany('products', 'Danh sách sản phẩm', function (Form\NestedForm $form) {
+                $form->select('status')->options(OrderProductStatus::pluck('name', 'id'))->default(1)->disable();
+                $form->number('quality')->default(1);
+                $form->currency('price')->digits(0)->symbol('VND');
+                $form->currency('amount')->digits(0)->symbol('VND')->readonly();
+                $form->text('link');
+                $form->text('description');
+                $form->select('payment_type')->options(OrderProductStatus::PAYMENT_TYPE)->default(0);
+                $form->currency('value_use_payment')->digits(2)->symbol('KG / M3');
+                $form->currency('service_price')->digits(0)->symbol('VND');
+                $form->currency('payment_amount')->digits(0)->symbol('VND');
+                $form->text('transport_code');
+                $form->text('payment_code');
+                $form->text('note');
+                $form->multipleFile('images', 'Ảnh')
+            ->rules('mimes:jpeg,png,jpg')
+            ->removable();
+            });
         });
 
         $form->disableEditingCheck();

@@ -50,6 +50,7 @@
     function LA() {}
     LA.token = "{{ csrf_token() }}";
     LA.user = @json($_user_);
+    $('.has-many-products-form img').attr('alt', "");
 </script>
 
 <!-- REQUIRED JS SCRIPTS -->
