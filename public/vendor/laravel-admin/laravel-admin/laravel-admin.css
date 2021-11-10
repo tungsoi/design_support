@@ -325,3 +325,15 @@ section.content .grid-box {
     font-size: 12px;
     border: 1px solid #646464;
 }
+
+.has-many-products-form .form-group {
+    width: 25% !important;
+    display: inline-block !important;
+}
+.has-many-products-form .form-group .col-sm-2, .has-many-products-form .form-group .col-sm-8 {
+    width: 90% !important;
+    text-align: left !important;
+}
+.has-many-products-form input {
+    width: 100% !important;
+}
