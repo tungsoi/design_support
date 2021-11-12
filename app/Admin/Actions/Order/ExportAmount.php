@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExportAmount extends RowAction
 {
+
+    public function __construct($id)
+    {
+        $this->id = $id;
+    }
     public $name = 'export-amount';
 
     public function handle(Model $model)
@@ -18,7 +23,7 @@ class ExportAmount extends RowAction
 
     public function render()
     {
-        $route = "";
+        $route = route('admin.orders.exportExcelDetailOrder', $this->id);
         $url = "";
         $icon = "fa-download";
         $id = "";
