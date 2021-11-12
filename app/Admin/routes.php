@@ -21,7 +21,6 @@ Route::group([
     $router->get('/products/product_property_price', 'ProductController@getPriceFromProperty')->name('products.getPriceFromProperty');
     $router->get('/products/products_pictures', 'ProductController@getPicture')->name('products.getPicture');
     $router->get('/products/products_info', 'ProductController@getInfoProduct')->name('products.getInfoProduct');
-
     $router->resources([
         'auth/users'    =>  'UserController',
         'categories'    =>  'CategoryController',
@@ -33,6 +32,8 @@ Route::group([
         'order_product_statuses'    =>  'OrderProductStatusController',
         'orders'    =>  'OrderController'
     ]);
+    $router->get('orders/{order}/export-excel-detail', 'OrderController@exportExcelDetailOrder')->name('orders.exportExcelDetailOrder');
+
 });
 
 
