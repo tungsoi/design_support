@@ -22,7 +22,7 @@ class Deposite extends RowAction
         $url = "";
         $icon = "fa-times";
         $id = "";
-        $color_btn = "btn-warning";
+        $color_btn = "btn-info";
         $title = "Đặt cọc đơn hàng";
         return '<a target="_blank" href="'. $route .'" data-url="'.$url.'" data-id="'.$id.'" class="btn btn-xs '.$color_btn.'" data-toggle="tooltip" title="'.$title.'">
                 <i class="fa '.$icon.'"></i>

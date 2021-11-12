@@ -20,7 +20,7 @@ class ConfirmSuccess extends RowAction
     {
         $route = "";
         $url = "";
-        $icon = "fa-times";
+        $icon = "fa-check";
         $id = "";
         $color_btn = "btn-success";
         $title = "Xác nhận thành công";

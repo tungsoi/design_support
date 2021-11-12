@@ -20,7 +20,7 @@ class Cancel extends RowAction
     {
         $route = "";
         $url = "";
-        $icon = "fa-times";
+        $icon = "fa-trash";
         $id = "";
         $color_btn = "btn-danger";
         $title = "Huỷ đơn hàng";

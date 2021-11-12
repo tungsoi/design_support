@@ -21,7 +21,7 @@ class ConfirmOrdered extends RowAction
     {
         $route = "";
         $url = "";
-        $icon = "fa-times";
+        $icon = "fa-check";
         $id = "";
         $color_btn = "btn-primary";
         $title = "Xác nhận đã đặt hàng";
