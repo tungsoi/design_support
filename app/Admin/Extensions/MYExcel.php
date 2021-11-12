@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Admin\Extensions;
-
+use App\Admin\Support\Common;
 class MYExcel
 {
     public static function getLogo($sheet, $data = [])
@@ -124,4 +124,5 @@ class MYExcel
 
         return $objRichText;
     }
+
 }

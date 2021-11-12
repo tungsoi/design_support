@@ -22,7 +22,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use Maatwebsite\Excel\Classes\LaravelExcelWorksheet;
 use Maatwebsite\Excel\Facades\Excel;
-
+use App\Admin\Support\Common;
 class OrderController extends AdminController
 {
     /**
@@ -131,37 +131,41 @@ class OrderController extends AdminController
         $service = new PortalService();
 
         $form->column(6, function ($form) use ($service) {
-            $form->select('customer_id')->options($service->getListCustomer());
-            $form->display('user_action_name')->default(Admin::user()->name);
-            $form->display('action_time')->default(now());
+            $form->select('customer_id', 'Khách hàng')->options($service->getListCustomer());
+            $form->display('user_action_name', 'Người tạo')->default(Admin::user()->name);
+            $form->display('action_time', 'Thời gian tạo')->default(now());
+            $form->hidden('status')->default(1);
         });
 
         $form->column(6, function ($form) use ($service) {
-            $form->currency('amount_products_price')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
-            $form->currency('default_deposite')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
-            $form->currency('amount_ship_service')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
-            $form->currency('amount_other_service')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
-            $form->currency('discount_value')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
-            $form->currency('total_amount')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('amount_products_price', 'Tiền sản phẩm')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('default_deposite', 'Tiền cọc')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('amount_ship_service', 'Tiền vận chuyển')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('amount_other_service', 'Tiền dịch vụ')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('discount_value', 'Chiết khấu')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('total_amount', 'Tổng tiền')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
         });
 
         $form->column(12, function ($form) use ($service) {
 
             $form->divider();
             $form->hasMany('products', '- Danh sách sản phẩm', function (Form\NestedForm $form) {
-                $form->select('status')->options(OrderProductStatus::pluck('name', 'id'))->default(1)->disable();
-                $form->number('quality')->default(1);
-                $form->currency('price')->digits(0)->symbol('VND');
-                $form->currency('amount')->digits(0)->symbol('VND')->readonly();
-                $form->text('link');
-                $form->text('description');
-                $form->select('payment_type')->options(OrderProductStatus::PAYMENT_TYPE)->default(0);
-                $form->currency('value_use_payment')->digits(2)->symbol('KG / M3');
-                $form->currency('service_price')->digits(0)->symbol('VND');
-                $form->currency('payment_amount')->digits(0)->symbol('VND');
-                $form->text('transport_code');
-                $form->text('payment_code');
-                $form->text('note');
+                $form->select('status', 'Trạng thái')->options(OrderProductStatus::pluck('name', 'id'))->default(1)->disable();
+                $form->text('name_product', 'Tên sản phẩm');
+                $form->number('quality', 'Số lượng')->default(1);
+                $form->currency('price', 'Giá tiền')->digits(0)->symbol('VND');
+                $form->currency('amount', 'Thành tiền')->digits(0)->symbol('VND')->readonly();
+                $form->text('link', 'Đường dẫn');
+                $form->text('description', 'Mô tả chất liệu');
+                $form->text('classify', 'Phân loại');
+                $form->text('specify_detail', 'Chỉ định chi tiết');
+                $form->select('payment_type', 'Đơn vị thanh toán')->options(OrderProductStatus::PAYMENT_TYPE)->default(0);
+                $form->currency('value_use_payment', 'Khối lượng')->digits(2)->symbol('KG / M3');
+                $form->currency('service_price', 'Giá tiền')->digits(0)->symbol('VND');
+                $form->currency('payment_amount', 'Thành tiền')->digits(0)->symbol('VND');
+                $form->text('payment_code', 'Mã thanh toán');
+                $form->text('transport_code', 'Mã vận tải');
+                $form->text('note', 'Ghi chú');
                 $form->multipleFile('images', 'Ảnh')
                     ->rules('mimes:jpeg,png,jpg')
                     ->removable();
@@ -184,113 +188,171 @@ class OrderController extends AdminController
         set_time_limit(0);
         ini_set('memory_limit', '-1');
         $products = OrderProduct::where('order_id', $id)->get();
-        Excel::create('ok', function ($excel) use ($self) {
-            $excel->sheet('Báo giá sản phẩm', function (LaravelExcelWorksheet $sheet) use ($self) {
+        
+        Excel::create('File báo giá', function ($excel) use ($self, $products) {
+            $excel->sheet('Báo giá sản phẩm', function (LaravelExcelWorksheet $sheet) use ($self, $products) {
                 $sheet = $self::header($sheet);
+               
                 $sheet->cell('A10', function ($cell) {
                     $cell->setValue('TÊN SP');
                     $cell->setValignment('center');
                 });
+                $name = [];
+                if ($products) {
+                    foreach ($products as $key => $item) {
+                        $name[] = $item->name_product;
+                    }
+                }
+                // $sheet->cell('B10', function ($cell) use($name) {
+                //     $cell->setValue(implode(",",$name));
+                    
+                //     $cell->setValignment('center');
+                // });
+
+                $cell_heading_name_product = [
+                    'cell' => 'B10',
+                    'cell_merge' => 'C10',
+                    'data_text_value' => [
+                        [
+                            'text' => implode(",",$name),
+                            'bold' => true,
+                        ],
+                    ],
+                    'valign' => 'center',
+                ];
+                $sheet = MYExcel::getHeading($sheet, $cell_heading_name_product);
                 $sheet->cell('A11', function ($cell) {
                     $cell->setValue('MÃ SỐ');
                     $cell->setValignment('center');
                 });
-                $sheet->cell('A13', function ($cell) {
+
+                $row_num = 13;
+                $arrRow = ['A','D'];
+                if ($products) {
+                    $number = 0;
+                    foreach ($products as $key => $item) {
+                        $sheet = MYExcel::getLogo($sheet, [
+                            // 'cell' => "$arrRow[$key]" . $row_num,
+                            'cell' => "A" . $row_num,
+                            'width' => 200,
+                            'height' => 150,
+                            'file_path' => 'uploads/'. $item['images'][0]
+                        ]);
+                        $row_num += 8;
+                        // $number += 10;
+                        // if($arrRow[$key] == 1){
+                        //     $row_num++;
+                        // }
+                    }
+                }
+                $row_nums = ($row_num + 1);
+                $sheet->cell('A' . ($row_nums), function ($cell) {
                     $cell->setValue('STT');
+                    $cell->setAlignment('center');
                     $cell->setValignment('center');
                 });
-                $sheet->cell('B13', function ($cell) {
+                $sheet->cell('B' . ($row_nums), function ($cell) {
                     $cell->setValue('Tên sản phẩm');
+                    $cell->setAlignment('center');
                     $cell->setValignment('center');
                 });
-                $sheet->cell('C13', function ($cell) {
+                $sheet->cell('C' . ($row_nums), function ($cell) {
                     $cell->setValue('Chất liệu chung');
+                    $cell->setAlignment('center');
                     $cell->setValignment('center');
                 });
-                $sheet->cell('D13', function ($cell) {
+                $sheet->cell('D' . ($row_nums), function ($cell) {
                     $cell->setValue('Phân loại');
+                    $cell->setAlignment('center');
                     $cell->setValignment('center');
                 });
-                $sheet->cell('E13', function ($cell) {
+                $sheet->cell('E' . ($row_nums), function ($cell) {
                     $cell->setValue('Chỉ định chi tiết');
+                    $cell->setAlignment('center');
                     $cell->setValignment('center');
                 });
-                $sheet->cell('F13', function ($cell) {
+                $sheet->cell('F' . ($row_nums), function ($cell) {
                     $cell->setValue('Giá sản phẩm');
+                    $cell->setAlignment('center');
                     $cell->setValignment('center');
                 });
-                $sheet->cell('G13', function ($cell) {
+                $sheet->cell('G'. ($row_nums), function ($cell) {
                     $cell->setValue('SL');
+                    $cell->setAlignment('center');
                     $cell->setValignment('center');
                 });
-                $sheet->cell('H13', function ($cell) {
+                $sheet->cell('H' . ($row_nums), function ($cell) {
                     $cell->setValue('Thành tiền(VND)');
+                    $cell->setAlignment('center');
                     $cell->setValignment('center');
                 });
+                $totalPrice = 0;
+                if ($products) {
+                    foreach ($products as $key => $item) {
+                       
+                        $sheet->cell('A' . ($row_nums + 1), function ($cell) use ($key) {
+                            $cell->setValue($key + 1);
+                            $cell->setFont(MYExcel::getFont());
+                            $cell->setAlignment('center');
+                            $cell->setValignment('center');
 
-                $row_num = 14;
-                for ($i = 0; $i < 9; $i++) {
-                    $sheet->cell('A' . $row_num, function ($cell) use ($i) {
-                        $cell->setValue($i);
-                        $cell->setFont(MYExcel::getFont());
-                        $cell->setAlignment('center');
-                        $cell->setValignment('center');
+                        });
+                        $sheet->cell('B' . ($row_nums + 1), function ($cell) use ($item) {
+                            $cell->setValue($item->name_product ?? null);
+                            $cell->setFont(MYExcel::getFont());
+                            $cell->setAlignment('center');
+                            $cell->setValignment('center');
 
-                    });
-                    $sheet->cell('B' . $row_num, function ($cell) use ($i) {
-                        $cell->setValue($i);
-                        $cell->setFont(MYExcel::getFont());
-                        $cell->setAlignment('center');
-                        $cell->setValignment('center');
+                        });
+                        $sheet->cell('C' . ($row_nums + 1), function ($cell) use ($item) {
+                            $cell->setValue($item->description ?? null);
+                            $cell->setFont(MYExcel::getFont());
+                            $cell->setAlignment('center');
+                            $cell->setValignment('center');
 
-                    });
-                    $sheet->cell('C' . $row_num, function ($cell) use ($i) {
-                        $cell->setValue($i);
-                        $cell->setFont(MYExcel::getFont());
-                        $cell->setAlignment('center');
-                        $cell->setValignment('center');
+                        });
+                        $sheet->cell('D' . ($row_nums + 1), function ($cell) use ($item) {
+                            $cell->setValue($item->classify ?? null);
+                            $cell->setFont(MYExcel::getFont());
+                            $cell->setAlignment('center');
+                            $cell->setValignment('center');
 
-                    });
-                    $sheet->cell('D' . $row_num, function ($cell) use ($i) {
-                        $cell->setValue($i);
-                        $cell->setFont(MYExcel::getFont());
-                        $cell->setAlignment('center');
-                        $cell->setValignment('center');
+                        });
+                        $sheet->cell('E' . ($row_nums + 1), function ($cell) use ($item) {
+                            $cell->setValue($item->specify_detail ?? null);
+                            $cell->setFont(MYExcel::getFont());
+                            $cell->setAlignment('center');
+                            $cell->setValignment('center');
 
-                    });
-                    $sheet->cell('E' . $row_num, function ($cell) use ($i) {
-                        $cell->setValue($i);
-                        $cell->setFont(MYExcel::getFont());
-                        $cell->setAlignment('center');
-                        $cell->setValignment('center');
+                        });
+                        $sheet->cell('F' . ($row_nums + 1), function ($cell) use ($item) {
+                            $cell->setValue($item->price ? number_format($item->price) : null);
+                            $cell->setFont(MYExcel::getFont());
+                            $cell->setAlignment('center');
+                            $cell->setValignment('center');
 
-                    });
-                    $sheet->cell('F' . $row_num, function ($cell) use ($i) {
-                        $cell->setValue($i);
-                        $cell->setFont(MYExcel::getFont());
-                        $cell->setAlignment('center');
-                        $cell->setValignment('center');
+                        });
+                        $sheet->cell('G' . ($row_nums + 1), function ($cell) use ($item) {
+                            $cell->setValue($item->quality ?? null);
+                            $cell->setFont(MYExcel::getFont());
+                            $cell->setAlignment('center');
+                            $cell->setValignment('center');
 
-                    });
-                    $sheet->cell('G' . $row_num, function ($cell) use ($i) {
-                        $cell->setValue($i);
-                        $cell->setFont(MYExcel::getFont());
-                        $cell->setAlignment('center');
-                        $cell->setValignment('center');
+                        });
+                        $sheet->cell('H' . ($row_nums + 1), function ($cell) use ($item) {
+                            $cell->setValue($item->amount ? number_format($item->amount) : null);
+                            $cell->setFont(MYExcel::getFont());
+                            $cell->setAlignment('center');
+                            $cell->setValignment('center');
 
-                    });
-                    $sheet->cell('H' . $row_num, function ($cell) use ($i) {
-                        $cell->setValue($i);
-                        $cell->setFont(MYExcel::getFont());
-                        $cell->setAlignment('center');
-                        $cell->setValignment('center');
-
-                    });
-                    $row_num++;
+                        });
+                        $totalPrice += ($item->amount);
+                        $row_nums++;
+                    }
                 }
                 $cell_heading_B14 = [
-                    'cell' => 'A' . $row_num,
-                    'cell_merge' => 'G' . $row_num,
+                    'cell' => 'A' . ($row_nums + 1),
+                    'cell_merge' => 'G' . ($row_nums + 1),
                     'data_text_value' => [
                         [
                             'text' => 'Tổng cộng',
@@ -302,10 +364,10 @@ class OrderController extends AdminController
                 ];
                 $sheet = MYExcel::getHeading($sheet, $cell_heading_B14);
                 $cell_heading_B15 = [
-                    'cell' => 'H' . $row_num,
+                    'cell' => 'H' . ($row_nums + 1),
                     'data_text_value' => [
                         [
-                            'text' => '2222',
+                            'text' => number_format($totalPrice),
                             'bold' => true,
                         ],
                     ],
@@ -313,7 +375,7 @@ class OrderController extends AdminController
                     'valign' => 'center',
                 ];
                 $sheet = MYExcel::getHeading($sheet, $cell_heading_B15);
-                $sheet->getStyle("A13:H" . $row_num)->applyFromArray(array(
+                $sheet->getStyle("A".($row_nums - 2).":H" . ($row_nums + 1))->applyFromArray(array(
                     'borders' => array(
                         'allborders' => array(
                             'style' => \PHPExcel_Style_Border::BORDER_THIN,
@@ -323,8 +385,8 @@ class OrderController extends AdminController
                 ));
 
                 $cell_heading_B16 = [
-                    'cell' => 'A' . ($row_num + 2),
-                    'cell_merge' => 'E' . ($row_num + 2),
+                    'cell' => 'A' . ($row_nums + 4),
+                    'cell_merge' => 'E' . ($row_nums + 4),
                     'data_text_value' => [
                         [
                             'text' => 'Báo giá có giá trị trong vòng 30 ngày kể từ ngày làm báo giá',
@@ -336,8 +398,8 @@ class OrderController extends AdminController
                 $sheet = MYExcel::getHeading($sheet, $cell_heading_B16);
 
                 $cell_heading_B17 = [
-                    'cell' => 'G' . ($row_num + 2),
-                    'cell_merge' => 'H' . ($row_num + 2),
+                    'cell' => 'G' . ($row_nums + 4),
+                    'cell_merge' => 'H' . ($row_nums + 4),
                     'data_text_value' => [
                         [
                             'text' => 'NGƯỜI LÀM BÁO GIÁ',
@@ -353,8 +415,8 @@ class OrderController extends AdminController
 
                 $sheet = MYExcel::getHeading($sheet, $cell_heading_B17);
                 $cell_heading_B18 = [
-                    'cell' => 'A' . ($row_num + 3),
-                    'cell_merge' => 'F' . ($row_num + 3),
+                    'cell' => 'A' . ($row_nums + 5),
+                    'cell_merge' => 'F' . ($row_nums + 5),
                     'data_text_value' => [
                         [
                             'text' => '( giá chưa bao gồm giá vận chuyển từ Trung Quốc về Hà Nội và chưa bao gồm VAT)',
@@ -461,12 +523,15 @@ class OrderController extends AdminController
         ];
         $sheet = MYExcel::getHeading($sheet, $cell_heading_B10);
         $sheet->getRowDimension(11)->setRowHeight(24);
+        $date = getdate();
+        $wday = Common::convertWeekDay($date['wday']) ?? null;
+
         $cell_heading_B11 = [
             'cell' => 'F9',
             'cell_merge' => 'H9',
             'data_text_value' => [
                 [
-                    'text' => 'Thứ năm, ngày 14, tháng 10, năm 2021',
+                    'text' => $wday. ', ngày ' . $date['mday'] . ', tháng '. $date['mon'] . ', năm '.   $date['year'] ,
                 ],
             ],
             'font_data' => [
@@ -477,4 +542,5 @@ class OrderController extends AdminController
         $sheet->getRowDimension(12)->setRowHeight(24);
         return $sheet;
     }
+
 }
