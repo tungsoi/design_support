@@ -33,7 +33,7 @@ Route::group([
         'orders'    =>  'OrderController'
     ]);
     $router->get('orders/{order}/export-excel-detail', 'OrderController@exportExcelDetailOrder')->name('orders.exportExcelDetailOrder');
-
+    $router->get('orders/{order}/export-excel-ship-bill', 'OrderController@exportExcelShipBill')->name('orders.exportExcelShipBill');
 });
 
 
@@ -51,5 +51,3 @@ Route::group([
     $router->get('/product/detail/{id}', 'ProductController@show')->name('product.detail');
     $router->get('/products/category/{code}', 'ProductController@getByCategoryCode')->name('product.product-by-category');
 });
-
-

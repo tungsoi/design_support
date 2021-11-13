@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class ExportShipBill extends RowAction
 {
+    public function __construct($id)
+    {
+        $this->id = $id;
+    }
     public $name = 'export-ship-bill';
 
     public function handle(Model $model)
@@ -19,14 +23,15 @@ class ExportShipBill extends RowAction
 
     public function render()
     {
+        // $route = route('admin.orders.exportExcelShipBill', $this->id);
         $route = "";
         $url = "";
         $icon = "fa-download";
         $id = "";
         $color_btn = "btn-success";
         $title = "Xuất phiếu giao hàng";
-        return '<a target="_blank" href="'. $route .'" data-url="'.$url.'" data-id="'.$id.'" class="btn btn-xs '.$color_btn.'" data-toggle="tooltip" title="'.$title.'">
-                <i class="fa '.$icon.'"></i>
+        return '<a target="_blank" href="' . $route . '" data-url="' . $url . '" data-id="' . $id . '" class="btn btn-xs ' . $color_btn . '" data-toggle="tooltip" title="' . $title . '">
+                <i class="fa ' . $icon . '"></i>
             </a>';
     }
 

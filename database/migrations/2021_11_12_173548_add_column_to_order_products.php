@@ -14,9 +14,9 @@ class AddColumnToOrderProducts extends Migration
     public function up()
     {
         Schema::table('order_products', function (Blueprint $table) {
-            $table->text('name_product')->comment('Ten san pham');
-            $table->text('classify')->comment('phan loai');
-            $table->text('specify_detail')->commet('chi dinh chi tiet');
+            $table->text('name_product')->comment('Ten san pham')->nullable();
+            $table->text('classify')->comment('phan loai')->nullable();
+            $table->text('specify_detail')->commet('chi dinh chi tiet')->nullable();
         });
     }
 
