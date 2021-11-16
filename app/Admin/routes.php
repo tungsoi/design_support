@@ -34,6 +34,7 @@ Route::group([
     ]);
     $router->get('orders/{order}/export-excel-detail', 'OrderController@exportExcelDetailOrder')->name('orders.exportExcelDetailOrder');
     $router->get('orders/{order}/export-excel-ship-bill', 'OrderController@exportExcelShipBill')->name('orders.exportExcelShipBill');
+    $router->get('orders/{order}/export-excel-payment-bill', 'OrderController@exportExcelPaymentBill')->name('orders.exportExcelPaymentBill');
 });
 
 

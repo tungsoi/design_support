@@ -23,8 +23,8 @@ class ExportShipBill extends RowAction
 
     public function render()
     {
-        // $route = route('admin.orders.exportExcelShipBill', $this->id);
-        $route = "";
+        $route = route('admin.orders.exportExcelShipBill', $this->id);
+        // $route = "";
         $url = "";
         $icon = "fa-download";
         $id = "";
