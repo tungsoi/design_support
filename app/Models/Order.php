@@ -20,19 +20,21 @@ class Order extends Model
         'type_discount',
         'discount_value',
         'total_amount',
-        'status'
+        'status',
     ];
 
     public function products()
     {
-        return $this->hasMany(OrderProduct::class,'order_id');
+        return $this->hasMany(OrderProduct::class, 'order_id');
     }
 
-    public function statusText() {
+    public function statusText()
+    {
         return $this->hasOne(OrderStatus::class, 'id', 'status');
     }
 
-    public function customer() {
+    public function customer()
+    {
         return $this->hasOne(User::class, 'id', 'customer_id');
     }
 }

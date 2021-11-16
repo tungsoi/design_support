@@ -1,10 +1,10 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-class AddColumnToOrderProducts extends Migration
+class AddDvtToOrderProductsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,9 +14,7 @@ class AddColumnToOrderProducts extends Migration
     public function up()
     {
         Schema::table('order_products', function (Blueprint $table) {
-            $table->text('name_product')->comment('Ten san pham')->nullable();
-            $table->text('classify')->comment('phan loai')->nullable();
-            $table->text('specify_detail')->commet('chi dinh chi tiet')->nullable();
+            $table->text('dvt')->comment('Don vi tinh')->nullable();
         });
     }
 

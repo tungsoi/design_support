@@ -6,7 +6,7 @@ use Encore\Admin\Actions\RowAction;
 use Illuminate\Database\Eloquent\Model;
 use Encore\Admin\Admin;
 
-class ConfirmOrdered extends RowAction
+class UpdateStatus extends RowAction
 {
     public $name = 'confirm-ordered';
     protected $status;
@@ -33,7 +33,7 @@ class ConfirmOrdered extends RowAction
 
             let url = $(this).data('url');
             let id = $(this).attr('data-id');
-            console.log(id,'id*');
+            let status = $(this).attr('data-status');
             Swal.fire({
                 title: 'Bạn có chắc chắn muốn thay đổi trạng thái ?',
                 showCancelButton: true,
@@ -56,10 +56,11 @@ class ConfirmOrdered extends RowAction
                         type: 'POST', // replaced from put
                         data: {
                             'id': id,
-                            'status': $this->status,
+                            'status': status,
                         },
                         success: function (response)
                         {
+                            console.log(response);
                             if (response.isRedirect) {
                                 setTimeout(function () {
                                     window.location.href = response.url;
@@ -84,11 +85,8 @@ SCRIPT;
     public function render()
     {
         Admin::script($this->script());
-        // return '<a target="_blank" href="' . $route . '" data-url="' . $url . '" data-id="' . $id . '" class="btn btn-xs ' . $color_btn . '" data-toggle="tooltip" title="' . $title . '">
-        //         <i class="fa ' . $icon . '"></i>
-        //     </a>';
-        return '<a href="javascript:void(0);" data-url="' . $this->url . '" data-id="' . $this->id . '"  class="grid-row-custom-delete btn btn-xs ' . $this->color_btn . '" data-toggle="tooltip" title="' . $this->title . '">
-            <i class="fa ' . $this->icon . '">' . $this->id . '</i>
+        return '<a href="javascript:void(0);" data-url="' . $this->url . '" data-status="' . $this->status . '" data-id="' . $this->id . '"  class="grid-row-custom-delete btn btn-xs ' . $this->color_btn . '" data-toggle="tooltip" title="' . $this->title . '">
+            <i class="fa ' . $this->icon . '"></i>
         </a>';
     }
 

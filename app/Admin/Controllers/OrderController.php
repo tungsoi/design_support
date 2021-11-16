@@ -9,6 +9,7 @@ use App\Admin\Actions\Order\Deposite;
 use App\Admin\Actions\Order\ExportAmount;
 use App\Admin\Actions\Order\ExportPaymentBill;
 use App\Admin\Actions\Order\ExportShipBill;
+use App\Admin\Actions\Order\UpdateStatus;
 use App\Admin\Extensions\MYExcel;
 use App\Admin\Service\PortalService;
 use App\Models\Order;
@@ -23,6 +24,8 @@ use Encore\Admin\Show;
 use Maatwebsite\Excel\Classes\LaravelExcelWorksheet;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Admin\Support\Common;
+use Illuminate\Http\Request;
+use Encore\Admin\Layout\Content;
 
 class OrderController extends AdminController
 {
@@ -102,11 +105,19 @@ class OrderController extends AdminController
             $actions->disableDelete();
             // $actions->disableEdit();
             // $actions->disableView();
+            $route = '/admin/orders/updateStatus';
 
-            $actions->append(new Deposite());
-            $actions->append(new Cancel());
-            $actions->append(new ConfirmOrdered());
-            $actions->append(new ConfirmSuccess());
+
+            if ($this->row->status == 1) {
+                $actions->append(new Deposite($actions->getKey()));
+            } elseif ($this->row->status == 2) {
+                $actions->append(new UpdateStatus($this->row->id, 3, $route, 'Xác nhận đã đặt hàng', 'fa-check', 'btn-info'));
+            } elseif ($this->row->status == 3) {
+                $actions->append(new UpdateStatus($this->row->id, 4, $route, 'Xác nhận thành công', 'fa-info-circle', 'btn-danger'));
+            } elseif ($this->row->status == 4) {
+                $actions->append(new UpdateStatus($this->row->id, 5, $route, 'Xác nhận xoá đơn hàng', 'fa-times', 'btn-primary'));
+            }
+
             $actions->append(new ExportAmount($actions->getKey()));
             $actions->append(new ExportShipBill($actions->getKey()));
             $actions->append(new ExportPaymentBill($actions->getKey()));
@@ -174,11 +185,12 @@ class OrderController extends AdminController
                 $form->text('specify_detail', 'Chỉ định chi tiết')->rules('required');
                 $form->select('payment_type', 'Loại thanh toán')->options(OrderProductStatus::PAYMENT_TYPE)->default(0);
                 $form->currency('value_use_payment', 'Giá trị')->digits(2)->symbol('KG / M3');
-                // $form->currency('service_price', 'Giá tiền')->digits(0)->symbol('VND');
-                // $form->currency('payment_amount', 'Thành tiền')->digits(0)->symbol('VND');
+                $form->currency('service_price', 'Giá tiền vận chuyển')->digits(0)->symbol('VND');
+                $form->currency('payment_amount', 'Thành tiền vận chuyển')->digits(0)->symbol('VND');
                 $form->text('payment_code', 'Mã giao dịch');
                 $form->text('transport_code', 'Mã vận đơn');
                 $form->text('note', 'Ghi chú');
+                $form->text('dvt', 'Đơn vị tính');
                 $form->multipleFile('images', 'Ảnh')
                     ->rules('mimes:jpeg,png,jpg')
                     ->removable();
@@ -1104,6 +1116,7 @@ class OrderController extends AdminController
                 $textColmn_Table_Product = ['STT', 'Tên sản phẩm', 'Chất liệu ', 'Kích thước', 'ĐVT', 'SL', 'Giá sản phẩm', 'Thành tiền(1)'];
                 $alignmentTable_Product = [];
                 $valignment_Product = [];
+                $totalDon = 0;
                 $sheet = MYExcel::getHeaderTable($sheet, $column_Table_Product, $row_Table_Product, $textColmn_Table_Product, $alignmentTable_Product, $valignment_Product);
                 if ($products) {
                     foreach ($products as $key => $item) {
@@ -1132,7 +1145,7 @@ class OrderController extends AdminController
                             $cell->setValignment('center');
                         });
                         $sheet->cell('E' . ($row_Table_Product + 1), function ($cell) use ($item) {
-                            $cell->setValue(($item->payment_type == 0 ? 'KG' : 'Khối'));
+                            $cell->setValue($item->dvt ?? null);
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
@@ -1149,7 +1162,8 @@ class OrderController extends AdminController
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
                         });
-                        $sheet->cell('H' . ($row_Table_Product + 1), function ($cell) use ($item) {
+                        $sheet->cell('H' . ($row_Table_Product + 1), function ($cell) use ($item, $totalDon) {
+
                             $cell->setValue($item->amount ? number_format($item->amount) : null);
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
@@ -1164,6 +1178,7 @@ class OrderController extends AdminController
                             ),
                         ));
                         $row_Table_Product++;
+                        $totalDon += $item->amount;
                     }
                 }
                 // end create table info product
@@ -1180,11 +1195,12 @@ class OrderController extends AdminController
                     ],
                 ];
                 $sheet = MYExcel::getHeading($sheet, $cell_heading_note_ship);
-                $column_Table_Payment = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
+                $column_Table_Payment = ['A', 'B', 'C', 'D', 'E', 'F'];
                 $row_Table_Payment = $row_payment_ship + 2;
-                $textColmn_Table_Payment = ['STT', 'Loại hàng', 'ĐVT', 'SL', 'Số lượng', 'Giá tiền', 'Thành tiền(2)'];
+                $textColmn_Table_Payment = ['STT', 'Loại hàng', 'ĐVT', 'Số lượng', 'Giá tiền', 'Thành tiền(2)'];
                 $alignmentTable_Payment = [];
                 $valignment_Payment = [];
+                $totalTQHN = 0;
                 $sheet = MYExcel::getHeaderTable($sheet, $column_Table_Payment, $row_Table_Payment, $textColmn_Table_Payment, $alignmentTable_Payment, $valignment_Payment);
                 if ($products) {
                     foreach ($products as $key => $item) {
@@ -1193,44 +1209,46 @@ class OrderController extends AdminController
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
+                            // STT
                         });
                         $sheet->cell('B' . ($row_payment_ship + 3), function ($cell) use ($item) {
-                            $cell->setValue($item->name_product ?? null);
+                            $name = ($item->quality ?? null) . ($item->name_product ?? null);
+                            $cell->setValue($name);
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
+                            // Loại hàng
                         });
                         $sheet->cell('C' . ($row_payment_ship + 3), function ($cell) use ($item) {
                             $cell->setValue(($item->payment_type == 0 ? 'KG' : 'Khối'));
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
+                            // ĐVT
                         });
                         $sheet->cell('D' . ($row_payment_ship + 3), function ($cell) use ($item) {
-                            $cell->setValue($item->classify ?? null);
+                            $cell->setValue(($item->value_use_payment ?? null));
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
+                            // Số lượng
                         });
                         $sheet->cell('E' . ($row_payment_ship + 3), function ($cell) use ($item) {
-                            $cell->setValue(($item->quality ?? null));
+                            $cell->setValue($item->service_price ? number_format($item->service_price) : null);
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
+                            // Giá tiền
                         });
-                        $sheet->cell('F' . ($row_payment_ship + 3), function ($cell) use ($item) {
-                            $cell->setValue($item->price ? number_format($item->price) : null);
+                        $sheet->cell('F' . ($row_payment_ship + 3), function ($cell) use ($item, $totalTQHN) {
+
+                            $cell->setValue($item->payment_amount ? number_format($item->payment_amount) : null);
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
+                            // Thành tiền(2)
                         });
-                        $sheet->cell('G' . ($row_payment_ship + 3), function ($cell) use ($item) {
-                            $cell->setValue($item->amount ? number_format($item->amount) : null);
-                            $cell->setFont(MYExcel::getFont());
-                            $cell->setAlignment('center');
-                            $cell->setValignment('center');
-                        });
-                        $sheet->getStyle("A" . ($row_payment_ship + 3) . ":G" . ($row_payment_ship + 3))->applyFromArray(array(
+                        $sheet->getStyle("A" . ($row_payment_ship + 3) . ":F" . ($row_payment_ship + 3))->applyFromArray(array(
                             'borders' => array(
                                 'allborders' => array(
                                     'style' => \PHPExcel_Style_Border::BORDER_THIN,
@@ -1238,92 +1256,18 @@ class OrderController extends AdminController
                                 ),
                             ),
                         ));
+                        $totalTQHN += $item->payment_amount;
                         $row_payment_ship++;
                     }
                 }
                 // end create table payment ship china into HN
-
-                // begin create table payment ship HN into more
-                $row_Table_Ships = $row_payment_ship + 3;
-                $cell_heading_note_ship = [
-                    'cell' => 'A' . ($row_Table_Ships + 1),
-                    'cell_merge' => 'E' . ($row_Table_Ships + 1),
-                    'data_text_value' => [
-                        [
-                            'text' => 'Tiền vận chuyển hàng từ Hà Nội về Hà Tĩnh',
-                            'bold' => true,
-                        ],
-                    ],
-                ];
-                $sheet = MYExcel::getHeading($sheet, $cell_heading_note_ship);
-                $column_Table_Ship = ['A', 'B', 'C', 'D', 'E', 'F', 'G'];
-                $textColmn_Table_Ship = ['STT', 'Loại hàng', 'ĐVT', 'SL', 'Số lượng', 'Giá tiền', 'Thành tiền(3)'];
-                $alignmentTable_Ship = [];
-                $valignment_Ship = [];
-                $sheet = MYExcel::getHeaderTable($sheet, $column_Table_Ship, ($row_Table_Ships + 2), $textColmn_Table_Ship, $alignmentTable_Ship, $valignment_Ship);
-                if ($products) {
-                    foreach ($products as $key => $item) {
-                        $sheet->cell('A' . ($row_Table_Ships + 3), function ($cell) use ($key) {
-                            $cell->setValue($key + 1);
-                            $cell->setFont(MYExcel::getFont());
-                            $cell->setAlignment('center');
-                            $cell->setValignment('center');
-                        });
-                        $sheet->cell('B' . ($row_Table_Ships + 3), function ($cell) use ($item) {
-                            $cell->setValue($item->classify ?? null);
-                            $cell->setFont(MYExcel::getFont());
-                            $cell->setAlignment('center');
-                            $cell->setValignment('center');
-                        });
-                        $sheet->cell('C' . ($row_Table_Ships + 3), function ($cell) use ($item) {
-                            $cell->setValue(($item->payment_type == 0 ? 'KG' : 'Khối'));
-                            $cell->setFont(MYExcel::getFont());
-                            $cell->setAlignment('center');
-                            $cell->setValignment('center');
-                        });
-                        $sheet->cell('D' . ($row_Table_Ships + 3), function ($cell) use ($item) {
-                            $cell->setValue($item->quality ?? null);
-                            $cell->setFont(MYExcel::getFont());
-                            $cell->setAlignment('center');
-                            $cell->setValignment('center');
-                        });
-                        $sheet->cell('E' . ($row_Table_Ships + 3), function ($cell) use ($item) {
-                            $cell->setValue(($item->price ?? null));
-                            $cell->setFont(MYExcel::getFont());
-                            $cell->setAlignment('center');
-                            $cell->setValignment('center');
-                        });
-                        $sheet->cell('F' . ($row_Table_Ships + 3), function ($cell) use ($item) {
-                            $cell->setValue($item->price ? number_format($item->price) : null);
-                            $cell->setFont(MYExcel::getFont());
-                            $cell->setAlignment('center');
-                            $cell->setValignment('center');
-                        });
-                        $sheet->cell('G' . ($row_Table_Ships + 3), function ($cell) use ($item) {
-                            $cell->setValue($item->amount ? number_format($item->amount) : null);
-                            $cell->setFont(MYExcel::getFont());
-                            $cell->setAlignment('center');
-                            $cell->setValignment('center');
-                        });
-                        $sheet->getStyle("A" . ($row_Table_Ships + 3) . ":G" . ($row_Table_Ships + 3))->applyFromArray(array(
-                            'borders' => array(
-                                'allborders' => array(
-                                    'style' => \PHPExcel_Style_Border::BORDER_THIN,
-                                    'color' => array('rgb' => '222222'),
-                                ),
-                            ),
-                        ));
-                        $row_Table_Ships++;
-                    }
-                }
-                $row_to = $row_Table_Ships + 2;
-                // end create table payment ship HN into more
+                $row_to = $row_payment_ship + 2;
                 $cell_total_price = [
                     'cell' => 'A' . ($row_to + 2),
                     'cell_merge' => 'E' . ($row_to + 2),
                     'data_text_value' => [
                         [
-                            'text' => 'TỔNG = (1) + (2) + (3)',
+                            'text' => 'TỔNG = (1) + (2)',
                             'bold' => true,
                         ],
                     ],
@@ -1341,7 +1285,7 @@ class OrderController extends AdminController
                     'cell' => 'F' . ($row_to + 2),
                     'data_text_value' => [
                         [
-                            'text' => '00000',
+                            'text' => number_format($totalDon + $totalTQHN),
                         ],
                     ],
                 ];
@@ -1357,10 +1301,10 @@ class OrderController extends AdminController
                 $row_footer_sheet = $row_to + 3;
                 $cell_footer_a1 = [
                     'cell' => 'A' . ($row_footer_sheet + 1),
-                    'cell_merge' => 'E' . ($row_footer_sheet + 1),
+                    'cell_merge' => 'H' . ($row_footer_sheet + 1),
                     'data_text_value' => [
                         [
-                            'text' => 'Số tiền bằng chữ : Ba mươi lăm triệu hai trăm nghìn đồng ',
+                            'text' => 'Số tiền bằng chữ : ' . Common::docso($totalDon + $totalTQHN),
                         ],
                     ],
                 ];
@@ -1471,5 +1415,73 @@ class OrderController extends AdminController
                 return $sheet;
             });
         })->export('xlsx');
+    }
+
+    public function deposite($id, Content $content)
+    {
+        return $content
+            ->title($this->title())
+            ->description($this->description['edit'] ?? trans('admin.edit'))
+            ->body($this->formDeposite($id));
+    }
+
+    public function formDeposite($id)
+    {
+        $order = Order::find($id);
+        $form = new Form(new Order());
+
+        $form->setAction(route('admin.orders.submitDeposite'));
+        $form->display('amount_products_price', 'Tổng tiền')->default(number_format($order->amount_products_price));
+        $form->display('deposite_default', 'Tổng tiền cọc')->default(number_format($order->amount_products_price * 0.7))
+            ->help('70% tong gia tri san pham'); // tien coc mac dinh theo tat ca cac don
+
+        $form->currency('deposit', 'Tiền cọc')->symbol('VND')->digits(0)->required(); // tien khach hang chuyen khoan de vao coc
+        $form->hidden('user_id_deposited')->default(Admin::user()->id);
+        $form->hidden('deposited_at')->default(now());
+        $form->hidden('id_order')->default($id);
+        $form->disableEditingCheck();
+        $form->disableCreatingCheck();
+        $form->disableViewCheck();
+        $form->disableReset();
+        return $form;
+    }
+    public function submitDeposite(Request $request)
+    {
+        $order = Order::find($request->id_order);
+        if ($order) {
+            $order->status = 2;
+            // $order->deposited_at = $request->deposited_at;
+            $order->deposited = $request->deposit;
+            // $order->user_id_deposited = $request->user_id_deposited;
+            $order->save();
+        };
+        return redirect(route('admin.orders.index'));
+    }
+
+    public function updateStatus(Request $request)
+    {
+        $order = Order::find($request->id);
+        $data = [
+            'status'    =>  $request->status
+        ];
+        if ($request->status == 3) {
+            $data['user_id_ordered']    =  Admin::user()->id;
+            $data['ordered_at'] =   now();
+        } else if ($request->status == 4) {
+            $data['user_id_success']    =  Admin::user()->id;
+            $data['success_at'] =   now();
+        } else if ($request->status == 5) {
+            $data['user_id_cancel']    =  Admin::user()->id;
+            $data['cancel_at'] =   now();
+        }
+
+        $order->update($data);
+
+        admin_toastr('Lưu thành công', 'success');
+
+        return response()->json([
+            'status'    =>  true,
+            'message'   =>  'success'
+        ]);
     }
 }

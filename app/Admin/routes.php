@@ -35,6 +35,10 @@ Route::group([
     $router->get('orders/{order}/export-excel-detail', 'OrderController@exportExcelDetailOrder')->name('orders.exportExcelDetailOrder');
     $router->get('orders/{order}/export-excel-ship-bill', 'OrderController@exportExcelShipBill')->name('orders.exportExcelShipBill');
     $router->get('orders/{order}/export-excel-payment-bill', 'OrderController@exportExcelPaymentBill')->name('orders.exportExcelPaymentBill');
+
+    $router->post('orders/submitDeposite', 'OrderController@submitDeposite')->name('orders.submitDeposite');
+    $router->get('orders/{order}/confirm-deposite', 'OrderController@deposite')->name('orders.deposite');
+    $router->post('orders/updateStatus', 'OrderController@updateStatus')->name('orders.updateStatus');
 });
 
 
