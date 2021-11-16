@@ -234,7 +234,6 @@ class OrderController extends AdminController
                     'data_text_value' => [
                         [
                             'text' => implode(",", $name),
-                            'bold' => true,
                         ],
                     ],
                     'valign' => 'center',
@@ -905,6 +904,24 @@ class OrderController extends AdminController
                     $cell->setValue('TÊN SP :');
                     $cell->setValignment('center');
                 });
+                $name = [];
+                if ($products) {
+                    foreach ($products as $key => $item) {
+                        $name[] = $item->name_product;
+                    }
+                }
+
+                $cell_heading_name_product = [
+                    'cell' => 'B' . ($row_num + 1),
+                    'cell_merge' => 'C' . ($row_num + 1),
+                    'data_text_value' => [
+                        [
+                            'text' => implode(",", $name),
+                        ],
+                    ],
+                    'valign' => 'center',
+                ];
+                $sheet = MYExcel::getHeading($sheet, $cell_heading_name_product);
                 $sheet->cell('A' . ($row_num + 2), function ($cell) {
                     $cell->setValue('MÃ SỐ :');
                     $cell->setValignment('center');
