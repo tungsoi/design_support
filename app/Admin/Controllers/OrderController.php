@@ -236,7 +236,6 @@ class OrderController extends AdminController
                 $sheet = MYExcel::getHeading($sheet, $cell_heading_name_product);
                 $sheet->cell('A11', function ($cell) {
                     $cell->setValue('MÃ SỐ');
-                    $cell->setValignment('center');
                 });
 
                 $row_num = 13;
@@ -927,7 +926,6 @@ class OrderController extends AdminController
                 $sheet = MYExcel::getHeading($sheet, $cell_heading_name_product);
                 $sheet->cell('A' . ($row_num + 2), function ($cell) {
                     $cell->setValue('MÃ SỐ :');
-                    $cell->setValignment('center');
                 });
                 $arrRow = ['A', 'D'];
                 $row_num = 14;

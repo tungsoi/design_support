@@ -190,11 +190,11 @@ class MYExcel
         $sheet->setWidth(array(
             'A' => 10,
             'B' => 15,
-            'C' => 15,
+            'C' => 20,
             'D' => 15,
             'E' => 15,
             'F' => 15,
-            'G' => 12,
+            'G' => 15,
             'H' => 17,
             'I' => 17,
             'J' => 17,
@@ -202,7 +202,7 @@ class MYExcel
             'L' => 17,
             'M' => 17,
             'N' => 17,
-            'O' => 50,
+            'O' => 17,
         ));
         $sheet->getRowDimension(2)->setRowHeight(19);
         $sheet = MYExcel::getLogo($sheet, ['cell' => 'A2']);
