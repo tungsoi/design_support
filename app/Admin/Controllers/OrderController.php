@@ -178,7 +178,6 @@ class OrderController extends AdminController
                 $form->currency('price', 'Giá tiền')->digits(0)->symbol('VND');
                 $form->currency('amount', 'Thành tiền')->digits(0)->symbol('VND')->readonly();
                 $form->text('link', 'Link sản phẩm');
-                $form->text('description', 'Mô tả chất liệu');
                 $form->text('classify', 'Phân loại')->rules(['required']);
                 $form->text('specify_detail', 'Chỉ định chi tiết')->rules(['required']);
                 $form->select('payment_type', 'Loại thanh toán')->options(OrderProductStatus::PAYMENT_TYPE)->default(0);
@@ -191,6 +190,7 @@ class OrderController extends AdminController
                 $form->text('dvt', 'Đơn vị tính');
                 $form->multipleFile('images', 'Ảnh')
                     ->removable();
+                $form->textarea('description', 'Mô tả chất liệu');
             });
         });
 
@@ -356,6 +356,11 @@ class OrderController extends AdminController
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
                         });
+                        $sheet->getStyle('C' . ($row_nums + 1))->applyFromArray(array(
+                            'alignment' => array(
+                                'wrap' => true
+                            )
+                        ));
                         $sheet->cell('D' . ($row_nums + 1), function ($cell) use ($item) {
                             $cell->setValue($item->classify ?? null);
                             $cell->setFont(MYExcel::getFont());
@@ -769,6 +774,11 @@ class OrderController extends AdminController
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
                         });
+                        $sheet->getStyle('C' . ($row_nums + 1))->applyFromArray(array(
+                            'alignment' => array(
+                                'wrap' => true
+                            )
+                        ));
                         $sheet->cell('D' . ($row_nums + 1), function ($cell) use ($item) {
                             $cell->setValue($item->classify ?? null);
                             $cell->setFont(MYExcel::getFont());
@@ -1148,6 +1158,11 @@ class OrderController extends AdminController
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
                         });
+                        $sheet->getStyle('C' . ($row_Table_Product + 1))->applyFromArray(array(
+                            'alignment' => array(
+                                'wrap' => true
+                            )
+                        ));
                         $sheet->cell('D' . ($row_Table_Product + 1), function ($cell) use ($item) {
                             $cell->setValue($item->classify ?? null);
                             $cell->setFont(MYExcel::getFont());
