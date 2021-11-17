@@ -190,7 +190,6 @@ class OrderController extends AdminController
                 $form->text('note', 'Ghi chú');
                 $form->text('dvt', 'Đơn vị tính');
                 $form->multipleFile('images', 'Ảnh')
-                    ->rules('mimes:jpeg,png,jpg')
                     ->removable();
             });
         });
