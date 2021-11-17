@@ -9,6 +9,11 @@ class Deposite extends RowAction
 {
     public $name = 'deposite';
 
+    public function __construct($id)
+    {
+        $this->id = $id;
+    }
+
     public function handle(Model $model)
     {
         // $model ...
@@ -18,14 +23,14 @@ class Deposite extends RowAction
 
     public function render()
     {
-        $route = "";
+        $route = route('admin.orders.deposite', $this->id);
         $url = "";
         $icon = "fa-times";
         $id = "";
         $color_btn = "btn-info";
         $title = "Đặt cọc đơn hàng";
-        return '<a target="_blank" href="'. $route .'" data-url="'.$url.'" data-id="'.$id.'" class="btn btn-xs '.$color_btn.'" data-toggle="tooltip" title="'.$title.'">
-                <i class="fa '.$icon.'"></i>
+        return '<a href="' . $route . '" data-url="' . $url . '" data-id="' . $id . '" class="btn btn-xs ' . $color_btn . '" data-toggle="tooltip" title="' . $title . '">
+                <i class="fa ' . $icon . '"></i>
             </a>';
     }
 
@@ -33,5 +38,4 @@ class Deposite extends RowAction
     {
         return $this->render();
     }
-
 }

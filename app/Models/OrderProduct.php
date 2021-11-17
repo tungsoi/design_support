@@ -23,12 +23,16 @@ class OrderProduct extends Model
         'payment_type',
         'value_use_payment',
         'service_price',
-        'payment_amount'
+        'payment_amount',
+        'name_product',
+        'classify',
+        'specify_detail',
+        'dvt'
     ];
 
     public function order()
     {
-        return $this->belongsTo(Order::class,'order_id');
+        return $this->belongsTo(Order::class, 'order_id');
     }
 
     public function getImagesAttribute($images)

@@ -9,6 +9,11 @@ class ExportPaymentBill extends RowAction
 {
     public $name = 'export-payment-bill';
 
+    public function __construct($id)
+    {
+        $this->id = $id;
+    }
+
     public function handle(Model $model)
     {
         // $model ...
@@ -18,14 +23,15 @@ class ExportPaymentBill extends RowAction
 
     public function render()
     {
-        $route = "";
+        $route = route('admin.orders.exportExcelPaymentBill', $this->id);
+        // $route = "";
         $url = "";
         $icon = "fa-download";
         $id = "";
         $color_btn = "btn-success";
         $title = "Xuất phiếu thanh toán";
-        return '<a target="_blank" href="'. $route .'" data-url="'.$url.'" data-id="'.$id.'" class="btn btn-xs '.$color_btn.'" data-toggle="tooltip" title="'.$title.'">
-                <i class="fa '.$icon.'"></i>
+        return '<a target="_blank" href="' . $route . '" data-url="' . $url . '" data-id="' . $id . '" class="btn btn-xs ' . $color_btn . '" data-toggle="tooltip" title="' . $title . '">
+                <i class="fa ' . $icon . '"></i>
             </a>';
     }
 

@@ -1,5 +1,6 @@
 
 $(document).on('change', ".quality", function () {
+console.log('ok');
     _quanlity =  $(this).val();
     _price = $(this).parents(".has-many-products-form").find(".price").val();
     amountProductPrice(_quanlity,_price,$(this));
@@ -59,7 +60,6 @@ $(document).on('keyup change', ".discount_value", function () {
 });
 
 function totalAmount() {
-
     val_amount_products_price = $('.amount_products_price').val().replace(/,/g, "") ?? 0;
 
     val_default_deposite = $('.default_deposite').val().replace(/,/g, "") ?? 0;
@@ -72,9 +72,5 @@ function totalAmount() {
 
     value = (parseInt(val_amount_ship_service) + parseInt(val_amount_other_service)+ parseInt(val_amount_products_price)+ parseInt(val_default_deposite)) - parseInt(val_discount_value);
     $('.total_amount').val(value);
-
 }
 
-function f() {
-
-}
