@@ -423,9 +423,9 @@ class OrderController extends AdminController
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
                         });
-                        $total = ($item->price ?? 0 * $item->quality ?? 0) + ($item->payment_amount ?? 0);
-                        $sheet->cell('I' . ($row_nums + 1), function ($cell) use ($item, $total) {
-                            $cell->setValue(number_format($total));
+                        $totalI = ($item->price * $item->quality) + $item->payment_amount;
+                        $sheet->cell('I' . ($row_nums + 1), function ($cell) use ($item, $totalI) {
+                            $cell->setValue(number_format($totalI));
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
@@ -438,7 +438,7 @@ class OrderController extends AdminController
                                 ),
                             ),
                         ));
-                        $totalPrice += $total;
+                        $totalPrice += $totalI;
                         $row_nums++;
                     }
                 }
