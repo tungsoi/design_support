@@ -170,6 +170,7 @@ class MYExcel
                     } else {
                         $cell->setValignment('center');
                     }
+                    $cell->setFont(MYExcel::getFont());
                 });
                 $sheet->getStyle($item . $row_Table)->applyFromArray(array(
                     'borders' => array(
@@ -188,13 +189,13 @@ class MYExcel
     public static function header($sheet, $title)
     {
         $sheet->setWidth(array(
-            'A' => 10,
+            'A' => 15,
             'B' => 15,
             'C' => 20,
             'D' => 15,
-            'E' => 15,
+            'E' => 17,
             'F' => 15,
-            'G' => 15,
+            'G' => 17,
             'H' => 17,
             'I' => 17,
             'J' => 17,
@@ -239,7 +240,6 @@ class MYExcel
             'cell' => 'C4',
             'cell_merge' => 'G4',
             'data_text_value' => [
-                ['text' => 'MST '],
                 [
                     'text' => 'MST : 0109534169 - SĐT 0703552222  - Web: supportdesign.vn  -  Email',
                     'size' => 12,
