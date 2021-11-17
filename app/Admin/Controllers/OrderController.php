@@ -106,8 +106,6 @@ class OrderController extends AdminController
             // $actions->disableEdit();
             // $actions->disableView();
             $route = '/admin/orders/updateStatus';
-
-
             if ($this->row->status == 1) {
                 $actions->append(new Deposite($actions->getKey()));
             } elseif ($this->row->status == 2) {
@@ -175,14 +173,14 @@ class OrderController extends AdminController
             $form->divider();
             $form->hasMany('products', '- Danh sách sản phẩm', function (Form\NestedForm $form) {
                 $form->select('status', 'Trạng thái')->options(OrderProductStatus::pluck('name', 'id'))->default(1)->disable();
-                $form->text('name_product', 'Tên sản phẩm')->rules('required');
+                $form->text('name_product', 'Tên sản phẩm')->rules(['required']);
                 $form->number('quality', 'Số lượng')->default(1);
                 $form->currency('price', 'Giá tiền')->digits(0)->symbol('VND');
                 $form->currency('amount', 'Thành tiền')->digits(0)->symbol('VND')->readonly();
                 $form->text('link', 'Link sản phẩm');
                 $form->text('description', 'Mô tả chất liệu');
-                $form->text('classify', 'Phân loại')->rules('required');
-                $form->text('specify_detail', 'Chỉ định chi tiết')->rules('required');
+                $form->text('classify', 'Phân loại')->rules(['required']);
+                $form->text('specify_detail', 'Chỉ định chi tiết')->rules(['required']);
                 $form->select('payment_type', 'Loại thanh toán')->options(OrderProductStatus::PAYMENT_TYPE)->default(0);
                 $form->currency('value_use_payment', 'Giá trị')->digits(2)->symbol('KG / M3');
                 $form->currency('service_price', 'Giá tiền vận chuyển')->digits(0)->symbol('VND');
@@ -219,7 +217,6 @@ class OrderController extends AdminController
                 $sheet = MYExcel::header($sheet, 'BẢNG BÁO GIÁ');
                 $sheet->cell('A10', function ($cell) {
                     $cell->setValue('TÊN SP');
-                    $cell->setValignment('center');
                 });
                 $name = [];
                 if ($products) {
@@ -236,7 +233,6 @@ class OrderController extends AdminController
                             'text' => implode(",", $name),
                         ],
                     ],
-                    'valign' => 'center',
                 ];
                 $sheet = MYExcel::getHeading($sheet, $cell_heading_name_product);
                 $sheet->cell('A11', function ($cell) {
@@ -902,7 +898,6 @@ class OrderController extends AdminController
                 $row_num = 10;
                 $sheet->cell('A' . ($row_num + 1), function ($cell) {
                     $cell->setValue('TÊN SP :');
-                    $cell->setValignment('center');
                 });
                 $name = [];
                 if ($products) {
@@ -919,7 +914,6 @@ class OrderController extends AdminController
                             'text' => implode(",", $name),
                         ],
                     ],
-                    'valign' => 'center',
                 ];
                 $sheet = MYExcel::getHeading($sheet, $cell_heading_name_product);
                 $sheet->cell('A' . ($row_num + 2), function ($cell) {
