@@ -118,6 +118,7 @@ class OrderedController extends AdminController
         $grid->disableCreateButton();
         $grid->disableExport();
         $grid->actions(function ($actions) {
+            $actions->disableView();
             $actions->disableDelete();
             $actions->disableEdit();
         });

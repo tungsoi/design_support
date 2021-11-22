@@ -12,6 +12,7 @@ use App\Admin\Service\PortalService;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\OrderProductStatus;
+use App\User;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
@@ -46,6 +47,11 @@ class OrderController extends AdminController
             $filter->disableIdFilter();
             $filter->column(1 / 3, function ($filter) {
                 $filter->like('id', 'Mã đơn hàng');
+            });
+            $filter->column(1 / 3, function ($filter) {
+                $users = User::join('user_profiles', 'user_profiles.user_id', '=', 'admin_users.id')->pluck('user_profiles.company_name', 'admin_users.id')->all();
+                $filter->equal('customer_id', 'Khách hàng')
+                    ->select($users);
             });
         });
 
