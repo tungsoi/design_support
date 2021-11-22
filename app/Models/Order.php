@@ -37,4 +37,23 @@ class Order extends Model
     {
         return $this->hasOne(User::class, 'id', 'customer_id');
     }
+
+    public function checkStatus()
+    {
+        return $this->products->where('status', '!=', 4)->count() > 0 ? false : true;
+        // $status = true;
+        // foreach ($this->products as $product) {
+        //     if ($product->status != 4) {
+        //         $status = false;
+        //     }
+        // }
+        // return $status;
+    }
+
+    public function getOwed()
+    {
+        $owed =  $this->total_amount - $this->deposited;
+        return $owed;
+        # code...
+    }
 }

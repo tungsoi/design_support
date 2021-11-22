@@ -30,7 +30,8 @@ Route::group([
         'customers'     =>  'CustomerController',
         'order_statuses'    =>  'OrderStatusController',
         'order_product_statuses'    =>  'OrderProductStatusController',
-        'orders'    =>  'OrderController'
+        'orders'    =>  'OrderController',
+        'ordereds'    =>  'OrderedController',
     ]);
     $router->get('orders/{order}/export-excel-detail', 'OrderController@exportExcelDetailOrder')->name('orders.exportExcelDetailOrder');
     $router->get('orders/{order}/export-excel-ship-bill', 'OrderController@exportExcelShipBill')->name('orders.exportExcelShipBill');
@@ -40,7 +41,6 @@ Route::group([
     $router->get('orders/{order}/confirm-deposite', 'OrderController@deposite')->name('orders.deposite');
     $router->post('orders/updateStatus', 'OrderController@updateStatus')->name('orders.updateStatus');
 });
-
 
 Route::group([
     'namespace'     => 'App\\Admin\\Controllers\\Furn',

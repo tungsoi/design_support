@@ -34,4 +34,8 @@ return [
         'secret' => env('SPARKPOST_SECRET'),
     ],
 
+    'google_drive' => [
+        'secret' => storage_path('drive/drive-secret.json'),
+        'access_token' => storage_path('drive/access-token.json'),
+    ],
 ];
