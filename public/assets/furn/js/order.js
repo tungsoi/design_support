@@ -62,7 +62,7 @@ $(document).on('keyup change', ".discount_value", function () {
 function totalAmount() {
     val_amount_products_price = $('.amount_products_price').val().replace(/,/g, "") ?? 0;
 
-    val_default_deposite = $('.default_deposite').val().replace(/,/g, "") ?? 0;
+    // val_default_deposite = $('.default_deposite').val().replace(/,/g, "") ?? 0;
 
     // val_amount_ship_service = $('.amount_ship_service').val().replace(/,/g, "") ?? 0;
 
@@ -70,7 +70,7 @@ function totalAmount() {
 
     val_discount_value = $('.discount_value').val().replace(/,/g, "") ?? 0;
 
-    value = (parseInt(val_amount_other_service) + parseInt(val_amount_products_price) + parseInt(val_default_deposite)) - parseInt(val_discount_value);
+    value = (parseInt(val_amount_other_service) + parseInt(val_amount_products_price)) - parseInt(val_discount_value);
     $('.total_amount').val(value);
 }
 

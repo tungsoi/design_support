@@ -148,7 +148,7 @@ class OrderController extends AdminController
         $show->amount_products_price('Tổng tiền sản phẩm')->as(function ($val) {
             return number_format($val);
         });
-        $show->default_deposite('Tiền cọc')->as(function ($val) {
+        $show->deposited('Tiền cọc')->as(function ($val) {
             return number_format($val);
         });
         $show->amount_other_service('Phí phát sinh')->as(function ($val) {
@@ -250,7 +250,8 @@ class OrderController extends AdminController
 
         $form->column(6, function ($form) use ($service) {
             $form->currency('amount_products_price', 'Tổng tiền sản phẩm')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
-            $form->currency('default_deposite', 'Tiền cọc')->help('70% tổng tiền sản phẩm')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('default_deposite', 'Tiền phải cọc')->help('70% tổng tiền sản phẩm')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('deposited', 'Tiền đã cọc')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
             // $form->currency('amount_ship_service', 'Tiền vận chuyển nội địa')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
             $form->currency('amount_other_service', 'Phí phát sinh')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
             $form->currency('discount_value', 'Chiết khấu')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
