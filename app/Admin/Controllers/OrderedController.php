@@ -52,7 +52,6 @@ class OrderedController extends AdminController
                 foreach ($customers as $customer) {
                     $customer_used[$customer->id] = $customer->profile->company_name;
                 }
-
                 $filter->where(function ($query) {
                     $customer_id = $this->input;
                     $order_ids = Order::where('customer_id', $customer_id)->pluck('id')->toArray();

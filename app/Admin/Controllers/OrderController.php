@@ -21,6 +21,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use Illuminate\Http\Request;
 use Encore\Admin\Layout\Content;
+use Encore\Admin\Admin as AdminJs;
 
 class OrderController extends AdminController
 {
@@ -148,7 +149,7 @@ class OrderController extends AdminController
         $show->amount_products_price('Tổng tiền sản phẩm')->as(function ($val) {
             return number_format($val);
         });
-        $show->default_deposite('Tiền cọc')->as(function ($val) {
+        $show->deposited('Tiền cọc')->as(function ($val) {
             return number_format($val);
         });
         $show->amount_other_service('Phí phát sinh')->as(function ($val) {
@@ -160,6 +161,17 @@ class OrderController extends AdminController
         $show->total_amount('Tổng tiền')->as(function ($val) {
             return number_format($val);
         });
+        $show->images_deposit('Ảnh đặt cọc')->image();
+        // $show->images_deposit('images_deposit')->as(function () {
+        //     $array = $this->images_deposit;
+        //     dd($array);
+        //     if ($array != null && sizeof($array) > 0) {
+        //         unset($array[0]);
+
+        //         return $array;
+        //     }
+        // })->lightbox(['width' => 80, 'height' => 50]);
+
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
         $show->products('Danh sách sản phẩm', function ($comments) {
@@ -237,7 +249,6 @@ class OrderController extends AdminController
      */
     protected function form()
     {
-        Admin::js('assets/furn/js/order.js');
         $form = new Form(new Order);
 
         $service = new PortalService();
@@ -250,7 +261,8 @@ class OrderController extends AdminController
 
         $form->column(6, function ($form) use ($service) {
             $form->currency('amount_products_price', 'Tổng tiền sản phẩm')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
-            $form->currency('default_deposite', 'Tiền cọc')->help('70% tổng tiền sản phẩm')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('default_deposite', 'Tiền phải cọc')->help('70% tổng tiền sản phẩm')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('deposited', 'Tiền đã cọc')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
             // $form->currency('amount_ship_service', 'Tiền vận chuyển nội địa')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
             $form->currency('amount_other_service', 'Phí phát sinh')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
             $form->currency('discount_value', 'Chiết khấu')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
@@ -292,6 +304,7 @@ class OrderController extends AdminController
         $form->saving(function (Form $form) {
             // dd($form);
         });
+        AdminJs::js('assets/furn/js/order.js');
 
         return $form;
     }
