@@ -32,6 +32,7 @@ Route::group([
         'order_product_statuses'    =>  'OrderProductStatusController',
         'orders'    =>  'OrderController',
         'ordereds'    =>  'OrderedController',
+        'deposite_orders'   =>  'DepositeOrderController'
     ]);
     $router->get('orders/{order}/export-excel-detail', 'OrderController@exportExcelDetailOrder')->name('orders.exportExcelDetailOrder');
     $router->get('orders/{order}/export-excel-ship-bill', 'OrderController@exportExcelShipBill')->name('orders.exportExcelShipBill');

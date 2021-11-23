@@ -21,6 +21,7 @@ class Order extends Model
         'discount_value',
         'total_amount',
         'status',
+        'images_deposit'
     ];
 
     public function products()
@@ -54,6 +55,26 @@ class Order extends Model
     {
         $owed =  $this->total_amount - $this->deposited;
         return $owed;
-        # code...
+    }
+
+    public function getImagesDepositAttribute($pictures)
+    {
+        if (is_string($pictures)) {
+            return json_decode($pictures, true);
+        }
+
+        return $pictures;
+    }
+
+    public function setImagesDepositAttribute($pictures)
+    {
+        if (is_array($pictures)) {
+            $this->attributes['images_deposit'] = json_encode($pictures);
+        }
+    }
+
+    public function logs()
+    {
+        return $this->hasOne(OrderLogTime::class, 'order_id', 'id');
     }
 }

@@ -10,6 +10,7 @@ use App\Admin\Actions\Order\UpdateStatus;
 use App\Admin\Extensions\Excel\ExcelOrder;
 use App\Admin\Service\PortalService;
 use App\Models\Order;
+use App\Models\OrderLogTime;
 use App\Models\OrderProduct;
 use App\Models\OrderProductStatus;
 use App\User;
@@ -38,6 +39,7 @@ class OrderController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Order);
+        $grid->disableExport();
         $grid->model()->orderBy('id', 'desc')
             ->with('products')
             ->with('statusText');
@@ -79,9 +81,9 @@ class OrderController extends AdminController
         $grid->column('amount_products_price', 'Tổng tiền sản phẩm (VND)')->display(function () {
             return $this->amount_products_price ?  number_format($this->amount_products_price) : null;
         });
-        $grid->column('amount_ship_service', 'Tổng phí vận chuyển (VND)')->display(function () {
-            return $this->amount_ship_service ?  number_format($this->amount_ship_service) : null;
-        });
+        // $grid->column('amount_ship_service', 'Tổng phí vận chuyển (VND)')->display(function () {
+        //     return $this->amount_ship_service ?  number_format($this->amount_ship_service) : null;
+        // });
         $grid->column('amount_other_service', 'Tổng phí phát sinh (VND)')->display(function () {
             return $this->amount_other_service ?  number_format($this->amount_other_service) : null;
         });
@@ -138,16 +140,26 @@ class OrderController extends AdminController
     {
         $show = new Show(Order::findOrFail($id));
 
-        $show->field('id', __('ID'));
+        // $show->field('id', __('ID'));
 
         $show->customer_id('Khách hàng')->as(function ($customer) {
             return $this->customer->profile->company_name;
         });
-        $show->field('amount_products_price', 'Tổng tiền sản phẩm');
-        $show->field('default_deposite', 'Tiền cọc');
-        $show->field('amount_other_service', 'Phí phát sinh');
-        $show->field('discount_value', 'Chiết khấu');
-        $show->field('total_amount', 'Tổng tiền');
+        $show->amount_products_price('Tổng tiền sản phẩm')->as(function ($val) {
+            return number_format($val);
+        });
+        $show->default_deposite('Tiền cọc')->as(function ($val) {
+            return number_format($val);
+        });
+        $show->amount_other_service('Phí phát sinh')->as(function ($val) {
+            return number_format($val);
+        });
+        $show->discount_value('Chiết khấu')->as(function ($val) {
+            return number_format($val);
+        });
+        $show->total_amount('Tổng tiền')->as(function ($val) {
+            return number_format($val);
+        });
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
         $show->products('Danh sách sản phẩm', function ($comments) {
@@ -155,7 +167,11 @@ class OrderController extends AdminController
                 $row->column('number', ($row->number + 1));
             });
             $comments->column('number', 'STT');
-            $comments->status('Trạng thái');
+            $comments->status('Trạng thái')->display(function () {
+                $color = $this->statusText->color;
+                $name = $this->statusText->name;
+                return "<span class='label label-{$color}'>{$name}</span>";
+            });
             $comments->name_product('Tên sản phẩm');
             $comments->quality('Số lượng');
             $comments->quality('Giá tiền')->display(function () {
@@ -164,7 +180,6 @@ class OrderController extends AdminController
             $comments->amount('Thành tiền')->display(function () {
                 return $this->amount ?  number_format($this->amount) : null;
             });
-            $comments->link('Link sản phẩm');
             $comments->classify('Phân loại');
             $comments->specify_detail('Chỉ định chi tiết');
             $comments->payment_type('Loại thanh toán');
@@ -179,7 +194,16 @@ class OrderController extends AdminController
             $comments->transport_code('Mã vận đơn');
             $comments->note('Ghi chú');
             $comments->dvt('Đơn vị tính');
+            $comments->link('Link sản phẩm');
+            $comments->images('Ảnh sản phẩm')->display(function () {
+                $array = $this->images;
 
+                if ($array != null && sizeof($array) > 0) {
+                    unset($array[0]);
+
+                    return $array;
+                }
+            })->lightbox(['width' => 80, 'height' => 50]);
             $comments->textarea('Mô tả chất liệu');
             $comments->created_at();
             $comments->disableCreateButton();
@@ -197,6 +221,12 @@ class OrderController extends AdminController
                 $actions->disableDelete();
             });
         });
+        $show->panel()
+            ->tools(function ($tools) {
+                // $tools->disableEdit();
+                // $tools->disableList();
+                $tools->disableDelete();
+            });
         return $show;
     }
 
@@ -242,7 +272,7 @@ class OrderController extends AdminController
                 $form->select('payment_type', 'Loại thanh toán')->options(OrderProductStatus::PAYMENT_TYPE)->default(0);
                 $form->currency('value_use_payment', 'Giá trị')->digits(2)->symbol('KG / M3');
                 $form->currency('service_price', 'Giá tiền vận chuyển')->digits(0)->symbol('VND');
-                $form->currency('payment_amount', 'Thành tiền vận chuyển')->digits(0)->symbol('VND');
+                $form->currency('payment_amount', 'Thành tiền vận chuyển')->digits(0)->symbol('VND')->readonly();
                 $form->text('payment_code', 'Mã giao dịch');
                 $form->text('transport_code', 'Mã vận đơn');
                 $form->text('note', 'Ghi chú');
@@ -286,36 +316,52 @@ class OrderController extends AdminController
         return $content
             ->title($this->title())
             ->description($this->description['edit'] ?? trans('admin.edit'))
-            ->body($this->formDeposite($id));
+            ->body($this->formDeposite()->edit($id));
     }
 
-    public function formDeposite($id)
+    public function formDeposite()
     {
-        $order = Order::find($id);
+        // $order = Order::find($id);
         $form = new Form(new Order());
 
-        $form->setAction(route('admin.orders.submitDeposite'));
-        $form->display('amount_products_price', 'Tổng tiền')->default(number_format($order->amount_products_price));
-        $form->display('deposite_default', 'Tổng tiền cọc')->default(number_format($order->amount_products_price * 0.7))
-            ->help('70% tong gia tri san pham'); // tien coc mac dinh theo tat ca cac don
+        // $form->setAction(route('admin.orders.submitDeposite'));
 
-        $form->currency('deposit', 'Tiền cọc')->symbol('VND')->digits(0)->required(); // tien khach hang chuyen khoan de vao coc
+        $form->currency('amount_products_price', 'Tổng tiền san pham')->symbol('VND')->digits(0)->readonly();
+        // $form->display('deposite_default', 'Tổng tiền cọc')
+        //     ->help('70% tong gia tri san pham'); // tien coc mac dinh theo tat ca cac don
+
+        $form->currency('deposited', 'Tiền cọc')->symbol('VND')->digits(0)->required(); // tien khach hang chuyen khoan de vao coc
+        $form->multipleFile('images_deposit', 'Ảnh')
+            ->rules('mimes:jpeg,png,jpg')
+            ->help('Ảnh đầu tiên sẽ hiển thị là ảnh đại diện')
+            ->removable();
+
         $form->hidden('user_id_deposited')->default(Admin::user()->id);
         $form->hidden('deposited_at')->default(now());
-        $form->hidden('id_order')->default($id);
+        $form->hidden('status')->default(2);
         $form->disableEditingCheck();
         $form->disableCreatingCheck();
         $form->disableViewCheck();
         $form->disableReset();
+
+
         return $form;
     }
+
     public function submitDeposite(Request $request)
     {
         $order = Order::find($request->id_order);
         if ($order) {
+            // $image = $request->images_deposit;
+            // if ($image) {
+            //     $img = $image->originalName;
+            // }
+            // dd($img);
             $order->status = 2;
             // $order->deposited_at = $request->deposited_at;
             $order->deposited = $request->deposit;
+            $order->images_deposit = $request->deposit;
+
             // $order->user_id_deposited = $request->user_id_deposited;
             $order->save();
         };
@@ -338,6 +384,12 @@ class OrderController extends AdminController
             $data['user_id_cancel']    =  Admin::user()->id;
             $data['cancel_at'] =   now();
         }
+
+        OrderLogTime::create([
+            'order_id'  =>  $request->id,
+            'order_status_id'   =>  $request->status,
+            'user_action_id'    =>  Admin::user()->id
+        ]);
 
         $order->update($data);
 
