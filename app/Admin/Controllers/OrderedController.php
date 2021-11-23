@@ -57,7 +57,7 @@ class OrderedController extends AdminController
                     $customer_id = $this->input;
                     $order_ids = Order::where('customer_id', $customer_id)->pluck('id')->toArray();
                     $query->whereIn('order_id', $order_ids);
-                }, 'Khach hang', 'customer_id')->select($customer_used);
+                }, 'Khách hàng', 'customer_id')->select($customer_used);
             });
             $filter->column(1 / 3, function ($filter) {
                 $filter->equal('status', 'Trạng thái')

@@ -21,7 +21,6 @@
         "maatwebsite/excel": "~2.1.0",
         "nao-pon/flysystem-google-drive": "~1.1",
         "spatie/db-dumper": "2.14",
-        "spatie/laravel-backup": "^6.0",
         "zhpefe/select-tree": "^1.2"
     },
     "require-dev": {
