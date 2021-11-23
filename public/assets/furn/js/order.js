@@ -1,6 +1,10 @@
 
+console.log('hihihi');
+$(document).ready(function () {
+    console.log("ready!");
+});
 $(document).on('change', ".quality", function () {
-    console.log('ok');
+
     _quanlity = $(this).val();
     _price = $(this).parents(".has-many-products-form").find(".price").val();
     amountProductPrice(_quanlity, _price, $(this));

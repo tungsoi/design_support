@@ -21,6 +21,7 @@ use Encore\Admin\Grid;
 use Encore\Admin\Show;
 use Illuminate\Http\Request;
 use Encore\Admin\Layout\Content;
+use Encore\Admin\Admin as AdminJs;
 
 class OrderController extends AdminController
 {
@@ -160,6 +161,17 @@ class OrderController extends AdminController
         $show->total_amount('Tổng tiền')->as(function ($val) {
             return number_format($val);
         });
+        $show->images_deposit('Ảnh đặt cọc')->image();
+        // $show->images_deposit('images_deposit')->as(function () {
+        //     $array = $this->images_deposit;
+        //     dd($array);
+        //     if ($array != null && sizeof($array) > 0) {
+        //         unset($array[0]);
+
+        //         return $array;
+        //     }
+        // })->lightbox(['width' => 80, 'height' => 50]);
+
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
         $show->products('Danh sách sản phẩm', function ($comments) {
@@ -237,7 +249,6 @@ class OrderController extends AdminController
      */
     protected function form()
     {
-        Admin::js('assets/furn/js/order.js');
         $form = new Form(new Order);
 
         $service = new PortalService();
@@ -293,6 +304,7 @@ class OrderController extends AdminController
         $form->saving(function (Form $form) {
             // dd($form);
         });
+        AdminJs::js('assets/furn/js/order.js');
 
         return $form;
     }
