@@ -11,14 +11,18 @@
         "php": ">=7.0.0",
         "encore/laravel-admin": "^1.8",
         "fideloper/proxy": "^4.0",
+        "google/apiclient": "^2.0",
         "intervention/image": "^2.5",
         "laravel-admin-ext/chartjs": "^1.0",
         "laravel-admin-ext/grid-lightbox": "^1.0",
         "laravel-admin-ext/summernote": "^1.0",
         "laravel/framework": "^5.8.0",
         "laravel/tinker": "^1.0",
-        "zhpefe/select-tree": "^1.2",
-        "maatwebsite/excel": "~2.1.0"
+        "maatwebsite/excel": "~2.1.0",
+        "nao-pon/flysystem-google-drive": "~1.1",
+        "spatie/db-dumper": "2.14",
+        "spatie/laravel-backup": "^6.0",
+        "zhpefe/select-tree": "^1.2"
     },
     "require-dev": {
         "filp/whoops": "^2.0",

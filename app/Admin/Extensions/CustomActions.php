@@ -2,6 +2,7 @@
 
 namespace App\Admin\Extensions;
 
+use App\Models\OrderProduct;
 use Encore\Admin\Admin;
 use Encore\Admin\Grid\Displayers\Actions;
 

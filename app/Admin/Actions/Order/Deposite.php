@@ -23,7 +23,7 @@ class Deposite extends RowAction
 
     public function render()
     {
-        $route = route('admin.orders.deposite', $this->id);
+        $route = route('admin.deposite_orders.edit', $this->id);
         $url = "";
         $icon = "fa-times";
         $id = "";
