@@ -242,7 +242,7 @@ class OrderController extends AdminController
 
         $service = new PortalService();
         $form->column(6, function ($form) use ($service) {
-            $form->select('customer_id', 'Khách hàng')->options($service->getListCustomer());
+            $form->select('customer_id', 'Khách hàng')->options($service->getListCustomer())->rules(['required']);
             $form->display('user_action_name', 'Người tạo')->default(Admin::user()->name);
             $form->display('action_time', 'Thời gian tạo')->default(now());
             $form->hidden('status')->default(1);
