@@ -71,13 +71,14 @@ class OrderedController extends AdminController
         $grid->column('order_id', 'Người đặt')->display(function () {
             $order = $this->order ?? null;
             $name = $order->customer->profile->company_name ?? null;
-            return $name;
-        })->width(500);
-        $grid->column('name_product', 'Tên sản phẩm')->setAttributes(['width' => ' 300px']);
+            return '<div style="width:200px;" >' . $name . '</div>';
+        })->style('max-width:200px;');
+
+        $grid->column('name_product', 'Tên sản phẩm')->setAttributes(['max-width' => ' 300px']);
         $grid->column('quality', 'Số lượng');
         $grid->column('price', 'Giá tiền')->display(function () {
             return $this->price ?  number_format($this->price) : null;
-        });
+        })->width(200);
         $grid->column('amount', 'Thành tiền')->display(function () {
             return $this->amount ?  number_format($this->amount) : null;
         });
