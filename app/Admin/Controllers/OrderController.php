@@ -116,7 +116,7 @@ class OrderController extends AdminController
                 $actions->append(new Deposite($actions->getKey()));
             } elseif ($this->row->status == 2) {
                 $actions->append(new UpdateStatus($this->row->id, 3, $route, 'Xác nhận đã đặt hàng', 'fa-check', 'btn-info'));
-            } elseif ($this->row->status == 3) {
+            } elseif ($this->row->status == 3 && $flag && sizeof($this->row->products) > 0) {
                 $actions->append(new UpdateStatus($this->row->id, 4, $route, 'Xác nhận thành công', 'fa-info-circle', 'btn-danger'));
             } elseif ($this->row->status == 4) {
 
@@ -162,15 +162,15 @@ class OrderController extends AdminController
             return number_format($val);
         });
         $show->images_deposit('Ảnh đặt cọc')->image();
-        // $show->images_deposit('images_deposit')->as(function () {
-        //     $array = $this->images_deposit;
-        //     dd($array);
-        //     if ($array != null && sizeof($array) > 0) {
-        //         unset($array[0]);
+        $show->images_deposit('images_deposit')->as(function () {
+            $array = $this->images_deposit;
+            dd($array);
+            if ($array != null && sizeof($array) > 0) {
+                unset($array[0]);
 
-        //         return $array;
-        //     }
-        // })->lightbox(['width' => 80, 'height' => 50]);
+                return $array;
+            }
+        })->lightbox(['width' => 80, 'height' => 50]);
 
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
@@ -332,54 +332,6 @@ class OrderController extends AdminController
             ->body($this->formDeposite()->edit($id));
     }
 
-    public function formDeposite()
-    {
-        // $order = Order::find($id);
-        $form = new Form(new Order());
-
-        // $form->setAction(route('admin.orders.submitDeposite'));
-
-        $form->currency('amount_products_price', 'Tổng tiền san pham')->symbol('VND')->digits(0)->readonly();
-        // $form->display('deposite_default', 'Tổng tiền cọc')
-        //     ->help('70% tong gia tri san pham'); // tien coc mac dinh theo tat ca cac don
-
-        $form->currency('deposited', 'Tiền cọc')->symbol('VND')->digits(0)->required(); // tien khach hang chuyen khoan de vao coc
-        $form->multipleFile('images_deposit', 'Ảnh')
-            ->rules('mimes:jpeg,png,jpg')
-            ->help('Ảnh đầu tiên sẽ hiển thị là ảnh đại diện')
-            ->removable();
-
-        $form->hidden('user_id_deposited')->default(Admin::user()->id);
-        $form->hidden('deposited_at')->default(now());
-        $form->hidden('status')->default(2);
-        $form->disableEditingCheck();
-        $form->disableCreatingCheck();
-        $form->disableViewCheck();
-        $form->disableReset();
-
-
-        return $form;
-    }
-
-    public function submitDeposite(Request $request)
-    {
-        $order = Order::find($request->id_order);
-        if ($order) {
-            // $image = $request->images_deposit;
-            // if ($image) {
-            //     $img = $image->originalName;
-            // }
-            // dd($img);
-            $order->status = 2;
-            // $order->deposited_at = $request->deposited_at;
-            $order->deposited = $request->deposit;
-            $order->images_deposit = $request->deposit;
-
-            // $order->user_id_deposited = $request->user_id_deposited;
-            $order->save();
-        };
-        return redirect(route('admin.orders.index'));
-    }
 
     public function updateStatus(Request $request)
     {

@@ -34,24 +34,22 @@ class DepositeOrderController extends AdminController
 
     public function form()
     {
+
         $form = new Form(new Order());
-        $form->currency('amount_products_price', 'Tổng tiền san pham')->symbol('VND')->digits(0)->readonly();
+        $form->currency('amount_products_price', 'Tổng tiền sản phẩm')->symbol('VND')->digits(0)->readonly();
         $form->currency('deposited', 'Tiền cọc')->symbol('VND')->digits(0)->required(); // tien khach hang chuyen khoan de vao coc
         $form->multipleFile('images_deposit', 'Ảnh')
             ->rules('mimes:jpeg,png,jpg')
             ->help('Ảnh đầu tiên sẽ hiển thị là ảnh đại diện')
             ->removable();
-
-        // $form->hidden('status');
-
+        $form->hidden('status');
         $form->disableEditingCheck();
         $form->disableCreatingCheck();
         $form->disableViewCheck();
-
         $form->saving(function (Form $form) {
             $form->status = 2;
+            // dd($form);
         });
-
         $form->saved(function (Form $form) {
             OrderLogTime::create([
                 'order_id'  =>  $form->model()->id,
@@ -60,15 +58,11 @@ class DepositeOrderController extends AdminController
             ]);
             return redirect()->route('admin.orders.index');
         });
-
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();
             $tools->disableView();
             $tools->disableList();
         });
-
-
-
         return $form;
     }
 }
