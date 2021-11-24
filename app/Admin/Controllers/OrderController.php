@@ -162,15 +162,6 @@ class OrderController extends AdminController
             return number_format($val);
         });
         $show->images_deposit('Ảnh đặt cọc')->image();
-        $show->images_deposit('images_deposit')->as(function () {
-            $array = $this->images_deposit;
-            dd($array);
-            if ($array != null && sizeof($array) > 0) {
-                unset($array[0]);
-
-                return $array;
-            }
-        })->lightbox(['width' => 80, 'height' => 50]);
 
         $show->field('created_at', __('Created at'));
         $show->field('updated_at', __('Updated at'));
