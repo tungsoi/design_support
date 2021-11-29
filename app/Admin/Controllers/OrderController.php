@@ -41,21 +41,33 @@ class OrderController extends AdminController
     {
         $grid = new Grid(new Order);
         $grid->disableExport();
+        $user = Admin::user();
+        $grid->model()->where(function ($query) use ($user) {
+            if ($user->is_customer == User::CUSTOMER) {
+                $query->where('customer_id', $user->id);
+            };
+        });
+        if ($user->is_customer == User::CUSTOMER) {
+            $grid->disableCreateButton();
+        }
+
         $grid->model()->orderBy('id', 'desc')
             ->with('products')
             ->with('statusText');
 
         $grid->expandFilter();
-        $grid->filter(function ($filter) {
+        $grid->filter(function ($filter) use ($user) {
             $filter->disableIdFilter();
             $filter->column(1 / 3, function ($filter) {
                 $filter->like('id', 'Mã đơn hàng');
             });
-            $filter->column(1 / 3, function ($filter) {
-                $users = User::join('user_profiles', 'user_profiles.user_id', '=', 'admin_users.id')->pluck('user_profiles.company_name', 'admin_users.id')->all();
-                $filter->equal('customer_id', 'Khách hàng')
-                    ->select($users);
-            });
+            if ($user->is_customer != User::CUSTOMER) {
+                $filter->column(1 / 3, function ($filter) {
+                    $users = User::join('user_profiles', 'user_profiles.user_id', '=', 'admin_users.id')->pluck('user_profiles.company_name', 'admin_users.id')->all();
+                    $filter->equal('customer_id', 'Khách hàng')
+                        ->select($users);
+                });
+            }
         });
 
         $grid->rows(function (Grid\Row $row) {
@@ -67,7 +79,7 @@ class OrderController extends AdminController
             return 'NT-' . str_pad($this->id, 4, 0, STR_PAD_LEFT);
         })->label('primary');
 
-        $grid->column('products', 'Sản phẩm')->display(function ($products) {
+        $grid->column('products', 'Số Sản phẩm')->display(function ($products) {
             return sizeof($products);
         });
 
@@ -105,27 +117,34 @@ class OrderController extends AdminController
         // });
         $grid->disableBatchActions();
         $funcThis = $this;
-        $grid->actions(function ($actions) use ($funcThis) {
+        $grid->actions(function ($actions) use ($funcThis, $user) {
             $actions->disableDelete();
+            if ($user->is_customer == User::CUSTOMER) {
+                $actions->disableEdit();
+            }
             // $actions->disableEdit();
             // $actions->disableView();
 
             $flag = $this->row->checkStatus();
             $route = '/admin/orders/updateStatus';
-            if ($this->row->status == 1) {
-                $actions->append(new Deposite($actions->getKey()));
-            } elseif ($this->row->status == 2) {
-                $actions->append(new UpdateStatus($this->row->id, 3, $route, 'Xác nhận đã đặt hàng', 'fa-check', 'btn-info'));
-            } elseif ($this->row->status == 3 && $flag && sizeof($this->row->products) > 0) {
-                $actions->append(new UpdateStatus($this->row->id, 4, $route, 'Xác nhận thành công', 'fa-info-circle', 'btn-danger'));
-            } elseif ($this->row->status == 4) {
+            if ($user->is_customer != User::CUSTOMER) {
+                if ($this->row->status == 1 && sizeof($this->row->products) > 0) {
+                    $actions->append(new Deposite($actions->getKey()));
+                } elseif ($this->row->status == 2) {
+                    $actions->append(new UpdateStatus($this->row->id, 3, $route, 'Xác nhận đã đặt hàng', 'fa-check', 'btn-info'));
+                } elseif ($this->row->status == 3 && $flag && sizeof($this->row->products) > 0) {
+                    $actions->append(new UpdateStatus($this->row->id, 4, $route, 'Xác nhận thành công', 'fa-info-circle', 'btn-danger'));
+                } elseif ($this->row->status == 4) {
 
-                $actions->append(new UpdateStatus($this->row->id, 5, $route, 'Xác nhận xoá đơn hàng', 'fa-times', 'btn-primary'));
-            }
-            $actions->append(new ExportAmount($actions->getKey()));
-            if ($this->row->status == 4 && $flag && sizeof($this->row->products) > 0) {
-                $actions->append(new ExportShipBill($actions->getKey()));
-                $actions->append(new ExportPaymentBill($actions->getKey()));
+                    $actions->append(new UpdateStatus($this->row->id, 5, $route, 'Xác nhận xoá đơn hàng', 'fa-times', 'btn-primary'));
+                }
+                if (sizeof($this->row->products) > 0) {
+                    $actions->append(new ExportAmount($actions->getKey()));
+                }
+                if ($this->row->status == 4 && $flag && sizeof($this->row->products) > 0) {
+                    $actions->append(new ExportShipBill($actions->getKey()));
+                    $actions->append(new ExportPaymentBill($actions->getKey()));
+                }
             }
         });
         return $grid;
@@ -150,6 +169,9 @@ class OrderController extends AdminController
             return number_format($val);
         });
         $show->deposited('Tiền cọc')->as(function ($val) {
+            return number_format($val);
+        });
+        $show->amount_ship_service('Tiền vận chuyển')->as(function ($val) {
             return number_format($val);
         });
         $show->amount_other_service('Phí phát sinh')->as(function ($val) {
@@ -208,7 +230,7 @@ class OrderController extends AdminController
                 }
             })->lightbox(['width' => 80, 'height' => 50]);
             $comments->textarea('Mô tả chất liệu');
-            $comments->created_at();
+            $comments->created_at('Ngày tạo');
             $comments->disableCreateButton();
             $comments->disableActions();
             $comments->disablePagination();
@@ -240,6 +262,8 @@ class OrderController extends AdminController
      */
     protected function form()
     {
+        $urlScript = asset('assets/furn/js/order.js');
+        Admin::html('<script type="text/javascript" src="' . $urlScript . '"></script> ');
         $form = new Form(new Order);
 
         $service = new PortalService();
@@ -254,7 +278,7 @@ class OrderController extends AdminController
             $form->currency('amount_products_price', 'Tổng tiền sản phẩm')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
             $form->currency('default_deposite', 'Tiền phải cọc')->help('70% tổng tiền sản phẩm')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
             $form->currency('deposited', 'Tiền đã cọc')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
-            // $form->currency('amount_ship_service', 'Tiền vận chuyển nội địa')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
+            $form->currency('amount_ship_service', 'Tiền vận chuyển')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
             $form->currency('amount_other_service', 'Phí phát sinh')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
             $form->currency('discount_value', 'Chiết khấu')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
             $form->currency('total_amount', 'Tổng tiền')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
@@ -295,7 +319,6 @@ class OrderController extends AdminController
         $form->saving(function (Form $form) {
             // dd($form);
         });
-        AdminJs::js('assets/furn/js/order.js');
 
         return $form;
     }
@@ -341,6 +364,8 @@ class OrderController extends AdminController
             $data['cancel_at'] =   now();
         }
 
+        // $checkExists = OrderLogTime::where('order_id', $request->id)->where('order_status_id', $request->status)->where('user_action_id', Admin::user()->id)->exists();
+        // dd($checkExists);
         OrderLogTime::create([
             'order_id'  =>  $request->id,
             'order_status_id'   =>  $request->status,

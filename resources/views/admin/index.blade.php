@@ -52,7 +52,7 @@
     LA.user = @json($_user_);
     $('.has-many-products-form img').attr('alt', "");
 </script>
-<script src="{{ asset('assets/furn/js/order.js')}}"></script>
+{{-- <script src="{{ asset('assets/furn/js/order.js')}}"></script> --}}
 <!-- REQUIRED JS SCRIPTS -->
 {!! Admin::js() !!}
 

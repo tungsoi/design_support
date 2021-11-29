@@ -140,22 +140,23 @@ class ExcelOrder
                     $cell->setFont(MYExcel::getFont());
                 });
                 $sheet->cell('G' . ($row_nums), function ($cell) {
-                    $cell->setValue('Tiền vc dự tính về Hà Nội');
-                    $cell->setAlignment('center');
-                    $cell->setValignment('center');
-                    $cell->setFont(MYExcel::getFont());
-                });
-                $sheet->getStyle('G' . ($row_nums))->applyFromArray(array(
-                    'alignment' => array(
-                        'wrap' => true
-                    )
-                ));
-                $sheet->cell('H' . ($row_nums), function ($cell) {
                     $cell->setValue('SL');
                     $cell->setAlignment('center');
                     $cell->setValignment('center');
                     $cell->setFont(MYExcel::getFont());
                 });
+                $sheet->cell('H' . ($row_nums), function ($cell) {
+                    $cell->setValue('Tiền vc dự tính về Hà Nội');
+                    $cell->setAlignment('center');
+                    $cell->setValignment('center');
+                    $cell->setFont(MYExcel::getFont());
+                });
+                $sheet->getStyle('H' . ($row_nums))->applyFromArray(array(
+                    'alignment' => array(
+                        'wrap' => true
+                    )
+                ));
+
                 $sheet->cell('I' . ($row_nums), function ($cell) {
                     $cell->setValue('Thành tiền(VND)');
                     $cell->setAlignment('center');
@@ -216,17 +217,18 @@ class ExcelOrder
                             $cell->setValignment('center');
                         });
                         $sheet->cell('G' . ($row_nums + 1), function ($cell) use ($item) {
-                            $cell->setValue($item->payment_amount ? number_format($item->payment_amount) : null);
-                            $cell->setFont(MYExcel::getFont());
-                            $cell->setAlignment('center');
-                            $cell->setValignment('center');
-                        });
-                        $sheet->cell('H' . ($row_nums + 1), function ($cell) use ($item) {
                             $cell->setValue($item->quality ?? null);
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
                         });
+                        $sheet->cell('H' . ($row_nums + 1), function ($cell) use ($item) {
+                            $cell->setValue($item->payment_amount ? number_format($item->payment_amount) : null);
+                            $cell->setFont(MYExcel::getFont());
+                            $cell->setAlignment('center');
+                            $cell->setValignment('center');
+                        });
+
                         $totalI = ($item->price * $item->quality) + $item->payment_amount;
                         $sheet->cell('I' . ($row_nums + 1), function ($cell) use ($item, $totalI) {
                             $cell->setValue(number_format($totalI));
