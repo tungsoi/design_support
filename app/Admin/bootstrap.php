@@ -19,6 +19,11 @@
  */
 
 use Encore\Admin\Facades\Admin;
+use Encore\Admin\Grid\Column;
 
 Encore\Admin\Form::forget(['map', 'editor']);
 app('view')->prependNamespace('admin', resource_path('views/admin'));
+// Admin::js('assets/furn/js/order.js');
+Column::extend('color', function ($value, $color) {
+    return "<span style='color: $color'>$value</span>";
+});

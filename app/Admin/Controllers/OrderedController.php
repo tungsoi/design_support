@@ -38,6 +38,7 @@ class OrderedController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new OrderProduct());
+
         $grid->expandFilter();
         $grid->filter(function ($filter) {
             $filter->disableIdFilter();
@@ -55,6 +56,7 @@ class OrderedController extends AdminController
                 $filter->where(function ($query) {
                     $customer_id = $this->input;
                     $order_ids = Order::where('customer_id', $customer_id)->pluck('id')->toArray();
+                    // dd($order_ids);
                     $query->whereIn('order_id', $order_ids);
                 }, 'Khách hàng', 'customer_id')->select($customer_used);
             });
