@@ -27,7 +27,7 @@ class OrderProduct extends Model
         'name_product',
         'classify',
         'specify_detail',
-        'dvt'
+        'dvt',
     ];
 
     public function order()

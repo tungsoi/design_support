@@ -21,7 +21,8 @@ class Order extends Model
         'discount_value',
         'total_amount',
         'status',
-        'images_deposit'
+        'images_deposit',
+        'code_order'
     ];
 
     public function products()
