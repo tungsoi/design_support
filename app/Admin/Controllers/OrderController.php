@@ -322,7 +322,7 @@ class OrderController extends AdminController
 
         return $form;
     }
-
+    //báo giá
     public function exportExcelDetailOrder($id)
     {
         ExcelOrder::exportDetail($id);

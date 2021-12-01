@@ -4,6 +4,7 @@ namespace App\Admin\Extensions\Excel;
 
 use App\Admin\Extensions\MYExcel;
 use App\Admin\Support\Common;
+use App\Models\Order;
 use App\Models\OrderProduct;
 use Encore\Admin\Admin;
 use Illuminate\Http\Request;
@@ -146,24 +147,30 @@ class ExcelOrder
                     $cell->setFont(MYExcel::getFont());
                 });
                 $sheet->cell('H' . ($row_nums), function ($cell) {
+                    $cell->setValue('Đơn vị tính');
+                    $cell->setAlignment('center');
+                    $cell->setValignment('center');
+                    $cell->setFont(MYExcel::getFont());
+                });
+                $sheet->cell('I' . ($row_nums), function ($cell) {
                     $cell->setValue('Tiền vc dự tính về Hà Nội');
                     $cell->setAlignment('center');
                     $cell->setValignment('center');
                     $cell->setFont(MYExcel::getFont());
                 });
-                $sheet->getStyle('H' . ($row_nums))->applyFromArray(array(
+                $sheet->getStyle('I' . ($row_nums))->applyFromArray(array(
                     'alignment' => array(
                         'wrap' => true
                     )
                 ));
 
-                $sheet->cell('I' . ($row_nums), function ($cell) {
+                $sheet->cell('J' . ($row_nums), function ($cell) {
                     $cell->setValue('Thành tiền(VND)');
                     $cell->setAlignment('center');
                     $cell->setValignment('center');
                     $cell->setFont(MYExcel::getFont());
                 });
-                $sheet->getStyle("A" . ($row_nums) . ":I" . ($row_nums + 1))->applyFromArray(array(
+                $sheet->getStyle("A" . ($row_nums) . ":J" . ($row_nums + 1))->applyFromArray(array(
                     'borders' => array(
                         'allborders' => array(
                             'style' => \PHPExcel_Style_Border::BORDER_THIN,
@@ -223,6 +230,12 @@ class ExcelOrder
                             $cell->setValignment('center');
                         });
                         $sheet->cell('H' . ($row_nums + 1), function ($cell) use ($item) {
+                            $cell->setValue($item->dvt ?? null);
+                            $cell->setFont(MYExcel::getFont());
+                            $cell->setAlignment('center');
+                            $cell->setValignment('center');
+                        });
+                        $sheet->cell('I' . ($row_nums + 1), function ($cell) use ($item) {
                             $cell->setValue($item->payment_amount ? number_format($item->payment_amount) : null);
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
@@ -230,13 +243,13 @@ class ExcelOrder
                         });
 
                         $totalI = ($item->price * $item->quality) + $item->payment_amount;
-                        $sheet->cell('I' . ($row_nums + 1), function ($cell) use ($item, $totalI) {
+                        $sheet->cell('J' . ($row_nums + 1), function ($cell) use ($item, $totalI) {
                             $cell->setValue(number_format($totalI));
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
                         });
-                        $sheet->getStyle("A" . ($row_nums + 1) . ":I" . ($row_nums + 1))->applyFromArray(array(
+                        $sheet->getStyle("A" . ($row_nums + 1) . ":J" . ($row_nums + 1))->applyFromArray(array(
                             'borders' => array(
                                 'allborders' => array(
                                     'style' => \PHPExcel_Style_Border::BORDER_THIN,
@@ -250,7 +263,7 @@ class ExcelOrder
                 }
                 $cell_heading_B14 = [
                     'cell' => 'A' . ($row_nums + 1),
-                    'cell_merge' => 'H' . ($row_nums + 1),
+                    'cell_merge' => 'I' . ($row_nums + 1),
                     'data_text_value' => [
                         [
                             'text' => 'Tổng cộng',
@@ -262,7 +275,7 @@ class ExcelOrder
                 ];
                 $sheet = MYExcel::getHeading($sheet, $cell_heading_B14);
                 $cell_heading_B15 = [
-                    'cell' => 'I' . ($row_nums + 1),
+                    'cell' => 'J' . ($row_nums + 1),
                     'data_text_value' => [
                         [
                             'text' => number_format($totalPrice),
@@ -272,7 +285,7 @@ class ExcelOrder
                     'align' => 'center',
                     'valign' => 'center',
                 ];
-                $sheet->getStyle("A" . ($row_nums + 1) . ":I" . ($row_nums + 1))->applyFromArray(array(
+                $sheet->getStyle("A" . ($row_nums + 1) . ":J" . ($row_nums + 1))->applyFromArray(array(
                     'borders' => array(
                         'allborders' => array(
                             'style' => \PHPExcel_Style_Border::BORDER_THIN,
@@ -337,7 +350,6 @@ class ExcelOrder
         set_time_limit(0);
         ini_set('memory_limit', '-1');
         $products = OrderProduct::where('order_id', $id)->get();
-
         Excel::create('File bàn giao hàng hoá', function ($excel) use ($products) {
             $excel->sheet('Bàn giao hàng hoá', function (LaravelExcelWorksheet $sheet) use ($products) {
                 $sheet = MYExcel::header($sheet, 'BIÊN BẢN BÀN GIAO HÀNG HÓA');
@@ -647,7 +659,7 @@ class ExcelOrder
                             $cell->setValignment('center');
                         });
                         $sheet->cell('E' . ($row_nums + 1), function ($cell) use ($item) {
-                            $cell->setValue(($item->specify_detail ?? null));
+                            $cell->setValue(($item->dvt ?? null));
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
@@ -761,8 +773,11 @@ class ExcelOrder
         set_time_limit(0);
         ini_set('memory_limit', '-1');
         $products = OrderProduct::where('order_id', $id)->get();
-        Excel::create('File thanh toán đơn hàng', function ($excel) use ($products) {
-            $excel->sheet('Báo giá sản phẩm', function (LaravelExcelWorksheet $sheet) use ($products) {
+        $order = Order::find($id);
+        $deposited = $order->deposited;
+        $moneyOwe = ($order->total_amount) - $deposited;
+        Excel::create('File thanh toán đơn hàng', function ($excel) use ($products, $moneyOwe, $deposited) {
+            $excel->sheet('Báo giá sản phẩm', function (LaravelExcelWorksheet $sheet) use ($products, $moneyOwe, $deposited) {
                 $sheet = MYExcel::header($sheet, 'PHIẾU THANH TOÁN ĐƠN HÀNG');
                 $row_num = 10;
                 $cell_ten_sp = [
@@ -1224,7 +1239,7 @@ class ExcelOrder
                     'cell_merge' => 'E' . ($row_footer_sheet + 2),
                     'data_text_value' => [
                         [
-                            'text' => 'Địa điểm giao hàng : Hà Tĩnh ',
+                            'text' => 'Địa điểm giao hàng :  ',
                         ],
                     ],
                 ];
@@ -1254,18 +1269,17 @@ class ExcelOrder
                     'cell_merge' => 'H' . ($row_footer_sheet + 5),
                     'data_text_value' => [
                         [
-                            'text' => '    -Thanh toán trước 0% giá trị hợp đồng : 0đ',
+                            'text' => '    -Thanh toán trước 0% giá trị hợp đồng :' . number_format($deposited),
                         ],
                     ],
                 ];
                 $sheet = MYExcel::getHeading($sheet, $cell_footer_a5);
-
                 $cell_footer_a6 = [
                     'cell' => 'A' . ($row_footer_sheet + 6),
                     'cell_merge' => 'H' . ($row_footer_sheet + 6),
                     'data_text_value' => [
                         [
-                            'text' => '  - Số tiền còn lại thanh toán sau khi giao hàng : 35.200.000đ ( Ba mươi lăm triệu hai trăm nghìn đồng )',
+                            'text' => '  - Số tiền còn lại thanh toán sau khi giao hàng :  ' . number_format($moneyOwe)  . ' ( ' . Common::docso($moneyOwe) . ')',
                         ],
                     ],
                 ];
