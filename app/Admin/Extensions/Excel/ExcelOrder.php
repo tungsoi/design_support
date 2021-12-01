@@ -349,7 +349,7 @@ class ExcelOrder
     {
         set_time_limit(0);
         ini_set('memory_limit', '-1');
-        $products = OrderProduct::where('order_id', $id)->get();
+        $products = OrderProduct::where('order_id', $id)->where('status', 4)->get();
         Excel::create('File bàn giao hàng hoá', function ($excel) use ($products) {
             $excel->sheet('Bàn giao hàng hoá', function (LaravelExcelWorksheet $sheet) use ($products) {
                 $sheet = MYExcel::header($sheet, 'BIÊN BẢN BÀN GIAO HÀNG HÓA');

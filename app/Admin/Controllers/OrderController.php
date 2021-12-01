@@ -75,9 +75,7 @@ class OrderController extends AdminController
         });
 
         $grid->column('number', 'STT');
-        $grid->order_number('Mã đơn hàng')->display(function () {
-            return 'NT-' . str_pad($this->id, 4, 0, STR_PAD_LEFT);
-        })->label('primary');
+        $grid->code_order('Mã đơn hàng')->label('primary');
 
         $grid->column('products', 'Số Sản phẩm')->display(function ($products) {
             return sizeof($products);
@@ -140,9 +138,10 @@ class OrderController extends AdminController
                 }
                 if (sizeof($this->row->products) > 0) {
                     $actions->append(new ExportAmount($actions->getKey()));
-                }
-                if ($this->row->status == 4 && $flag && sizeof($this->row->products) > 0) {
                     $actions->append(new ExportShipBill($actions->getKey()));
+                }
+
+                if ($this->row->status == 4 && $flag && sizeof($this->row->products) > 0) {
                     $actions->append(new ExportPaymentBill($actions->getKey()));
                 }
             }
@@ -269,6 +268,7 @@ class OrderController extends AdminController
         $service = new PortalService();
         $form->column(6, function ($form) use ($service) {
             $form->select('customer_id', 'Khách hàng')->options($service->getListCustomer())->rules(['required']);
+            $form->text('code_order', 'Mã đơn hàng')->rules(['required']);
             $form->display('user_action_name', 'Người tạo')->default(Admin::user()->name);
             $form->display('action_time', 'Thời gian tạo')->default(now());
             $form->hidden('status')->default(1);
