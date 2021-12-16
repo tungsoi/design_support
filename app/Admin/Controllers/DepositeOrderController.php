@@ -54,7 +54,8 @@ class DepositeOrderController extends AdminController
             OrderLogTime::create([
                 'order_id'  =>  $form->model()->id,
                 'order_status_id'   =>  2,
-                'user_action_id'    =>  Admin::user()->id
+                'user_action_id'    =>  Admin::user()->id,
+                'type' => OrderLogTime::TYPE_ORDER
             ]);
             return redirect()->route('admin.orders.index');
         });
