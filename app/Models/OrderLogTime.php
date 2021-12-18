@@ -15,4 +15,9 @@ class OrderLogTime extends Model
         'user_action_id',
         'type'
     ];
+
+    public function statusLog()
+    {
+        return $this->hasOne(OrderProductStatus::class, 'id', 'order_status_id');
+    }
 }

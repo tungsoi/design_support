@@ -132,7 +132,6 @@ class MYExcel
     public static function getHeaderTable($sheet, $column_Table, $row_Table, $textColmn_Table)
     {
         foreach ($column_Table as $key => $item) {
-
             if (strlen($item) > 1) {
                 $itemColumn = explode(' ', $item);
                 $sheet->mergeCells($itemColumn[0] . $row_Table . ':' . $itemColumn[1] . $row_Table);

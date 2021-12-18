@@ -4,6 +4,7 @@ namespace App\Admin\Extensions\Excel;
 
 use App\Admin\Extensions\MYExcel;
 use App\Admin\Support\Common;
+use App\Models\NoteService;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use Encore\Admin\Admin;
@@ -773,11 +774,14 @@ class ExcelOrder
         set_time_limit(0);
         ini_set('memory_limit', '-1');
         $products = OrderProduct::where('order_id', $id)->get();
+
         $order = Order::find($id);
+        $ortherService = (NoteService::where('order_id', $order->id)->get());
+
         $deposited = $order->deposited;
         $moneyOwe = ($order->total_amount) - $deposited;
-        Excel::create('File thanh toán đơn hàng', function ($excel) use ($products, $moneyOwe, $deposited) {
-            $excel->sheet('Báo giá sản phẩm', function (LaravelExcelWorksheet $sheet) use ($products, $moneyOwe, $deposited) {
+        Excel::create('File thanh toán đơn hàng', function ($excel) use ($products, $moneyOwe, $deposited, $ortherService) {
+            $excel->sheet('Báo giá sản phẩm', function (LaravelExcelWorksheet $sheet) use ($products, $moneyOwe, $deposited, $ortherService) {
                 $sheet = MYExcel::header($sheet, 'PHIẾU THANH TOÁN ĐƠN HÀNG');
                 $row_num = 10;
                 $cell_ten_sp = [
@@ -1185,19 +1189,147 @@ class ExcelOrder
                         $row_payment_ship++;
                     }
                 }
+
                 // end create table payment ship china into HN
-                $row_to = $row_payment_ship + 2;
-                $cell_total_price = [
-                    'cell' => 'A' . ($row_to + 2),
-                    'cell_merge' => 'E' . ($row_to + 2),
+
+                //begin orther service
+                $totalOr = 0;
+
+                if ($ortherService) {
+                    $row_orther_service = $row_payment_ship + 2;
+                    $cell_heading_note_orther_service = [
+                        'cell' => 'A' . ($row_orther_service + 2),
+                        'cell_merge' => 'B' . ($row_orther_service + 2),
+                        'data_text_value' => [
+                            [
+                                'text' => 'Chi phí phát sinh',
+                                'bold' => true,
+                            ],
+                        ],
+                    ];
+                    $sheet = MYExcel::getHeading($sheet, $cell_heading_note_orther_service);
+                    $column_Table_Or = ['A', 'B', 'C'];
+                    $row_Table_Or = $row_orther_service + 3;
+                    $textColmn_Table_Or = ['STT', 'Ghi chú', 'Giá tiền'];
+                    $sheet = MYExcel::getHeaderTable($sheet, $column_Table_Or, $row_Table_Or, $textColmn_Table_Or, $alignmentTable_Payment, $valignment_Payment);
+                    $test = $row_orther_service + 4;
+                    foreach ($ortherService as $key => $item) {
+                        $sheet->cell('A' . ($row_orther_service + 4), function ($cell) use ($key, $item) {
+                            $cell->setValue($key + 1);
+                            $cell->setFont(MYExcel::getFont());
+                            $cell->setAlignment('center');
+                            $cell->setValignment('center');
+                        });
+                        $sheet->cell('B' . ($row_orther_service + 4), function ($cell) use ($key, $item) {
+                            $cell->setValue($item->note);
+                            $cell->setFont(MYExcel::getFont());
+                            $cell->setAlignment('center');
+                            $cell->setValignment('center');
+                        });
+                        $sheet->cell('C' . ($row_orther_service + 4), function ($cell) use ($key, $item) {
+                            $cell->setValue(number_format($item->money));
+                            $cell->setFont(MYExcel::getFont());
+                            $cell->setAlignment('center');
+                            $cell->setValignment('center');
+                        });
+                        $sheet->getStyle("A" . ($row_orther_service + 4) . ":C" . ($row_orther_service + 4))->applyFromArray(array(
+                            'borders' => array(
+                                'allborders' => array(
+                                    'style' => \PHPExcel_Style_Border::BORDER_THIN,
+                                    'color' => array('rgb' => '222222'),
+                                ),
+                            ),
+                        ));
+                        $row_orther_service++;
+                        $test++;
+                        $totalOr += $item->money;
+                    };
+                    // var_dump($row_orther_service);
+                    // die();
+
+                    $cell_total_or = [
+                        'cell' => 'A' . ($test),
+                        'cell_merge' => 'B' . ($test),
+                        'data_text_value' => [
+                            [
+                                'text' => 'Thành tiền (3)',
+                                'bold' => true,
+                            ],
+                        ],
+                        'align' => 'center',
+                    ];
+                    $sheet->getStyle("A" . ($test) . ":C" . ($test))->applyFromArray(array(
+                        'borders' => array(
+                            'allborders' => array(
+                                'style' => \PHPExcel_Style_Border::BORDER_THIN,
+                                'color' => array('rgb' => '222222'),
+                            ),
+                        ),
+                    ));
+
+                    $sheet = MYExcel::getHeading($sheet, $cell_total_or);
+                    $cell_val_total_or = [
+                        'cell' => 'C' . ($test),
+                        'data_text_value' => [
+                            [
+                                'text' => number_format($totalOr),
+                            ],
+                        ],
+                        'align' => 'center',
+                    ];
+
+                    $sheet = MYExcel::getHeading($sheet, $cell_val_total_or);
+                }
+
+                //end orther service
+                /**** */
+                $bang_tong_hop = $test + 2;
+                $cell_heading_bth = [
+                    'cell' => 'A' . ($bang_tong_hop),
+                    'cell_merge' => 'B' . ($bang_tong_hop),
                     'data_text_value' => [
                         [
-                            'text' => 'TỔNG = (1) + (2)',
+                            'text' => 'Bảng tổng hợp chi phí',
                             'bold' => true,
                         ],
                     ],
                 ];
-                $sheet->getStyle("A" . ($row_to + 2) . ":E" . ($row_to + 2))->applyFromArray(array(
+                $sheet = MYExcel::getHeading($sheet, $cell_heading_bth);
+                $column_Table_bth = ['A', 'B', 'C', 'D', 'E'];
+                $row_Table_bth = $bang_tong_hop + 1;
+                $textColmn_tb_btn = ['STT', 'Giá sản phẩm', 'Trung Quốc về Hà Nội', 'Phí phát sinh', 'Tổng cộng'];
+                $sheet = MYExcel::getHeaderTable($sheet, $column_Table_bth, $row_Table_bth, $textColmn_tb_btn, $alignmentTable_Payment, $valignment_Payment);
+                $sheet->cell('A' . ($bang_tong_hop + 2), function ($cell) use ($key, $item) {
+                    $cell->setValue(1);
+                    $cell->setFont(MYExcel::getFont());
+                    $cell->setAlignment('center');
+                    $cell->setValignment('center');
+                });
+                $sheet->cell('B' . ($bang_tong_hop + 2), function ($cell) use ($key, $item, $totalDon) {
+                    $cell->setValue(number_format($totalDon));
+                    $cell->setFont(MYExcel::getFont());
+                    $cell->setAlignment('center');
+                    $cell->setValignment('center');
+                });
+                $sheet->cell('C' . ($bang_tong_hop + 2), function ($cell) use ($key, $item, $totalTQHN) {
+                    $cell->setValue(number_format($totalTQHN));
+                    $cell->setFont(MYExcel::getFont());
+                    $cell->setAlignment('center');
+                    $cell->setValignment('center');
+                });
+                $sheet->cell('D' . ($bang_tong_hop + 2), function ($cell) use ($key, $item, $totalOr) {
+                    $cell->setValue(number_format($totalOr));
+                    $cell->setFont(MYExcel::getFont());
+                    $cell->setAlignment('center');
+                    $cell->setValignment('center');
+                });
+                $sheet->cell('E' . ($bang_tong_hop + 2), function ($cell) use ($totalDon, $totalTQHN, $totalOr) {
+                    $cell->setValue(number_format($totalDon + $totalTQHN + $totalOr));
+                    $cell->setFont(MYExcel::getFont());
+                    $cell->setAlignment('center');
+                    $cell->setValignment('center');
+                });
+                $sheet->getStyle("A" . ($bang_tong_hop + 2) . ":E" . ($bang_tong_hop + 2))->applyFromArray(array(
                     'borders' => array(
                         'allborders' => array(
                             'style' => \PHPExcel_Style_Border::BORDER_THIN,
@@ -1205,31 +1337,53 @@ class ExcelOrder
                         ),
                     ),
                 ));
-                $sheet = MYExcel::getHeading($sheet, $cell_total_price);
-                $cell_val_total_price = [
-                    'cell' => 'F' . ($row_to + 2),
-                    'data_text_value' => [
-                        [
-                            'text' => number_format($totalDon + $totalTQHN),
-                        ],
-                    ],
-                ];
-                $sheet->getStyle("A" . ($row_to + 2) . ":F" . ($row_to + 2))->applyFromArray(array(
-                    'borders' => array(
-                        'allborders' => array(
-                            'style' => \PHPExcel_Style_Border::BORDER_THIN,
-                            'color' => array('rgb' => '222222'),
-                        ),
-                    ),
-                ));
-                $sheet = MYExcel::getHeading($sheet, $cell_val_total_price);
+                /***
+                 *
+                 */
+                $row_to = $test + 2;
+                // $cell_total_price = [
+                //     'cell' => 'A' . ($row_to + 2),
+                //     'cell_merge' => 'E' . ($row_to + 2),
+                //     'data_text_value' => [
+                //         [
+                //             'text' => 'TỔNG = (1) + (2) + (3)',
+                //             'bold' => true,
+                //         ],
+                //     ],
+                // ];
+                // $sheet->getStyle("A" . ($row_to + 2) . ":E" . ($row_to + 2))->applyFromArray(array(
+                //     'borders' => array(
+                //         'allborders' => array(
+                //             'style' => \PHPExcel_Style_Border::BORDER_THIN,
+                //             'color' => array('rgb' => '222222'),
+                //         ),
+                //     ),
+                // ));
+                // $sheet = MYExcel::getHeading($sheet, $cell_total_price);
+                // $cell_val_total_price = [
+                //     'cell' => 'F' . ($row_to + 2),
+                //     'data_text_value' => [
+                //         [
+                //             'text' => number_format($totalDon + $totalTQHN + $totalOr),
+                //         ],
+                //     ],
+                // ];
+                // $sheet->getStyle("A" . ($row_to + 2) . ":F" . ($row_to + 2))->applyFromArray(array(
+                //     'borders' => array(
+                //         'allborders' => array(
+                //             'style' => \PHPExcel_Style_Border::BORDER_THIN,
+                //             'color' => array('rgb' => '222222'),
+                //         ),
+                //     ),
+                // ));
+                // $sheet = MYExcel::getHeading($sheet, $cell_val_total_price);
                 $row_footer_sheet = $row_to + 3;
                 $cell_footer_a1 = [
                     'cell' => 'A' . ($row_footer_sheet + 1),
                     'cell_merge' => 'H' . ($row_footer_sheet + 1),
                     'data_text_value' => [
                         [
-                            'text' => 'Số tiền bằng chữ : ' . Common::docso($totalDon + $totalTQHN),
+                            'text' => 'Số tiền bằng chữ : ' . Common::docso($totalDon + $totalTQHN + $totalOr),
                         ],
                     ],
                 ];

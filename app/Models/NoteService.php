@@ -20,6 +20,7 @@ class NoteService extends Model
      */
     protected $fillable = [
         'note',
+        'money',
         'order_id',
         'user_id'
     ];

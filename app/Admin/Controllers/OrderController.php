@@ -195,10 +195,12 @@ class OrderController extends AdminController
             $comments->column('number', 'STT');
             $thisF = $this;
             $comments->status('Trạng thái')->display(function () use ($thisF) {
-                $color = $this->statusText->color;
-                $name = $this->statusText->name;
-                return $thisF->addView();
-                // return "<span class='label label-{$color}'>{$name}</span>";
+                // return $this->id;
+                $historyStatus = OrderLogTime::where('order_id', $this->id)->where('type', OrderLogTime::TYPE_PRODUCT)->get();
+                // if (count($historyStatus) == 0) {
+                //     return "<span class='label label-{$color}'>{$name}</span>";
+                // }
+                return $thisF->addView($historyStatus);
             });
             $comments->name_product('Tên sản phẩm');
             $comments->quality('Số lượng');
@@ -275,10 +277,7 @@ class OrderController extends AdminController
             $form->text('code_order', 'Mã đơn hàng')->rules(['required']);
             $form->display('user_action_name', 'Người tạo')->default(Admin::user()->name);
             $form->display('action_time', 'Thời gian tạo')->default(now());
-            $form->hasMany('noteService', 'Ghi chú chi phí', function (Form\NestedForm $form) {
-                $form->text('note', 'Ghi chú')->rules(['required']);
-                $form->hidden('user_id', '')->default(Admin::user()->id);
-            });
+
             $form->hidden('status')->default(1);
         });
 
@@ -287,8 +286,12 @@ class OrderController extends AdminController
             $form->currency('default_deposite', 'Tiền phải cọc')->help('70% tổng tiền sản phẩm')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
             $form->currency('deposited', 'Tiền đã cọc')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
             $form->currency('amount_ship_service', 'Tiền vận chuyển')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
-            $form->currency('amount_other_service', 'Phí phát sinh')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
-
+            $form->currency('amount_other_service', 'Phí phát sinh')->digits(0)->symbol('VND')->default(0)->readonly()->attribute(['style' => 'width: 100% !important;']);
+            $form->hasMany('noteService', '', function (Form\NestedForm $form) {
+                $form->text('note', 'Ghi chú')->rules(['required']);
+                $form->currency('money', 'Chi phí')->digits(0)->symbol('VND')->default(0)->rules(['required'])->attribute(['style' => 'width: 100% !important;']);
+                $form->hidden('user_id', '')->default(Admin::user()->id);
+            });
             $form->currency('discount_value', 'Chiết khấu')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
             $form->currency('total_amount', 'Tổng tiền')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
         });
@@ -296,6 +299,7 @@ class OrderController extends AdminController
         $form->column(12, function ($form) use ($service) {
             $form->divider();
             $form->hasMany('products', '- Danh sách sản phẩm', function (Form\NestedForm $form) {
+                // dd($form->getKey());
                 // $form->text('id', 'id');
                 $form->select('status', 'Trạng thái')->options(OrderProductStatus::pluck('name', 'id'))->default(1);
                 $form->text('name_product', 'Tên sản phẩm')->rules(['required']);
@@ -310,6 +314,7 @@ class OrderController extends AdminController
                 $form->currency('service_price', 'Giá tiền vận chuyển')->digits(0)->symbol('VND');
                 $form->currency('payment_amount', 'Thành tiền vận chuyển')->digits(0)->symbol('VND')->readonly();
                 $status = ($form->getForm()->model()['status']);
+                // dd($form->getForm()->model());
                 if ($status != 2) {
                     $form->text('payment_code', 'Mã giao dịch');
                 } else {
@@ -321,7 +326,6 @@ class OrderController extends AdminController
                 } else {
                     $form->text('transport_code', 'Mã vận đơn')->readonly();
                 }
-
                 // transport_code đã giao hàng
                 $form->text('note', 'Ghi chú');
                 $form->text('dvt', 'Đơn vị tính');
@@ -336,30 +340,41 @@ class OrderController extends AdminController
         $form->disableEditingCheck();
         $form->disableCreatingCheck();
         $form->disableViewCheck();
+        // $form->submitted(function (Form $form) {
+        //     // dd($form->model()->products, $form->products, $form->model(), $form, 'ok');
+        // });
+
         $form->saved(function (Form $form) {
-            // dd($form, 'saved');
-        });
-        $form->saving(function (Form $form) {
-            $products = $form->products;
-            foreach ($products as $key => $item) {
-                // dd($item, 'plp');
-                OrderLogTime::firstOrCreate([
-                    'order_id'  =>  $item['id'],
-                    'order_status_id'   =>  $item['status'],
-                    'user_action_id'    =>  Admin::user()->id,
-                    'type' => OrderLogTime::TYPE_PRODUCT
-                ]);
-                if (!is_null($item['payment_code']) && $item['status'] == 2) {
-                    OrderProduct::find($item['id'])->update([
-                        'status' => 3
+            $products = $form;
+
+            $order_id = $form->model()->id;
+
+            $saved_order = Order::find($order_id);
+
+            $products = $saved_order->products;
+            if ($products) {
+                // dd($products);
+                foreach ($products as $key => $item) {
+                    OrderLogTime::firstOrCreate([
+                        'order_id'  =>  $item['id'],
+                        'order_status_id'   =>  $item['status'],
+                        'user_action_id'    =>  Admin::user()->id,
+                        'type' => OrderLogTime::TYPE_PRODUCT
                     ]);
-                }
-                if (!is_null($item['transport_code']) && $item['status'] == 3) {
-                    OrderProduct::find($item['id'])->update([
-                        'status' => 3
-                    ]);
+                    if (!is_null($item['payment_code']) && $item['status'] == 2) {
+                        OrderProduct::find($item['id'])->update([
+                            'status' => 3
+                        ]);
+                    }
+                    if (!is_null($item['transport_code']) && $item['status'] == 3) {
+                        OrderProduct::find($item['id'])->update([
+                            'status' => 3
+                        ]);
+                    }
                 }
             }
+        });
+        $form->saving(function (Form $form) {
         });
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();
@@ -431,15 +446,12 @@ class OrderController extends AdminController
         ]);
     }
 
-    public function addView()
+    public function addView($data)
     {
-        $html = '
-            <div style=" white-space: nowrap;text-align: left;">Chưa đặt hàng</div>
-            <div style=" white-space: nowrap;text-align: left;">Đã đặt hàng</div>
-            <div style=" white-space: nowrap;text-align: left;">Đã về Việt Nam</div>
-            <div style=" white-space: nowrap;text-align: left;">Đã giao hàng</div>
-            <div style=" white-space: nowrap;text-align: left;">Hết hàng</div>
-        ';
+        $html  = null;
+        foreach ($data as $item) {
+            $html .= '<div class="label label-' . $item->statusLog->color . '" style="float: left;    margin-bottom: 5px;">' . $item->statusLog->name . ' (' . date('d-m-Y', strtotime($item->created_at)) . ')' . '</div> <br>';
+        }
         return $html;
     }
 }
