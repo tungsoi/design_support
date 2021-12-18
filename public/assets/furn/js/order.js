@@ -23,6 +23,32 @@ $(document).on('keyup change', ".service_price", function () {
     _value_payment = $(this).parents(".has-many-products-form").find(".value_use_payment").val();
     amountPayment(_value_payment, _price, $(this));
 });
+
+//note chi phi
+$(document).on('keyup change', ".noteService", function () {
+    // _money_note = $(this).val();
+    totalAmountOtherService()
+});
+//remove note orther service
+$('.has-many-noteService-form .remove').click(function () {
+    console.log('okoko');
+    totalAmountOtherService();
+});
+
+function totalAmountOtherService() {
+    // $getStyle = $(this).parents(".has-many-noteService-form");
+    // console.log($getStyle, 'ppppp');
+    var total = 0;
+    $(".money").each(function (index, e) {
+        value = $(this).val();
+        console.log(value, 'pkkpkp');
+        value = value.replace(/,/g, "");
+        total += parseInt(value);
+        return total;
+    });
+    $('.amount_other_service').val(total);
+}
+
 // tính tiền vận chuyển
 function amountPayment(value, price, $this) {
     total = value.replace(/,/g, "") * price.replace(/,/g, "");
@@ -64,6 +90,7 @@ function totalPrice() {
 $(document).on('keyup change', ".amount_other_service", function () {
     totalAmount();
 });
+
 //Chiết khấu
 $(document).on('keyup change', ".discount_value", function () {
     totalAmount();

@@ -78,4 +78,9 @@ class Order extends Model
     {
         return $this->hasOne(OrderLogTime::class, 'order_id', 'id');
     }
+
+    public function noteService()
+    {
+        return $this->hasMany(NoteService::class, 'order_id', 'id');
+    }
 }
