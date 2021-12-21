@@ -1163,17 +1163,18 @@ class ExcelOrder
                 $alignmentTable_Payment = [];
                 $valignment_Payment = [];
                 $totalTQHN = 0;
+                $row_new_pm = $row_Table_Payment + 1;
                 $sheet = MYExcel::getHeaderTable($sheet, $column_Table_Payment, $row_Table_Payment, $textColmn_Table_Payment, $alignmentTable_Payment, $valignment_Payment);
                 if ($products) {
                     foreach ($products as $key => $item) {
-                        $sheet->cell('A' . ($row_Table_Payment + 3), function ($cell) use ($key) {
+                        $sheet->cell('A' . ($row_new_pm), function ($cell) use ($key) {
                             $cell->setValue($key + 1);
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
                             // STT
                         });
-                        $sheet->cell('B' . ($row_Table_Payment + 3), function ($cell) use ($item) {
+                        $sheet->cell('B' . ($row_new_pm), function ($cell) use ($item) {
                             $name = ($item->quality ?? null) . ($item->name_product ?? null);
                             $cell->setValue($name);
                             $cell->setFont(MYExcel::getFont());
@@ -1181,28 +1182,28 @@ class ExcelOrder
                             $cell->setValignment('center');
                             // Loại hàng
                         });
-                        $sheet->cell('C' . ($row_Table_Payment + 3), function ($cell) use ($item) {
+                        $sheet->cell('C' . ($row_new_pm), function ($cell) use ($item) {
                             $cell->setValue(($item->payment_type == 0 ? 'KG' : 'Khối'));
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
                             // ĐVT
                         });
-                        $sheet->cell('D' . ($row_Table_Payment + 3), function ($cell) use ($item) {
+                        $sheet->cell('D' . ($row_new_pm), function ($cell) use ($item) {
                             $cell->setValue(($item->value_use_payment ?? null));
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
                             // Số lượng
                         });
-                        $sheet->cell('E' . ($row_Table_Payment + 3), function ($cell) use ($item) {
+                        $sheet->cell('E' . ($row_new_pm), function ($cell) use ($item) {
                             $cell->setValue($item->service_price ? number_format($item->service_price) : null);
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
                             // Giá tiền
                         });
-                        $sheet->cell('F' . ($row_Table_Payment + 3), function ($cell) use ($item, $totalTQHN) {
+                        $sheet->cell('F' . ($row_new_pm), function ($cell) use ($item, $totalTQHN) {
 
                             $cell->setValue($item->payment_amount ? number_format($item->payment_amount) : null);
                             $cell->setFont(MYExcel::getFont());
@@ -1210,7 +1211,7 @@ class ExcelOrder
                             $cell->setValignment('center');
                             // Thành tiền(2)
                         });
-                        $sheet->getStyle("A" . ($row_Table_Payment + 3) . ":F" . ($row_Table_Payment + 3))->applyFromArray(array(
+                        $sheet->getStyle("A" . ($row_new_pm) . ":F" . ($row_new_pm))->applyFromArray(array(
                             'borders' => array(
                                 'allborders' => array(
                                     'style' => \PHPExcel_Style_Border::BORDER_THIN,
@@ -1218,12 +1219,12 @@ class ExcelOrder
                                 ),
                             ),
                         ));
-                        $row_Table_Payment++;
+                        $row_new_pm++;
                         $totalTQHN += $item->payment_amount;
                     }
                     $cell_heading_tong_ship = [
-                        'cell' => 'A' . ($row_Table_Payment + 1),
-                        'cell_merge' => 'E' . ($row_Table_Payment + 1),
+                        'cell' => 'A' . ($row_new_pm),
+                        'cell_merge' => 'E' . ($row_new_pm),
                         'data_text_value' => [
                             [
                                 'text' => 'Tổng tiền',
@@ -1234,7 +1235,7 @@ class ExcelOrder
                     ];
 
                     $sheet = MYExcel::getHeading($sheet, $cell_heading_tong_ship);
-                    $sheet->getStyle("A" . ($row_Table_Payment + 1) . ":F" . ($row_Table_Payment + 1))->applyFromArray(array(
+                    $sheet->getStyle("A" . ($row_new_pm) . ":F" . ($row_new_pm))->applyFromArray(array(
                         'borders' => array(
                             'allborders' => array(
                                 'style' => \PHPExcel_Style_Border::BORDER_THIN,
@@ -1243,7 +1244,7 @@ class ExcelOrder
                         ),
                     ));
                     $cell_val_tong_don = [
-                        'cell' => 'F' . ($row_Table_Payment + 1),
+                        'cell' => 'F' . ($row_new_pm),
                         'data_text_value' => [
                             [
                                 'text' => number_format($totalTQHN),
@@ -1261,7 +1262,7 @@ class ExcelOrder
                 $totalOr = 0;
 
                 if ($ortherService) {
-                    $row_orther_service = $row_Table_Payment + 3;
+                    $row_orther_service = $row_new_pm;
                     $cell_heading_note_orther_service = [
                         'cell' => 'A' . ($row_orther_service + 2),
                         'cell_merge' => 'B' . ($row_orther_service + 2),
@@ -1277,7 +1278,7 @@ class ExcelOrder
                     $row_Table_Or = $row_orther_service + 3;
                     $textColmn_Table_Or = ['STT', 'Ghi chú', 'Giá tiền'];
                     $sheet = MYExcel::getHeaderTable($sheet, $column_Table_Or, $row_Table_Or, $textColmn_Table_Or, $alignmentTable_Payment, $valignment_Payment);
-                    $test = $row_orther_service + 4;
+                    $row_or_new = $row_orther_service + 4;
                     foreach ($ortherService as $key => $item) {
                         $sheet->cell('A' . ($row_orther_service + 4), function ($cell) use ($key, $item) {
                             $cell->setValue($key + 1);
@@ -1306,15 +1307,15 @@ class ExcelOrder
                             ),
                         ));
                         $row_orther_service++;
-                        $test++;
+                        $row_or_new++;
                         $totalOr += $item->money;
                     };
                     // var_dump($row_orther_service);
                     // die();
 
                     $cell_total_or = [
-                        'cell' => 'A' . ($test),
-                        'cell_merge' => 'B' . ($test),
+                        'cell' => 'A' . ($row_or_new),
+                        'cell_merge' => 'B' . ($row_or_new),
                         'data_text_value' => [
                             [
                                 'text' => 'Thành tiền (3)',
@@ -1323,7 +1324,7 @@ class ExcelOrder
                         ],
                         'align' => 'center',
                     ];
-                    $sheet->getStyle("A" . ($test) . ":C" . ($test))->applyFromArray(array(
+                    $sheet->getStyle("A" . ($row_or_new) . ":C" . ($row_or_new))->applyFromArray(array(
                         'borders' => array(
                             'allborders' => array(
                                 'style' => \PHPExcel_Style_Border::BORDER_THIN,
@@ -1334,7 +1335,7 @@ class ExcelOrder
 
                     $sheet = MYExcel::getHeading($sheet, $cell_total_or);
                     $cell_val_total_or = [
-                        'cell' => 'C' . ($test),
+                        'cell' => 'C' . ($row_or_new),
                         'data_text_value' => [
                             [
                                 'text' => number_format($totalOr),
@@ -1348,7 +1349,7 @@ class ExcelOrder
 
                 //end orther service
                 /**** */
-                $bang_tong_hop = $test + 2;
+                $bang_tong_hop = $row_or_new + 2;
                 $cell_heading_bth = [
                     'cell' => 'A' . ($bang_tong_hop),
                     'cell_merge' => 'B' . ($bang_tong_hop),
@@ -1405,7 +1406,7 @@ class ExcelOrder
                 /***
                  *
                  */
-                $row_to = $test + 2;
+                $row_to = $row_or_new + 2;
                 // $cell_total_price = [
                 //     'cell' => 'A' . ($row_to + 2),
                 //     'cell_merge' => 'E' . ($row_to + 2),
