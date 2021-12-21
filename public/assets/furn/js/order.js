@@ -8,7 +8,6 @@ $(document).on('change', ".quality", function () {
 $(document).on('keyup change', ".price", function () {
     _price = $(this).val();
     _quanlity = $(this).parents(".has-many-products-form").find(".quality").val();
-    console.log(_price, _quanlity);
     amountProductPrice(_quanlity, _price, $(this));
 });
 // giá trị m3/kg
@@ -26,27 +25,30 @@ $(document).on('keyup change', ".service_price", function () {
 
 //note chi phi
 $(document).on('keyup change', ".noteService", function () {
-    // _money_note = $(this).val();
     totalAmountOtherService()
 });
 //remove note orther service
-$('.has-many-noteService-form .remove').click(function () {
-    console.log('okoko');
-    totalAmountOtherService();
+$('.has-many-noteService-forms').on('click', '.remove', function () {
+    console.log('remove');
+    $(this).parents(".has-many-noteService-form").remove();
+    totalAmountOtherService()
 });
 
+
+// tinh tong chi phi phat sinh
 function totalAmountOtherService() {
-    // $getStyle = $(this).parents(".has-many-noteService-form");
-    // console.log($getStyle, 'ppppp');
     var total = 0;
     $(".money").each(function (index, e) {
-        value = $(this).val();
-        console.log(value, 'pkkpkp');
-        value = value.replace(/,/g, "");
-        total += parseInt(value);
+        if ($(this).parents(".has-many-noteService-form").css('display') === 'block') {
+            value = $(this).val();
+            value = value.replace(/,/g, "");
+            total += parseInt(value);
+            return total;
+        }
         return total;
     });
     $('.amount_other_service').val(total);
+    totalAmount();
 }
 
 // tính tiền vận chuyển
@@ -61,6 +63,14 @@ function amountProductPrice(quanlity, price, $this) {
     parent = $this.parents(".has-many-products-form").find('.amount').val(total);
     totalPrice();
 }
+
+//remove product
+$('.has-many-products-forms').on('click', '.remove', function () {
+    $(this).parents(".has-many-products-form").remove();
+    totalPriceTransport();
+    totalPrice();
+});
+
 function totalPriceTransport() {
     var total = 0;
     $(".payment_amount").each(function (index, e) {
@@ -99,16 +109,17 @@ $(document).on('keyup change', ".discount_value", function () {
 
 function totalAmount() {
     val_amount_products_price = $('.amount_products_price').val().replace(/,/g, "") ?? 0;
-
+    console.log(val_amount_products_price, 'val_amount_products_price');
     // val_default_deposite = $('.default_deposite').val().replace(/,/g, "") ?? 0;
 
     val_amount_ship_service = $('.amount_ship_service').val().replace(/,/g, "") ?? 0;
-
     val_amount_other_service = $('.amount_other_service').val().replace(/,/g, "") ?? 0;
-
     val_discount_value = $('.discount_value').val().replace(/,/g, "") ?? 0;
-
     value = (parseInt(val_amount_other_service) + parseInt(val_amount_products_price) + parseInt(val_amount_ship_service)) - parseInt(val_discount_value);
+    console.log(val_amount_other_service, 'val_amount_other_service');
+    console.log(val_amount_products_price, 'val_amount_products_price');
+    console.log(val_amount_ship_service, 'val_amount_ship_service');
+    console.log(val_discount_value, 'val_discount_value');
     $('.total_amount').val(value);
 }
 

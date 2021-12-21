@@ -327,19 +327,19 @@ class ExcelOrder
                 ];
 
                 $sheet = MYExcel::getHeading($sheet, $cell_heading_B17);
-                $cell_heading_B18 = [
-                    'cell' => 'A' . ($row_nums + 5),
-                    'cell_merge' => 'F' . ($row_nums + 5),
-                    'data_text_value' => [
-                        [
-                            'text' => '( giá chưa bao gồm giá vận chuyển từ Trung Quốc về Hà Nội và chưa bao gồm VAT)',
-                            'size' => 10,
-                        ],
-                    ],
+                // $cell_heading_B18 = [
+                //     'cell' => 'A' . ($row_nums + 5),
+                //     'cell_merge' => 'F' . ($row_nums + 5),
+                //     'data_text_value' => [
+                //         [
+                //             'text' => '( giá chưa bao gồm giá vận chuyển từ Trung Quốc về Hà Nội và chưa bao gồm VAT)',
+                //             'size' => 10,
+                //         ],
+                //     ],
 
-                ];
+                // ];
 
-                $sheet = MYExcel::getHeading($sheet, $cell_heading_B18);
+                // $sheet = MYExcel::getHeading($sheet, $cell_heading_B18);
 
                 return $sheet;
             });
@@ -1110,9 +1110,42 @@ class ExcelOrder
                         $totalDon += $item->amount;
                     }
                 }
+                $cell_heading_tong_don = [
+                    'cell' => 'A' . ($row_Table_Product + 1),
+                    'cell_merge' => 'G' . ($row_Table_Product + 1),
+                    'data_text_value' => [
+                        [
+                            'text' => 'Tổng tiền',
+                            'bold' => true,
+                        ],
+                    ],
+                    'align' => 'center',
+                ];
+
+                $sheet = MYExcel::getHeading($sheet, $cell_heading_tong_don);
+                $sheet->getStyle("A" . ($row_Table_Product + 1) . ":H" . ($row_Table_Product + 1))->applyFromArray(array(
+                    'borders' => array(
+                        'allborders' => array(
+                            'style' => \PHPExcel_Style_Border::BORDER_THIN,
+                            'color' => array('rgb' => '222222'),
+                        ),
+                    ),
+                ));
+                $cell_val_tong_don = [
+                    'cell' => 'H' . ($row_Table_Product + 1),
+                    'data_text_value' => [
+                        [
+                            'text' => number_format($totalDon),
+                        ],
+                    ],
+                    'align' => 'center',
+                ];
+
+                $sheet = MYExcel::getHeading($sheet, $cell_val_tong_don);
                 // end create table info product
-                $row_payment_ship = $row_Table_Product + 1;
                 // begin create table payment ship china into HN
+                $row_payment_ship = $row_Table_Product + 2;
+
                 $cell_heading_note_ship = [
                     'cell' => 'A' . ($row_payment_ship + 1),
                     'cell_merge' => 'E' . ($row_payment_ship + 1),
@@ -1133,14 +1166,14 @@ class ExcelOrder
                 $sheet = MYExcel::getHeaderTable($sheet, $column_Table_Payment, $row_Table_Payment, $textColmn_Table_Payment, $alignmentTable_Payment, $valignment_Payment);
                 if ($products) {
                     foreach ($products as $key => $item) {
-                        $sheet->cell('A' . ($row_payment_ship + 3), function ($cell) use ($key) {
+                        $sheet->cell('A' . ($row_Table_Payment + 3), function ($cell) use ($key) {
                             $cell->setValue($key + 1);
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
                             // STT
                         });
-                        $sheet->cell('B' . ($row_payment_ship + 3), function ($cell) use ($item) {
+                        $sheet->cell('B' . ($row_Table_Payment + 3), function ($cell) use ($item) {
                             $name = ($item->quality ?? null) . ($item->name_product ?? null);
                             $cell->setValue($name);
                             $cell->setFont(MYExcel::getFont());
@@ -1148,28 +1181,28 @@ class ExcelOrder
                             $cell->setValignment('center');
                             // Loại hàng
                         });
-                        $sheet->cell('C' . ($row_payment_ship + 3), function ($cell) use ($item) {
+                        $sheet->cell('C' . ($row_Table_Payment + 3), function ($cell) use ($item) {
                             $cell->setValue(($item->payment_type == 0 ? 'KG' : 'Khối'));
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
                             // ĐVT
                         });
-                        $sheet->cell('D' . ($row_payment_ship + 3), function ($cell) use ($item) {
+                        $sheet->cell('D' . ($row_Table_Payment + 3), function ($cell) use ($item) {
                             $cell->setValue(($item->value_use_payment ?? null));
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
                             // Số lượng
                         });
-                        $sheet->cell('E' . ($row_payment_ship + 3), function ($cell) use ($item) {
+                        $sheet->cell('E' . ($row_Table_Payment + 3), function ($cell) use ($item) {
                             $cell->setValue($item->service_price ? number_format($item->service_price) : null);
                             $cell->setFont(MYExcel::getFont());
                             $cell->setAlignment('center');
                             $cell->setValignment('center');
                             // Giá tiền
                         });
-                        $sheet->cell('F' . ($row_payment_ship + 3), function ($cell) use ($item, $totalTQHN) {
+                        $sheet->cell('F' . ($row_Table_Payment + 3), function ($cell) use ($item, $totalTQHN) {
 
                             $cell->setValue($item->payment_amount ? number_format($item->payment_amount) : null);
                             $cell->setFont(MYExcel::getFont());
@@ -1177,7 +1210,7 @@ class ExcelOrder
                             $cell->setValignment('center');
                             // Thành tiền(2)
                         });
-                        $sheet->getStyle("A" . ($row_payment_ship + 3) . ":F" . ($row_payment_ship + 3))->applyFromArray(array(
+                        $sheet->getStyle("A" . ($row_Table_Payment + 3) . ":F" . ($row_Table_Payment + 3))->applyFromArray(array(
                             'borders' => array(
                                 'allborders' => array(
                                     'style' => \PHPExcel_Style_Border::BORDER_THIN,
@@ -1185,9 +1218,41 @@ class ExcelOrder
                                 ),
                             ),
                         ));
+                        $row_Table_Payment++;
                         $totalTQHN += $item->payment_amount;
-                        $row_payment_ship++;
                     }
+                    $cell_heading_tong_ship = [
+                        'cell' => 'A' . ($row_Table_Payment + 1),
+                        'cell_merge' => 'E' . ($row_Table_Payment + 1),
+                        'data_text_value' => [
+                            [
+                                'text' => 'Tổng tiền',
+                                'bold' => true,
+                            ],
+                        ],
+                        'align' => 'center',
+                    ];
+
+                    $sheet = MYExcel::getHeading($sheet, $cell_heading_tong_ship);
+                    $sheet->getStyle("A" . ($row_Table_Payment + 1) . ":F" . ($row_Table_Payment + 1))->applyFromArray(array(
+                        'borders' => array(
+                            'allborders' => array(
+                                'style' => \PHPExcel_Style_Border::BORDER_THIN,
+                                'color' => array('rgb' => '222222'),
+                            ),
+                        ),
+                    ));
+                    $cell_val_tong_don = [
+                        'cell' => 'F' . ($row_Table_Payment + 1),
+                        'data_text_value' => [
+                            [
+                                'text' => number_format($totalTQHN),
+                            ],
+                        ],
+                        'align' => 'center',
+                    ];
+
+                    $sheet = MYExcel::getHeading($sheet, $cell_val_tong_don);
                 }
 
                 // end create table payment ship china into HN
@@ -1196,7 +1261,7 @@ class ExcelOrder
                 $totalOr = 0;
 
                 if ($ortherService) {
-                    $row_orther_service = $row_payment_ship + 2;
+                    $row_orther_service = $row_Table_Payment + 3;
                     $cell_heading_note_orther_service = [
                         'cell' => 'A' . ($row_orther_service + 2),
                         'cell_merge' => 'B' . ($row_orther_service + 2),
