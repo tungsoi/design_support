@@ -176,6 +176,30 @@ class OrderController extends AdminController
         $show->amount_other_service('Phí phát sinh')->as(function ($val) {
             return number_format($val);
         });
+        $show->noteService('Ghi chú', function ($note) {
+            $note->rows(function (Grid\Row $row) {
+                $row->column('number', ($row->number + 1));
+            });
+            $note->column('number', 'STT');
+            $note->note('Ghi chú');
+            $note->money('Số tiền')->display(function () {
+                return $this->money ?  number_format($this->money) : null;
+            });
+            $note->disableCreateButton();
+            $note->disableActions();
+            $note->disablePagination();
+            $note->disableCreateButton();
+            $note->disableFilter();
+            $note->disableRowSelector();
+            $note->disableColumnSelector();
+            $note->disableTools();
+            $note->disableExport();
+            $note->actions(function (Grid\Displayers\Actions $actions) {
+                $actions->disableView();
+                $actions->disableEdit();
+                $actions->disableDelete();
+            });
+        });
         $show->discount_value('Chiết khấu')->as(function ($val) {
             return number_format($val);
         });
@@ -195,11 +219,7 @@ class OrderController extends AdminController
             $comments->column('number', 'STT');
             $thisF = $this;
             $comments->status('Trạng thái')->display(function () use ($thisF) {
-                // return $this->id;
                 $historyStatus = OrderLogTime::where('order_id', $this->id)->where('type', OrderLogTime::TYPE_PRODUCT)->get();
-                // if (count($historyStatus) == 0) {
-                //     return "<span class='label label-{$color}'>{$name}</span>";
-                // }
                 return $thisF->addView($historyStatus);
             });
             $comments->name_product('Tên sản phẩm');
@@ -227,7 +247,6 @@ class OrderController extends AdminController
             $comments->link('Link sản phẩm');
             $comments->images('Ảnh sản phẩm')->display(function () {
                 $array = $this->images;
-
                 if ($array != null && sizeof($array) > 0) {
                     unset($array[0]);
 
@@ -259,7 +278,6 @@ class OrderController extends AdminController
             });
         return $show;
     }
-
     /**
      * Make a form builder.
      *
@@ -295,26 +313,29 @@ class OrderController extends AdminController
             $form->currency('discount_value', 'Chiết khấu')->digits(0)->symbol('VND')->default(0)->attribute(['style' => 'width: 100% !important;']);
             $form->currency('total_amount', 'Tổng tiền')->digits(0)->symbol('VND')->readonly()->attribute(['style' => 'width: 100% !important;']);
         });
-
         $form->column(12, function ($form) use ($service) {
             $form->divider();
-            $form->hasMany('products', '- Danh sách sản phẩm', function (Form\NestedForm $form) {
-                // dd($form->getKey());
-                // $form->text('id', 'id');
+            $key = 0;
+
+            $form->hasMany('products', '- Danh sách sản phẩm', function (Form\NestedForm $form) use ($key) {
+                // dd($form);
+                // dd($form->getForm()->model());
+
+                $key++;
+                $data = ($form->getForm()->model()->products[$key]);
                 $form->select('status', 'Trạng thái')->options(OrderProductStatus::pluck('name', 'id'))->default(1);
-                $form->text('name_product', 'Tên sản phẩm')->rules(['required']);
+                $form->text('name_product', 'Tên sản phẩm');
                 $form->number('quality', 'Số lượng')->default(1);
                 $form->currency('price', 'Giá tiền')->digits(0)->symbol('VND');
                 $form->currency('amount', 'Thành tiền')->digits(0)->symbol('VND')->readonly();
                 $form->text('link', 'Link sản phẩm');
-                $form->text('classify', 'Phân loại')->rules(['required']);
+                $form->text('classify', 'Phân loại');
                 $form->text('specify_detail', 'Chỉ định chi tiết');
                 $form->select('payment_type', 'Loại thanh toán')->options(OrderProductStatus::PAYMENT_TYPE)->default(0);
                 $form->currency('value_use_payment', 'Giá trị')->digits(2)->symbol('KG / M3');
                 $form->currency('service_price', 'Giá tiền vận chuyển')->digits(0)->symbol('VND');
                 $form->currency('payment_amount', 'Thành tiền vận chuyển')->digits(0)->symbol('VND')->readonly();
-                $status = ($form->getForm()->model()['status']);
-                // dd($form->getForm()->model());
+                $status = $data->status;
                 if ($status != 2) {
                     $form->text('payment_code', 'Mã giao dịch');
                 } else {
@@ -329,8 +350,7 @@ class OrderController extends AdminController
                 // transport_code đã giao hàng
                 $form->text('note', 'Ghi chú');
                 $form->text('dvt', 'Đơn vị tính');
-                $form->multipleFile('images', 'Ảnh')
-                    ->removable();
+                $form->multipleFile('images', 'Ảnh');
                 $form->textarea('description', 'Mô tả chất liệu');
             });
         });
@@ -345,6 +365,7 @@ class OrderController extends AdminController
         // });
 
         $form->saved(function (Form $form) {
+            // dd($form->model());
             $products = $form;
 
             $order_id = $form->model()->id;
@@ -375,6 +396,7 @@ class OrderController extends AdminController
             }
         });
         $form->saving(function (Form $form) {
+            // dd($form->model());
         });
         $form->tools(function (Form\Tools $tools) {
             $tools->disableDelete();
@@ -404,8 +426,8 @@ class OrderController extends AdminController
     public function deposite($id, Content $content)
     {
         return $content
-            ->title($this->title())
-            ->description($this->description['edit'] ?? trans('admin.edit'))
+            ->title('Đặt cọc đơn hàng')
+            ->description('Đặt cọc đơn hàng')
             ->body($this->formDeposite()->edit($id));
     }
 

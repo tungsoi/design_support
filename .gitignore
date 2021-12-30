@@ -3,6 +3,7 @@
 /public/storage
 /storage/debugbar
 /storage/log
+/storage/*
 /storage/*.key
 /vendor
 .env

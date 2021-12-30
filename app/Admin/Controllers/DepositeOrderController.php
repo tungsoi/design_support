@@ -29,7 +29,7 @@ class DepositeOrderController extends AdminController
      *
      * @var string
      */
-    protected $title = 'Dat coc đơn hàng';
+    protected $title = 'Đặt cọc đơn hàng';
 
 
     public function form()
