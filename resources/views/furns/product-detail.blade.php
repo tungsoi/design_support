@@ -101,14 +101,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightgallery/1.3.2/js/lightgallery.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightslider/1.1.6/js/lightslider.js"></script>
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/lightslider/1.1.6/css/lightslider.css">
+    <style>
+        .lSSlideWrapper{
+            width: 480px !important;
+            height: 480px !important;
+        }
+    </style>
     <script>
         $(document).ready(function () {
             showPrice();
             $('#imageGallery').lightSlider({
                 gallery:true,
                 item:1,
+                addClass: '',
                 vertical:true,
-                verticalHeight:295,
+                verticalHeight:480,
                 vThumbWidth:50,
                 thumbItem:8,
                 thumbMargin:4,
